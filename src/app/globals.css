@@ -1,26 +1,112 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Palette — cinematic warm dark */
+  --color-bg: #0a0908;
+  --color-bg-elevated: #14110f;
+  --color-bg-card: #181513;
+  --color-fg: #f5efe6;
+  --color-fg-muted: #a09a91;
+  --color-fg-dim: #6b665e;
+  --color-line: rgba(245, 239, 230, 0.08);
+  --color-line-strong: rgba(245, 239, 230, 0.16);
+  --color-accent: #c9a96e;
+  --color-accent-hover: #d9b97e;
+
+  /* Typography */
+  --font-display: var(--font-instrument-serif);
+  --font-sans: var(--font-inter);
+
+  /* Easing */
+  --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "ss01", "cv11";
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: -0.011em;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  /* Subtle film-grain overlay for cinematic depth */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Hairline borders */
+  .border-line {
+    border-color: var(--color-line);
+  }
+
+  /* Vertical rule for cinematic section dividers */
+  .rule-top {
+    border-top: 1px solid var(--color-line);
+  }
+
+  /* Subtle radial spotlight */
+  .spotlight {
+    background: radial-gradient(
+      ellipse 80% 60% at 50% 0%,
+      rgba(201, 169, 110, 0.06) 0%,
+      transparent 70%
+    );
+  }
+
+  /* Reveal-on-scroll base */
+  @keyframes reveal-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-reveal {
+    animation: reveal-up 1s var(--ease-cinematic) forwards;
+  }
 }
