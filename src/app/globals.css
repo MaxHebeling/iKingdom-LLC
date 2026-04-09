@@ -10,8 +10,9 @@
   --color-fg-dim: #6b665e;
   --color-line: rgba(245, 239, 230, 0.08);
   --color-line-strong: rgba(245, 239, 230, 0.16);
-  --color-accent: #c9a96e;
-  --color-accent-hover: #d9b97e;
+  /* Sherwin-Williams Roman Column (SW 7562) — warm off-beige white */
+  --color-accent: #ebe2cf;
+  --color-accent-hover: #f4ecdc;
 
   /* Typography */
   --font-display: var(--font-instrument-serif);
@@ -77,7 +78,7 @@
   .spotlight {
     background: radial-gradient(
       ellipse 80% 60% at 50% 0%,
-      rgba(201, 169, 110, 0.06) 0%,
+      rgba(235, 226, 207, 0.05) 0%,
       transparent 70%
     );
   }

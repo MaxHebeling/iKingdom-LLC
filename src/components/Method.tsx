@@ -306,6 +306,7 @@ function AccuracyMeter() {
     if (!started) return;
 
     let raf = 0;
+    let driftInterval: ReturnType<typeof setInterval> | undefined;
     const start = performance.now();
     const target = 98.0;
     const duration = 2000;
@@ -316,6 +317,11 @@ function AccuracyMeter() {
       setValue(target * eased);
       if (t < 1) {
         raf = requestAnimationFrame(tick);
+      } else {
+        // Subtle live drift around the threshold so it feels alive
+        driftInterval = setInterval(() => {
+          setValue(target + (Math.random() - 0.5) * 0.6);
+        }, 2200);
       }
     };
 
@@ -323,6 +329,7 @@ function AccuracyMeter() {
 
     return () => {
       cancelAnimationFrame(raf);
+      if (driftInterval) clearInterval(driftInterval);
     };
   }, [started]);
 

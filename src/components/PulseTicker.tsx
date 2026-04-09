@@ -121,38 +121,34 @@ export default function PulseTicker() {
       className="fixed bottom-0 inset-x-0 z-30 pointer-events-none select-none"
       aria-hidden="true"
     >
-      <div className="relative bg-[--color-bg-elevated]/95 backdrop-blur-sm border-t border-[--color-line]">
-        {/* Left fade */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[--color-bg-elevated] to-transparent z-10 pointer-events-none" />
+      <div className="relative bg-[--color-bg-elevated] border-t border-[--color-line]">
+        {/* Left fade — masks the marquee behind the Live badge */}
+        <div className="absolute left-0 top-0 bottom-0 w-36 bg-gradient-to-r from-[--color-bg-elevated] via-[--color-bg-elevated] to-transparent z-10 pointer-events-none" />
         {/* Right fade */}
         <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[--color-bg-elevated] to-transparent z-10 pointer-events-none" />
 
         {/* Label badge on left */}
         <div className="absolute left-6 top-1/2 -translate-y-1/2 z-20 flex items-center gap-2.5">
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-[--color-accent] opacity-70 animate-ping" />
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[--color-accent]" />
-          </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg-muted]">
+          <span className="block h-1.5 w-1.5 rounded-full bg-[--color-accent]" />
+          <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-[--color-fg-muted] font-medium">
             Live
           </span>
         </div>
 
-        <div className="overflow-hidden h-12">
+        <div className="overflow-hidden h-14">
           <motion.div
             animate={{ x: ["0%", "-50%"] }}
             transition={{
-              duration: 90,
+              duration: 50,
               ease: "linear",
               repeat: Infinity,
             }}
-            className="flex items-center h-12 whitespace-nowrap will-change-transform"
-            style={{ paddingLeft: "120px" }}
+            className="flex items-center h-14 whitespace-nowrap"
           >
             {loop.map((event, i) => (
               <span
                 key={i}
-                className="inline-flex items-center gap-3 px-8 font-mono text-[11px] tracking-tight text-[--color-fg-muted]"
+                className="inline-flex items-center gap-3 px-8 font-mono text-[12px] tracking-tight text-[--color-fg-muted] font-medium"
               >
                 <span className="text-[--color-accent] tabular-nums">
                   AGENT {event.num}

@@ -106,13 +106,11 @@ export default function AgentTrace() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, delay: 1.6, ease: [0.16, 1, 0.3, 1] }}
-        className="relative bg-[--color-bg-elevated]/95 backdrop-blur-sm border border-[--color-line] px-5 py-3.5 rounded-md min-w-[300px] shadow-xl shadow-black/40"
+        className="relative bg-[--color-bg-elevated] border border-[--color-line] px-5 py-4 rounded-md min-w-[320px] shadow-xl shadow-black/50"
       >
-        {/* Pulsing dot */}
         <div className="flex items-start gap-3">
           <div className="relative mt-1.5 flex-shrink-0">
-            <span className="absolute inset-0 rounded-full bg-[--color-accent] animate-ping opacity-60" />
-            <span className="relative block w-2 h-2 rounded-full bg-[--color-accent]" />
+            <span className="block w-2 h-2 rounded-full bg-[--color-accent]" />
           </div>
 
           <div className="flex-1 min-w-0">
@@ -124,16 +122,16 @@ export default function AgentTrace() {
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               >
-                <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-[--color-fg-muted] mb-1">
+                <div className="font-mono text-[11px] tracking-[0.16em] uppercase text-[--color-fg-muted] mb-1.5 font-medium">
                   Agent {agent.num} · {agent.name}
                 </div>
-                <div className="font-mono text-[11px] tracking-tight text-[--color-fg]">
+                <div className="font-mono text-[12px] tracking-tight text-[--color-fg] font-medium">
                   {agent.action}
                 </div>
               </motion.div>
             </AnimatePresence>
 
-            <div className="mt-2 pt-2 border-t border-[--color-line] flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.18em] text-[--color-fg-dim]">
+            <div className="mt-3 pt-2.5 border-t border-[--color-line] flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.16em] text-[--color-fg-dim] font-medium">
               <span>iKingdom · live</span>
               <span>{sessionId}</span>
             </div>
