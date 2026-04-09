@@ -139,7 +139,7 @@ export default function PulseTicker() {
           <motion.div
             animate={{ x: ["0%", "-50%"] }}
             transition={{
-              duration: 80,
+              duration: 130,
               ease: "linear",
               repeat: Infinity,
             }}
