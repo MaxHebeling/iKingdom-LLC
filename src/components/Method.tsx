@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -212,11 +212,13 @@ export default function Method() {
             <p className="text-[11px] uppercase tracking-[0.22em] text-[--color-accent] mb-6">
               The Checkpoint Graduation Model
             </p>
-            <h3 className="font-display text-3xl md:text-5xl leading-[1.05] tracking-[-0.015em] mb-6">
+            <h3 className="font-display text-3xl md:text-5xl leading-[1.05] tracking-[-0.015em] mb-10">
               Trust is earned,
               <br />
               not assumed.
             </h3>
+
+            <AccuracyMeter />
           </motion.div>
 
           <motion.div
@@ -278,6 +280,95 @@ export default function Method() {
         </div>
       </div>
     </section>
+  );
+}
+
+function AccuracyMeter() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [value, setValue] = useState(0);
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started) {
+          setStarted(true);
+        }
+      },
+      { threshold: 0.5 },
+    );
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [started]);
+
+  useEffect(() => {
+    if (!started) return;
+
+    let raf = 0;
+    let driftInterval: ReturnType<typeof setInterval> | undefined;
+    const start = performance.now();
+    const target = 98.7;
+    const duration = 2000;
+
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setValue(target * eased);
+      if (t < 1) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        // Subtle drift around 98.7%
+        driftInterval = setInterval(() => {
+          setValue(target + (Math.random() - 0.5) * 0.4);
+        }, 2800);
+      }
+    };
+
+    raf = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      if (driftInterval) clearInterval(driftInterval);
+    };
+  }, [started]);
+
+  return (
+    <div
+      ref={ref}
+      className="relative border border-[--color-line] bg-[--color-bg-elevated]/40 backdrop-blur-sm p-6 md:p-7 rounded-md max-w-sm"
+    >
+      <div className="flex items-center gap-2.5 mb-5">
+        <span className="relative flex h-1.5 w-1.5">
+          <span className="absolute inline-flex h-full w-full rounded-full bg-[--color-accent] opacity-70 animate-ping" />
+          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[--color-accent]" />
+        </span>
+        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg-muted]">
+          Current iKingdom system accuracy
+        </span>
+      </div>
+
+      <div className="font-display text-5xl md:text-6xl tracking-[-0.02em] text-[--color-fg] tabular-nums leading-none">
+        {value.toFixed(1)}
+        <span className="text-[--color-accent] text-3xl md:text-4xl">%</span>
+      </div>
+
+      <div className="mt-6 h-1 bg-[--color-line] rounded-full overflow-hidden">
+        <motion.div
+          animate={{ width: `${value}%` }}
+          transition={{ duration: 0.6, ease }}
+          className="h-full bg-gradient-to-r from-[--color-accent]/50 to-[--color-accent]"
+          style={{
+            boxShadow: "0 0 16px var(--color-accent)",
+          }}
+        />
+      </div>
+
+      <div className="mt-5 pt-5 border-t border-[--color-line] flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.18em] text-[--color-fg-dim]">
+        <span>12 deployments</span>
+        <span>30-day rolling</span>
+      </div>
+    </div>
   );
 }
 

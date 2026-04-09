@@ -52,9 +52,48 @@ const requirements = [
   "Willingness to commit to a 12-month, four-phase deployment",
 ];
 
+type FormData = {
+  name: string;
+  title: string;
+  email: string;
+  phone: string;
+  company: string;
+  website: string;
+  revenue: string;
+  capital: string;
+  scope: string;
+};
+
+const EMPTY_FORM: FormData = {
+  name: "",
+  title: "",
+  email: "",
+  phone: "",
+  company: "",
+  website: "",
+  revenue: "",
+  capital: "",
+  scope: "",
+};
+
 export default function Application() {
   const [submitted, setSubmitted] = useState(false);
   const [activeStep, setActiveStep] = useState(-1);
+  const [step, setStep] = useState<1 | 2>(1);
+  const [formData, setFormData] = useState<FormData>(EMPTY_FORM);
+
+  function update<K extends keyof FormData>(key: K, value: FormData[K]) {
+    setFormData((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function handleNext(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStep(2);
+  }
+
+  function handleBack() {
+    setStep(1);
+  }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -175,98 +214,243 @@ export default function Application() {
             {submitted ? (
               <SubmittedPipeline activeStep={activeStep} />
             ) : (
-              <form
-                onSubmit={handleSubmit}
-                className="border border-[--color-line] p-8 md:p-12 bg-[--color-bg-elevated]/40 backdrop-blur-sm space-y-8"
-              >
-                <div className="grid md:grid-cols-2 gap-8">
-                  <Field label="Full name" name="name" required />
-                  <Field label="Title / role" name="title" required />
-                </div>
+              <div className="border border-[--color-line] p-8 md:p-12 bg-[--color-bg-elevated]/40 backdrop-blur-sm">
+                <StepHeader step={step} />
 
-                <div className="grid md:grid-cols-2 gap-8">
-                  <Field label="Company" name="company" required />
-                  <Field label="Website" name="website" type="url" />
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-8">
-                  <Field label="Email" name="email" type="email" required />
-                  <Field label="Phone" name="phone" type="tel" required />
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-8">
-                  <Select
-                    label="Annual revenue"
-                    name="revenue"
-                    options={[
-                      "Under $1M",
-                      "$1M – $5M",
-                      "$5M – $25M",
-                      "$25M – $100M",
-                      "$100M+",
-                    ]}
-                  />
-                  <Select
-                    label="Capital available"
-                    name="capital"
-                    options={[
-                      "Under $100K (not a fit)",
-                      "$100K – $250K",
-                      "$250K – $1M",
-                      "$1M – $5M",
-                      "$5M+",
-                    ]}
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="scope"
-                    className="block text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim] mb-3"
-                  >
-                    What do you want automated?
-                  </label>
-                  <textarea
-                    id="scope"
-                    name="scope"
-                    rows={5}
-                    required
-                    placeholder="Briefly describe the operations you want iKingdom to take over."
-                    className="w-full bg-transparent border border-[--color-line] focus:border-[--color-accent] focus:outline-none px-4 py-3 text-[--color-fg] placeholder:text-[--color-fg-dim] text-[15px] resize-none transition-colors duration-300"
-                  />
-                </div>
-
-                <div className="flex flex-wrap items-center justify-between gap-6 pt-4">
-                  <p className="text-xs text-[--color-fg-dim] max-w-xs leading-relaxed">
-                    By submitting, you confirm you meet the minimum criteria.
-                  </p>
-                  <button
-                    type="submit"
-                    className="group inline-flex items-center gap-3 px-7 py-4 bg-[--color-accent] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-accent-hover] transition-all duration-500 rounded-full"
-                  >
-                    Submit Application
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 14 14"
-                      fill="none"
-                      className="transition-transform duration-500 group-hover:translate-x-1"
+                <AnimatePresence mode="wait">
+                  {step === 1 ? (
+                    <motion.form
+                      key="step-1"
+                      onSubmit={handleNext}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.5, ease }}
+                      className="space-y-8 mt-10"
                     >
-                      <path
-                        d="M1 7H13M13 7L7.5 1.5M13 7L7.5 12.5"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </form>
+                      <div className="grid md:grid-cols-2 gap-8">
+                        <Field
+                          label="Full name"
+                          name="name"
+                          value={formData.name}
+                          onChange={(v) => update("name", v)}
+                          required
+                        />
+                        <Field
+                          label="Title / role"
+                          name="title"
+                          value={formData.title}
+                          onChange={(v) => update("title", v)}
+                          required
+                        />
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-8">
+                        <Field
+                          label="Email"
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={(v) => update("email", v)}
+                          required
+                        />
+                        <Field
+                          label="Phone"
+                          name="phone"
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(v) => update("phone", v)}
+                          required
+                        />
+                      </div>
+
+                      <div className="flex flex-wrap items-center justify-between gap-6 pt-6">
+                        <p className="text-xs text-[--color-fg-dim] max-w-xs leading-relaxed">
+                          Step 1 of 2 · About you. Takes about 60 seconds.
+                        </p>
+                        <button
+                          type="submit"
+                          className="group inline-flex items-center gap-3 px-7 py-4 bg-[--color-accent] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-accent-hover] transition-all duration-500 rounded-full"
+                        >
+                          Continue
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 14 14"
+                            fill="none"
+                            className="transition-transform duration-500 group-hover:translate-x-1"
+                          >
+                            <path
+                              d="M1 7H13M13 7L7.5 1.5M13 7L7.5 12.5"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </motion.form>
+                  ) : (
+                    <motion.form
+                      key="step-2"
+                      onSubmit={handleSubmit}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.5, ease }}
+                      className="space-y-8 mt-10"
+                    >
+                      <div className="grid md:grid-cols-2 gap-8">
+                        <Field
+                          label="Company"
+                          name="company"
+                          value={formData.company}
+                          onChange={(v) => update("company", v)}
+                          required
+                        />
+                        <Field
+                          label="Website"
+                          name="website"
+                          type="url"
+                          value={formData.website}
+                          onChange={(v) => update("website", v)}
+                        />
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-8">
+                        <Select
+                          label="Annual revenue"
+                          name="revenue"
+                          value={formData.revenue}
+                          onChange={(v) => update("revenue", v)}
+                          options={[
+                            "Under $1M",
+                            "$1M – $5M",
+                            "$5M – $25M",
+                            "$25M – $100M",
+                            "$100M+",
+                          ]}
+                        />
+                        <Select
+                          label="Capital available"
+                          name="capital"
+                          value={formData.capital}
+                          onChange={(v) => update("capital", v)}
+                          options={[
+                            "Under $100K (not a fit)",
+                            "$100K – $250K",
+                            "$250K – $1M",
+                            "$1M – $5M",
+                            "$5M+",
+                          ]}
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="scope"
+                          className="block text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim] mb-3"
+                        >
+                          What do you want automated?
+                          <span className="text-[--color-accent] ml-1">*</span>
+                        </label>
+                        <textarea
+                          id="scope"
+                          name="scope"
+                          rows={5}
+                          required
+                          value={formData.scope}
+                          onChange={(e) => update("scope", e.target.value)}
+                          placeholder="Briefly describe the operations you want iKingdom to take over."
+                          className="w-full bg-transparent border border-[--color-line] focus:border-[--color-accent] focus:outline-none px-4 py-3 text-[--color-fg] placeholder:text-[--color-fg-dim] text-[15px] resize-none transition-colors duration-300"
+                        />
+                      </div>
+
+                      <div className="flex flex-wrap items-center justify-between gap-6 pt-6">
+                        <button
+                          type="button"
+                          onClick={handleBack}
+                          className="text-sm text-[--color-fg-muted] hover:text-[--color-fg] transition-colors duration-300 inline-flex items-center gap-2"
+                        >
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 14 14"
+                            fill="none"
+                          >
+                            <path
+                              d="M13 7H1M1 7L6.5 1.5M1 7L6.5 12.5"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                          Back
+                        </button>
+                        <button
+                          type="submit"
+                          className="group inline-flex items-center gap-3 px-7 py-4 bg-[--color-accent] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-accent-hover] transition-all duration-500 rounded-full"
+                        >
+                          Submit Application
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 14 14"
+                            fill="none"
+                            className="transition-transform duration-500 group-hover:translate-x-1"
+                          >
+                            <path
+                              d="M1 7H13M13 7L7.5 1.5M13 7L7.5 12.5"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </motion.form>
+                  )}
+                </AnimatePresence>
+              </div>
             )}
           </motion.div>
         </div>
       </div>
     </section>
+  );
+}
+
+function StepHeader({ step }: { step: 1 | 2 }) {
+  const label = step === 1 ? "About you" : "About your business";
+
+  return (
+    <div className="border-b border-[--color-line] pb-6">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-accent]">
+            Step {step} of 2
+          </span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
+            · {label}
+          </span>
+        </div>
+        <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-[--color-fg-dim]">
+          ~60 seconds
+        </span>
+      </div>
+
+      {/* Progress bar */}
+      <div className="h-px bg-[--color-line] overflow-hidden">
+        <motion.div
+          animate={{ width: step === 1 ? "50%" : "100%" }}
+          transition={{ duration: 0.6, ease }}
+          className="h-full bg-[--color-accent]"
+          style={{
+            boxShadow: "0 0 10px var(--color-accent)",
+          }}
+        />
+      </div>
+    </div>
   );
 }
 
@@ -435,11 +619,15 @@ function Field({
   label,
   name,
   type = "text",
+  value,
+  onChange,
   required,
 }: {
   label: string;
   name: string;
   type?: string;
+  value: string;
+  onChange: (v: string) => void;
   required?: boolean;
 }) {
   return (
@@ -456,6 +644,8 @@ function Field({
         name={name}
         type={type}
         required={required}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
         className="w-full bg-transparent border-b border-[--color-line] focus:border-[--color-accent] focus:outline-none py-3 text-[--color-fg] text-[15px] transition-colors duration-300"
       />
     </div>
@@ -465,10 +655,14 @@ function Field({
 function Select({
   label,
   name,
+  value,
+  onChange,
   options,
 }: {
   label: string;
   name: string;
+  value: string;
+  onChange: (v: string) => void;
   options: string[];
 }) {
   return (
@@ -478,12 +672,14 @@ function Select({
         className="block text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim] mb-3"
       >
         {label}
+        <span className="text-[--color-accent] ml-1">*</span>
       </label>
       <select
         id={name}
         name={name}
         required
-        defaultValue=""
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
         className="w-full bg-transparent border-b border-[--color-line] focus:border-[--color-accent] focus:outline-none py-3 text-[--color-fg] text-[15px] transition-colors duration-300 appearance-none cursor-pointer"
       >
         <option value="" disabled className="bg-[--color-bg]">

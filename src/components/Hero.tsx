@@ -50,10 +50,9 @@ export default function Hero() {
           transition={{ duration: 1.2, ease, delay: 0.9 }}
           className="mt-12 md:mt-16 max-w-2xl text-pretty text-base md:text-lg leading-relaxed text-[--color-fg-muted]"
         >
-          iKingdom designs and deploys autonomous operations for ambitious
-          companies. Eighty AI agents across nine functional tiers replace
-          entire departments — from first contact to final invoice —
-          running as one coordinated, supervised system.
+          We design and install autonomous AI operations inside ambitious
+          businesses. Eighty agents. Nine tiers. From first contact to
+          final invoice — running as one coordinated, supervised system.
         </motion.p>
 
         {/* CTA row */}
