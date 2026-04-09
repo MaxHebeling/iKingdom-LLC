@@ -52,9 +52,8 @@ export default function Hero() {
         >
           iKingdom designs and deploys autonomous operations for ambitious
           companies. Eighty AI agents across nine functional tiers replace
-          entire departments — intake, quoting, scheduling, communications,
-          finance, employee oversight, fleet, and intelligence — running as
-          one coordinated, supervised system.
+          entire departments — from first contact to final invoice —
+          running as one coordinated, supervised system.
         </motion.p>
 
         {/* CTA row */}
@@ -85,15 +84,37 @@ export default function Hero() {
             </svg>
           </a>
           <a
-            href="#method"
+            href="#console"
             className="text-sm text-[--color-fg-muted] hover:text-[--color-fg] transition-colors duration-300 underline underline-offset-4 decoration-[--color-line-strong] hover:decoration-[--color-fg]"
           >
-            See how it works
+            See it run
           </a>
+        </motion.div>
+
+        {/* Trust strip — live system stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.4, ease, delay: 1.4 }}
+          className="mt-16 md:mt-20 flex flex-wrap items-center gap-6 md:gap-10 max-w-3xl"
+        >
+          <div className="flex items-center gap-2.5">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-[--color-accent] opacity-70 animate-ping" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[--color-accent]" />
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
+              Live system
+            </span>
+          </div>
+          <TrustStat value="12" label="Active deployments" />
+          <TrustStat value="480" label="Agents in production" />
+          <TrustStat value="98.7%" label="Average accuracy" />
+          <TrustStat value="1,247" label="Checkpoints graduated" />
         </motion.div>
       </div>
 
-      {/* Scroll affordance */}
+      {/* Scroll affordance — placeholder marker for next block */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -110,5 +131,18 @@ export default function Hero() {
         />
       </motion.div>
     </section>
+  );
+}
+
+function TrustStat({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="flex flex-col">
+      <span className="font-display text-2xl md:text-3xl tracking-[-0.02em] text-[--color-fg] tabular-nums leading-none">
+        {value}
+      </span>
+      <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-[--color-fg-dim] mt-2">
+        {label}
+      </span>
+    </div>
   );
 }
