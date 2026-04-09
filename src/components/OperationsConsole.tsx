@@ -61,21 +61,13 @@ const TIER_BARS = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Map deployment dots (stylized world coords)
+// Map deployment dots — real iKingdom geographic footprint
 // ─────────────────────────────────────────────────────────────────────────────
 const DEPLOYMENT_DOTS = [
-  { x: 18, y: 38, label: "San Diego" },
-  { x: 21, y: 36, label: "Los Angeles" },
-  { x: 24, y: 32, label: "Las Vegas" },
-  { x: 28, y: 34, label: "Phoenix" },
-  { x: 38, y: 30, label: "Dallas" },
-  { x: 46, y: 28, label: "Atlanta" },
-  { x: 50, y: 22, label: "New York" },
-  { x: 52, y: 38, label: "Miami" },
-  { x: 64, y: 26, label: "London" },
-  { x: 68, y: 30, label: "Madrid" },
-  { x: 73, y: 32, label: "Dubai" },
-  { x: 84, y: 38, label: "Singapore" },
+  { x: 18, y: 38, label: "San Diego" },     // BuildCore + DCS
+  { x: 19, y: 36, label: "Los Angeles" },   // California cluster
+  { x: 35, y: 34, label: "Dallas" },        // Texas
+  { x: 60, y: 28, label: "Global" },        // Online mortgage brokerage
 ];
 
 export default function OperationsConsole() {
@@ -133,7 +125,7 @@ export default function OperationsConsole() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.4, ease, delay: 0.3 }}
-          className="mt-20 md:mt-24 border border-[--color-line-strong] bg-[--color-bg-elevated]/60 backdrop-blur-md rounded-md overflow-hidden shadow-2xl shadow-black/40"
+          className="mt-20 md:mt-24 border border-[--color-line-strong] bg-[--color-bg-elevated]/80 backdrop-blur-sm rounded-md overflow-hidden shadow-2xl shadow-black/40"
         >
           {/* Top bar */}
           <div className="border-b border-[--color-line] px-5 md:px-7 py-4 flex items-center justify-between flex-wrap gap-3">
@@ -183,7 +175,7 @@ export default function OperationsConsole() {
 
             {/* Map */}
             <div className="lg:col-span-5 bg-[--color-bg-elevated]/40 p-6 md:p-8">
-              <PanelHeader title="Deployments" subtitle="12 active" />
+              <PanelHeader title="Deployments" subtitle="6 live · 3 in build" />
               <DeploymentMap />
             </div>
           </div>
@@ -276,12 +268,12 @@ function EventStream() {
 
 function KpiGrid() {
   const kpis = [
-    { label: "Active deployments", target: 12, suffix: "" },
-    { label: "Agents in production", target: 480, suffix: "" },
-    { label: "Checkpoints graduated", target: 1247, suffix: "" },
-    { label: "Avg accuracy", target: 98.7, suffix: "%" },
-    { label: "Avg response", target: 0.8, suffix: "s" },
-    { label: "System uptime", target: 99.99, suffix: "%" },
+    { label: "Live deployments", target: 6, suffix: "" },
+    { label: "In active build", target: 3, suffix: "" },
+    { label: "Agents per system", target: 80, suffix: "" },
+    { label: "Functional tiers", target: 9, suffix: "" },
+    { label: "Verticals served", target: 4, suffix: "" },
+    { label: "Graduation threshold", target: 98, suffix: "%" },
   ];
 
   return (
@@ -471,8 +463,8 @@ function DeploymentMap() {
       </svg>
 
       <div className="mt-4 pt-4 border-t border-[--color-line] flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.18em]">
-        <span className="text-[--color-fg-dim]">Active sites</span>
-        <span className="text-[--color-fg] tabular-nums">12</span>
+        <span className="text-[--color-fg-dim]">Live sites</span>
+        <span className="text-[--color-fg] tabular-nums">4</span>
       </div>
     </div>
   );

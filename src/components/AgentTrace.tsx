@@ -106,7 +106,7 @@ export default function AgentTrace() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, delay: 1.6, ease: [0.16, 1, 0.3, 1] }}
-        className="relative bg-[--color-bg-elevated]/85 backdrop-blur-md border border-[--color-line] px-5 py-3.5 rounded-md min-w-[300px] shadow-2xl shadow-black/40"
+        className="relative bg-[--color-bg-elevated]/95 backdrop-blur-sm border border-[--color-line] px-5 py-3.5 rounded-md min-w-[300px] shadow-xl shadow-black/40"
       >
         {/* Pulsing dot */}
         <div className="flex items-start gap-3">

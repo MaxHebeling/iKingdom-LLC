@@ -121,7 +121,7 @@ export default function PulseTicker() {
       className="fixed bottom-0 inset-x-0 z-30 pointer-events-none select-none"
       aria-hidden="true"
     >
-      <div className="relative bg-[--color-bg-elevated]/85 backdrop-blur-md border-t border-[--color-line]">
+      <div className="relative bg-[--color-bg-elevated]/95 backdrop-blur-sm border-t border-[--color-line]">
         {/* Left fade */}
         <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[--color-bg-elevated] to-transparent z-10 pointer-events-none" />
         {/* Right fade */}

@@ -4,48 +4,79 @@ import { motion } from "framer-motion";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-const cases = [
+type Case = {
+  name: string;
+  redacted: boolean;
+  status: "live" | "in-build";
+  sector: string;
+  body: string;
+  metric: string;
+};
+
+const cases: Case[] = [
   {
-    name: "A national moving & storage operator",
-    redacted: true,
-    sector: "Logistics · West Coast",
-    body: "Full 80-agent deployment. AI receptionist, instant quoting, GPS-verified crew tracking, automated dispatch, and a finance tier that closes the day's books before midnight.",
-    metric: "80 agents · live",
-  },
-  {
-    name: "The world's first online brokerage & development firm",
-    redacted: true,
-    sector: "Real Estate · Global",
-    body: "End-to-end transactional automation. Lead intake, qualification, document handling, and post-close communications running without a single human touchpoint on the standard path.",
-    metric: "Founding deployment",
+    name: "BuildCore Ai",
+    redacted: false,
+    status: "live",
+    sector: "Construction Platform · San Diego",
+    body: "iKingdom's productized construction vertical — a 97-agent CRM and operational platform built on the iKingdom architecture. Permit acquisition, lead intelligence, sales pipeline, and field crew coordination running as one autonomous layer.",
+    metric: "97 agents · live",
   },
   {
     name: "Distinct Construction Solutions",
     redacted: false,
+    status: "live",
     sector: "Construction · Southern California",
-    body: "Full-stack BuildCore deployment with 97 agents extending the iKingdom architecture for the construction vertical. Permit acquisition, lead intelligence, and field operations under one system.",
-    metric: "97 agents · live",
+    body: "First production deployment of BuildCore Ai. Full operational stack — permit hunter, lead intelligence, sales pipeline, and field crew coordination — running on the iKingdom architecture.",
+    metric: "Live · BuildCore",
   },
   {
     name: "Elite Control Group LLC",
     redacted: false,
-    sector: "Holding Company",
+    status: "live",
+    sector: "Holding Company · California",
     body: "Centralized intelligence and finance layer across an operating portfolio. Shared agent infrastructure with per-entity isolation.",
-    metric: "Active",
+    metric: "Live",
   },
   {
     name: "Kyros Global Capital",
     redacted: false,
-    sector: "Capital · Investment",
+    status: "live",
+    sector: "Capital · Investment · California",
     body: "Bespoke deployment architecture for an investment firm. Deal flow intake, due diligence assistance, and reporting automation built into the iKingdom framework.",
-    metric: "In production",
+    metric: "Live",
   },
   {
     name: "Structura Aeternum",
     redacted: false,
-    sector: "Architecture · Build",
+    status: "live",
+    sector: "Architecture & Build · California / Texas",
     body: "Operational platform tailored to project-based work — bid intake, proposal generation, project tracking, and client communications running on the agent layer.",
-    metric: "Active",
+    metric: "Live",
+  },
+  {
+    name: "The world's first online mortgage brokerage",
+    redacted: true,
+    status: "in-build",
+    sector: "Real Estate Finance · Global",
+    body: "End-to-end transactional automation under construction. Lead intake, qualification, document handling, underwriting coordination, and post-close communications — engineered to run without a single human touchpoint on the standard path.",
+    metric: "In active build",
+  },
+  {
+    name: "A national moving & storage operator",
+    redacted: true,
+    status: "in-build",
+    sector: "Logistics · West Coast",
+    body: "Full 80-agent deployment under build. AI receptionist, instant quoting, GPS-verified crew tracking, automated dispatch, and a finance tier that closes the day's books before midnight.",
+    metric: "In active build",
+  },
+  {
+    name: "Terra Bella Nursery",
+    redacted: false,
+    status: "in-build",
+    sector: "Horticulture & Retail",
+    body: "Bespoke iKingdom deployment for horticulture and retail nursery operations. Inventory, customer intake, scheduling, and back office under one autonomous layer.",
+    metric: "In active build",
   },
 ];
 
@@ -108,11 +139,22 @@ export default function Proof() {
                 <span className="text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
                   {c.sector}
                 </span>
-                {c.redacted && (
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-[--color-fg-dim] border border-[--color-line] px-2 py-1 rounded-full">
-                    Under NDA
-                  </span>
-                )}
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {c.status === "live" ? (
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-[--color-bg] bg-[--color-accent] px-2 py-1 rounded-full font-medium">
+                      Live
+                    </span>
+                  ) : (
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-[--color-fg-muted] border border-[--color-line-strong] px-2 py-1 rounded-full">
+                      In build
+                    </span>
+                  )}
+                  {c.redacted && (
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-[--color-fg-dim] border border-[--color-line] px-2 py-1 rounded-full">
+                      NDA
+                    </span>
+                  )}
+                </div>
               </div>
 
               <h3 className="font-display text-2xl md:text-[34px] leading-[1.05] tracking-[-0.015em] text-[--color-fg] group-hover:text-[--color-accent] transition-colors duration-700">

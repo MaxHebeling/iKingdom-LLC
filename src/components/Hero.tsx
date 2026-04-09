@@ -98,18 +98,15 @@ export default function Hero() {
           className="mt-16 md:mt-20 flex flex-wrap items-center gap-6 md:gap-10 max-w-3xl"
         >
           <div className="flex items-center gap-2.5">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-[--color-accent] opacity-70 animate-ping" />
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[--color-accent]" />
-            </span>
+            <span className="block h-1.5 w-1.5 rounded-full bg-[--color-accent]" />
             <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
               Live system
             </span>
           </div>
-          <TrustStat value="12" label="Active deployments" />
-          <TrustStat value="480" label="Agents in production" />
-          <TrustStat value="98.7%" label="Average accuracy" />
-          <TrustStat value="1,247" label="Checkpoints graduated" />
+          <TrustStat value="6" label="Live deployments" />
+          <TrustStat value="3" label="In active build" />
+          <TrustStat value="4" label="Verticals served" />
+          <TrustStat value="9" label="Functional tiers" />
         </motion.div>
       </div>
 

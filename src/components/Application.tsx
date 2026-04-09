@@ -445,9 +445,6 @@ function StepHeader({ step }: { step: 1 | 2 }) {
           animate={{ width: step === 1 ? "50%" : "100%" }}
           transition={{ duration: 0.6, ease }}
           className="h-full bg-[--color-accent]"
-          style={{
-            boxShadow: "0 0 10px var(--color-accent)",
-          }}
         />
       </div>
     </div>

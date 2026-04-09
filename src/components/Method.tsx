@@ -306,9 +306,8 @@ function AccuracyMeter() {
     if (!started) return;
 
     let raf = 0;
-    let driftInterval: ReturnType<typeof setInterval> | undefined;
     const start = performance.now();
-    const target = 98.7;
+    const target = 98.0;
     const duration = 2000;
 
     const tick = (now: number) => {
@@ -317,11 +316,6 @@ function AccuracyMeter() {
       setValue(target * eased);
       if (t < 1) {
         raf = requestAnimationFrame(tick);
-      } else {
-        // Subtle drift around 98.7%
-        driftInterval = setInterval(() => {
-          setValue(target + (Math.random() - 0.5) * 0.4);
-        }, 2800);
       }
     };
 
@@ -329,7 +323,6 @@ function AccuracyMeter() {
 
     return () => {
       cancelAnimationFrame(raf);
-      if (driftInterval) clearInterval(driftInterval);
     };
   }, [started]);
 
@@ -339,12 +332,9 @@ function AccuracyMeter() {
       className="relative border border-[--color-line] bg-[--color-bg-elevated]/40 backdrop-blur-sm p-6 md:p-7 rounded-md max-w-sm"
     >
       <div className="flex items-center gap-2.5 mb-5">
-        <span className="relative flex h-1.5 w-1.5">
-          <span className="absolute inline-flex h-full w-full rounded-full bg-[--color-accent] opacity-70 animate-ping" />
-          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[--color-accent]" />
-        </span>
+        <span className="block h-1.5 w-1.5 rounded-full bg-[--color-accent]" />
         <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg-muted]">
-          Current iKingdom system accuracy
+          Graduation threshold
         </span>
       </div>
 
@@ -357,16 +347,14 @@ function AccuracyMeter() {
         <motion.div
           animate={{ width: `${value}%` }}
           transition={{ duration: 0.6, ease }}
-          className="h-full bg-gradient-to-r from-[--color-accent]/50 to-[--color-accent]"
-          style={{
-            boxShadow: "0 0 16px var(--color-accent)",
-          }}
+          className="h-full bg-gradient-to-r from-[--color-accent]/60 to-[--color-accent]"
         />
       </div>
 
-      <div className="mt-5 pt-5 border-t border-[--color-line] flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.18em] text-[--color-fg-dim]">
-        <span>12 deployments</span>
-        <span>30-day rolling</span>
+      <div className="mt-5 pt-5 border-t border-[--color-line]">
+        <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-[--color-fg-dim] leading-relaxed">
+          Agents are released to autonomy upon reaching this accuracy
+        </p>
       </div>
     </div>
   );
@@ -465,10 +453,7 @@ function TierRow({
                   <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-[--color-fg-muted] group-hover/agent:text-[--color-fg] transition-colors duration-300 flex-1">
                     {agent.name}
                   </span>
-                  <span className="relative flex h-1.5 w-1.5 flex-shrink-0">
-                    <span className="absolute inline-flex h-full w-full rounded-full bg-[--color-accent] opacity-50 animate-ping" />
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[--color-accent]" />
-                  </span>
+                  <span className="block h-1.5 w-1.5 rounded-full bg-[--color-accent] flex-shrink-0" />
                 </motion.div>
               ))}
             </div>
