@@ -139,16 +139,16 @@ export default function PulseTicker() {
           <motion.div
             animate={{ x: ["0%", "-50%"] }}
             transition={{
-              duration: 50,
+              duration: 80,
               ease: "linear",
               repeat: Infinity,
             }}
-            className="flex items-center h-14 whitespace-nowrap"
+            className="flex items-center h-14 whitespace-nowrap w-max"
           >
             {loop.map((event, i) => (
               <span
                 key={i}
-                className="inline-flex items-center gap-3 px-8 font-mono text-[12px] tracking-tight text-[--color-fg-muted] font-medium"
+                className="inline-flex items-center gap-3 px-8 font-mono text-[12px] tracking-tight text-[--color-fg-muted] font-medium flex-shrink-0"
               >
                 <span className="text-[--color-accent] tabular-nums">
                   AGENT {event.num}

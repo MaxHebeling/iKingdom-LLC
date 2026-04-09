@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -98,15 +99,31 @@ export default function Hero() {
           className="mt-16 md:mt-20 flex flex-wrap items-center gap-6 md:gap-10 max-w-3xl"
         >
           <div className="flex items-center gap-2.5">
-            <span className="block h-1.5 w-1.5 rounded-full bg-[--color-accent]" />
-            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-[--color-accent] opacity-70 animate-ping" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[--color-accent]" />
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg-dim] font-medium">
               Live system
             </span>
           </div>
+          <LiveStat
+            initial={3}
+            min={2}
+            max={6}
+            interval={3500}
+            label="Handling you"
+          />
+          <LiveStat
+            initial={47}
+            min={38}
+            max={78}
+            interval={1900}
+            prefix="~"
+            label="Active across clients"
+          />
           <TrustStat value="6" label="Live deployments" />
           <TrustStat value="3" label="In active build" />
-          <TrustStat value="4" label="Verticals served" />
-          <TrustStat value="9" label="Functional tiers" />
         </motion.div>
       </div>
 
@@ -136,7 +153,60 @@ function TrustStat({ value, label }: { value: string; label: string }) {
       <span className="font-display text-2xl md:text-3xl tracking-[-0.02em] text-[--color-fg] tabular-nums leading-none">
         {value}
       </span>
-      <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-[--color-fg-dim] mt-2">
+      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[--color-fg-dim] mt-2 font-medium">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function LiveStat({
+  initial,
+  min,
+  max,
+  interval,
+  label,
+  prefix,
+}: {
+  initial: number;
+  min: number;
+  max: number;
+  interval: number;
+  label: string;
+  prefix?: string;
+}) {
+  const [value, setValue] = useState(initial);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      const next = Math.floor(min + Math.random() * (max - min + 1));
+      setValue(next);
+    }, interval);
+    return () => clearInterval(id);
+  }, [min, max, interval]);
+
+  return (
+    <div className="flex flex-col">
+      <div className="font-display text-2xl md:text-3xl tracking-[-0.02em] text-[--color-fg] tabular-nums leading-none flex items-baseline">
+        {prefix && (
+          <span className="text-[--color-fg-dim] text-base mr-1">
+            {prefix}
+          </span>
+        )}
+        <AnimatePresence mode="popLayout">
+          <motion.span
+            key={value}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8, position: "absolute" }}
+            transition={{ duration: 0.4, ease }}
+            className="inline-block"
+          >
+            {value}
+          </motion.span>
+        </AnimatePresence>
+      </div>
+      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[--color-accent] mt-2 font-medium">
         {label}
       </span>
     </div>
