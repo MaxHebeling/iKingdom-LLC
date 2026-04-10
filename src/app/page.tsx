@@ -18,7 +18,7 @@ export default function Home() {
     <>
       <EngagementTracker />
       <Nav lang="en" />
-      <AgentTrace />
+      <AgentTrace lang="en" />
       <PulseTicker />
       <main className="relative">
         <Hero lang="en" />

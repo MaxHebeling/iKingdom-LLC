@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Method from "@/components/Method";
@@ -13,12 +14,32 @@ import PulseTicker from "@/components/PulseTicker";
 import ChatWidget from "@/components/ChatWidget";
 import EngagementTracker from "@/components/EngagementTracker";
 
+export const metadata: Metadata = {
+  title: "iKingdom — La primera firma de operaciones de IA del mundo",
+  description:
+    "iKingdom diseña y despliega operaciones autónomas de IA para empresas ambiciosas. Ochenta agentes. Nueve niveles. Una empresa completamente automatizada. Solo por solicitud.",
+  alternates: {
+    canonical: "https://ikingdom.org/es",
+    languages: {
+      en: "https://ikingdom.org/",
+      es: "https://ikingdom.org/es",
+    },
+  },
+  openGraph: {
+    title: "iKingdom — La primera firma de operaciones de IA del mundo",
+    description:
+      "Ochenta agentes. Nueve niveles. Una empresa completamente automatizada. Solo por solicitud.",
+    type: "website",
+    locale: "es_ES",
+  },
+};
+
 export default function HomeES() {
   return (
     <>
       <EngagementTracker />
       <Nav lang="es" />
-      <AgentTrace />
+      <AgentTrace lang="es" />
       <PulseTicker />
       <main className="relative">
         <Hero lang="es" />

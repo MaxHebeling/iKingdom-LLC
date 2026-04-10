@@ -60,22 +60,22 @@ const COPY = {
       {
         title: "Captura cada prospecto, día y noche.",
         body: "La recepcionista de IA contesta llamadas. El agente de chat responde en tu sitio web. El correo y los formularios nunca duermen. Cada contacto entrante se registra, se califica y se enruta antes de que un humano se involucre.",
-        stat: "100% · 24/7 capture",
+        stat: "100% · captura 24/7",
       },
       {
         title: "Califica y responde antes de que despierten tus competidores.",
         body: "Los prospectos entrantes son evaluados, clasificados y enrutados en segundos. Las personas correctas ven los prospectos correctos. Los prospectos fríos se calientan solos mientras tú duermes.",
-        stat: "< 2s avg response",
+        stat: "< 2s respuesta promedio",
       },
       {
         title: "Coordina cada calendario, transición y seguimiento.",
         body: "Reservas, transiciones internas, dependencias y confirmaciones manejadas por una capa coordinada. Nada se pierde entre las grietas de dos humanos.",
-        stat: "0 dropped handoffs",
+        stat: "0 transiciones perdidas",
       },
       {
         title: "Comunícate con cada cliente como si fuera el único.",
         body: "Secuencias de bienvenida, actualizaciones de estado, seguimiento post-compromiso, solicitudes de reseñas, resolución de quejas, reactivación. Todo personalizado. Nada olvidado.",
-        stat: "47× faster touchpoints",
+        stat: "47× contactos más rápidos",
       },
       {
         title: "Opera tu administración sobre rieles.",
