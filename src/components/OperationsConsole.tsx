@@ -284,8 +284,8 @@ const COPY = {
     headlineLine2: "operate itself.",
     intro:
       "This is an illustrative reconstruction of the dashboard we use to run iKingdom itself. Application intake, discovery, build, deployment, supervision, finance — all handled by the same architecture we install for our clients. Real visitor events from this page are mixed into the stream when they occur; everything else is simulated for demonstration.",
-    topBar: "iKingdom · Internal Operations · Demo",
-    liveBadge: "Demo",
+    topBar: "iKingdom · Internal Operations · Live",
+    liveBadge: "Live",
     panels: {
       eventStream: { title: "Event Stream", subtitle: "Simulated · real events when present" },
       telemetry: { title: "Today's Telemetry", subtitle: "Illustrative" },
@@ -322,8 +322,8 @@ const COPY = {
     headlineLine2: "operarse sola.",
     intro:
       "Esta es una reconstrucción ilustrativa del panel que usamos para operar iKingdom. Recepción de solicitudes, descubrimiento, construcción, despliegue, supervisión, finanzas — todo manejado por la misma arquitectura que instalamos para nuestros clientes. Los eventos reales de visitantes de esta página se mezclan cuando ocurren; el resto es simulado para demostración.",
-    topBar: "iKingdom · Operaciones Internas · Demo",
-    liveBadge: "Demo",
+    topBar: "iKingdom · Operaciones Internas · Live",
+    liveBadge: "Live",
     panels: {
       eventStream: { title: "Flujo de Eventos", subtitle: "Simulado · eventos reales al llegar" },
       telemetry: { title: "Telemetría de Hoy", subtitle: "Ilustrativo" },
