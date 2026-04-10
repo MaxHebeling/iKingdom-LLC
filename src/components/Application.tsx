@@ -47,9 +47,44 @@ const PIPELINE: PipelineStep[] = [
 
 const requirements = [
   "An existing operating business with verifiable revenue",
-  "Minimum $100,000 of capital allocated to the engagement",
   "Authority to make a strategic, multi-year operational decision",
   "Willingness to commit to a 12-month, four-phase deployment",
+  "Investment readiness starting at $35,000",
+];
+
+type InvestmentTier = {
+  id: string;
+  price: string;
+  name: string;
+  description: string;
+};
+
+const INVESTMENT_TIERS: InvestmentTier[] = [
+  {
+    id: "pilot",
+    price: "$35,000",
+    name: "Pilot Engagement",
+    description: "Single workflow, proof of concept, ~15 agents",
+  },
+  {
+    id: "foundation",
+    price: "$50,000",
+    name: "Foundation",
+    description: "1–2 functional tiers, partial deployment, ~30 agents",
+  },
+  {
+    id: "standard",
+    price: "$100,000",
+    name: "Standard",
+    description:
+      "Full operational layer, all 9 tiers, 80 agents — the iKingdom flagship engagement",
+  },
+  {
+    id: "enterprise",
+    price: "$500,000+",
+    name: "Enterprise",
+    description: "Multi-vertical, large organization, custom architecture",
+  },
 ];
 
 type FormData = {
@@ -59,8 +94,9 @@ type FormData = {
   phone: string;
   company: string;
   website: string;
+  industry: string;
   revenue: string;
-  capital: string;
+  investment: string;
   scope: string;
 };
 
@@ -71,32 +107,41 @@ const EMPTY_FORM: FormData = {
   phone: "",
   company: "",
   website: "",
+  industry: "",
   revenue: "",
-  capital: "",
+  investment: "",
   scope: "",
 };
+
+type Step = 1 | 2 | 3;
 
 export default function Application() {
   const [submitted, setSubmitted] = useState(false);
   const [activeStep, setActiveStep] = useState(-1);
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<Step>(1);
   const [formData, setFormData] = useState<FormData>(EMPTY_FORM);
 
   function update<K extends keyof FormData>(key: K, value: FormData[K]) {
     setFormData((prev) => ({ ...prev, [key]: value }));
   }
 
-  function handleNext(e: React.FormEvent<HTMLFormElement>) {
+  function handleStep1(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStep(2);
   }
 
-  function handleBack() {
-    setStep(1);
+  function handleStep2(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStep(3);
+  }
+
+  function handleBackTo(target: Step) {
+    setStep(target);
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!formData.investment) return;
     // Local-only for now — wire to backend later
     setSubmitted(true);
   }
@@ -124,7 +169,6 @@ export default function Application() {
       id="apply"
       className="relative py-32 md:py-48 border-t border-[--color-line] overflow-hidden"
     >
-
       <div className="relative max-w-[1400px] mx-auto px-6 md:px-10">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -164,17 +208,8 @@ export default function Application() {
                 iKingdom is not for everyone. Most companies that apply are
                 not selected. We deploy a small number of full-stack systems
                 each year because each one demands our presence for twelve
-                months.
-              </p>
-              <p>
-                Engagements begin at <span className="text-[--color-fg]">$100,000</span> and scale into the
-                multi-millions depending on the scope of the operational
-                takeover. We do not publish a price sheet. We assess fit
-                first.
-              </p>
-              <p className="text-[--color-fg]">
-                If you cannot meet the criteria below, this is not the right
-                firm for you — and we will tell you so honestly.
+                months. If you&rsquo;re ready to commit to a strategic,
+                multi-year operational decision, we want to hear from you.
               </p>
             </motion.div>
 
@@ -213,20 +248,26 @@ export default function Application() {
             {submitted ? (
               <SubmittedPipeline activeStep={activeStep} />
             ) : (
-              <div className="border border-[--color-line-strong] p-8 md:p-12 bg-[--color-bg]">
+              <div className="border border-[--color-line-strong] p-8 md:p-12 bg-[--color-bg-card]">
                 <StepHeader step={step} />
 
                 <AnimatePresence mode="wait">
-                  {step === 1 ? (
+                  {step === 1 && (
                     <motion.form
                       key="step-1"
-                      onSubmit={handleNext}
+                      onSubmit={handleStep1}
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.5, ease }}
                       className="space-y-8 mt-10"
                     >
+                      <StepIntro>
+                        We start with you. Every iKingdom engagement begins
+                        with a single principal who has the authority to
+                        commit. Tell us who you are.
+                      </StepIntro>
+
                       <div className="grid md:grid-cols-2 gap-8">
                         <Field
                           label="Full name"
@@ -265,40 +306,29 @@ export default function Application() {
 
                       <div className="flex flex-wrap items-center justify-between gap-6 pt-6">
                         <p className="text-xs text-[--color-fg-dim] max-w-xs leading-relaxed">
-                          Step 1 of 2 · About you. Takes about 60 seconds.
+                          Step 1 of 3 · About you. Takes about 90 seconds.
                         </p>
-                        <button
-                          type="submit"
-                          className="group inline-flex items-center gap-3 px-7 py-4 bg-[--color-fg] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-fg-muted] transition-all duration-500 rounded-full"
-                        >
-                          Continue
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 14 14"
-                            fill="none"
-                            className="transition-transform duration-500 group-hover:translate-x-1"
-                          >
-                            <path
-                              d="M1 7H13M13 7L7.5 1.5M13 7L7.5 12.5"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                        </button>
+                        <PrimaryButton label="Continue" />
                       </div>
                     </motion.form>
-                  ) : (
+                  )}
+
+                  {step === 2 && (
                     <motion.form
                       key="step-2"
-                      onSubmit={handleSubmit}
+                      onSubmit={handleStep2}
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.5, ease }}
                       className="space-y-8 mt-10"
                     >
+                      <StepIntro>
+                        Now your business. We design the system around your
+                        operations, your verticals, and the scale you operate
+                        at. Help us understand what we&rsquo;d be working with.
+                      </StepIntro>
+
                       <div className="grid md:grid-cols-2 gap-8">
                         <Field
                           label="Company"
@@ -317,6 +347,13 @@ export default function Application() {
                       </div>
 
                       <div className="grid md:grid-cols-2 gap-8">
+                        <Field
+                          label="Industry / sector"
+                          name="industry"
+                          value={formData.industry}
+                          onChange={(v) => update("industry", v)}
+                          required
+                        />
                         <Select
                           label="Annual revenue"
                           name="revenue"
@@ -330,19 +367,79 @@ export default function Application() {
                             "$100M+",
                           ]}
                         />
-                        <Select
-                          label="Capital available"
-                          name="capital"
-                          value={formData.capital}
-                          onChange={(v) => update("capital", v)}
-                          options={[
-                            "Under $100K (not a fit)",
-                            "$100K – $250K",
-                            "$250K – $1M",
-                            "$1M – $5M",
-                            "$5M+",
-                          ]}
-                        />
+                      </div>
+
+                      <div className="flex flex-wrap items-center justify-between gap-6 pt-6">
+                        <BackButton onClick={() => handleBackTo(1)} />
+                        <PrimaryButton label="Continue" />
+                      </div>
+                    </motion.form>
+                  )}
+
+                  {step === 3 && (
+                    <motion.form
+                      key="step-3"
+                      onSubmit={handleSubmit}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.5, ease }}
+                      className="space-y-8 mt-10"
+                    >
+                      <StepIntro>
+                        iKingdom engagements are not subscriptions.
+                        They&rsquo;re single, decisive commitments to install
+                        a system. Tell us what you&rsquo;re prepared to commit
+                        and what you want us to take over.
+                      </StepIntro>
+
+                      <div>
+                        <p className="block text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim] mb-4">
+                          Investment readiness
+                          <span className="text-[--color-accent] ml-1">*</span>
+                        </p>
+                        <div className="grid sm:grid-cols-2 gap-4">
+                          {INVESTMENT_TIERS.map((tier) => {
+                            const selected = formData.investment === tier.id;
+                            return (
+                              <button
+                                key={tier.id}
+                                type="button"
+                                onClick={() => update("investment", tier.id)}
+                                className={`text-left p-6 border transition-all duration-300 group relative ${
+                                  selected
+                                    ? "border-[--color-accent] bg-[--color-accent]/5 shadow-[0_0_0_1px_var(--color-accent)]"
+                                    : "border-[--color-line-strong] hover:border-[--color-fg] bg-transparent"
+                                }`}
+                              >
+                                <div className="flex items-start justify-between gap-3 mb-3">
+                                  <span
+                                    className={`font-display text-2xl md:text-[28px] tracking-[-0.015em] transition-colors duration-300 ${
+                                      selected
+                                        ? "text-[--color-accent]"
+                                        : "text-[--color-fg]"
+                                    }`}
+                                  >
+                                    {tier.price}
+                                  </span>
+                                  <span
+                                    className={`mt-2 h-3 w-3 rounded-full border transition-all duration-300 flex-shrink-0 ${
+                                      selected
+                                        ? "border-[--color-accent] bg-[--color-accent]"
+                                        : "border-[--color-line-strong] bg-transparent"
+                                    }`}
+                                  />
+                                </div>
+                                <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-[--color-fg-muted] mb-2">
+                                  {tier.name}
+                                </div>
+                                <p className="text-[13px] leading-relaxed text-[--color-fg-muted]">
+                                  {tier.description}
+                                </p>
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
 
                       <div>
@@ -366,29 +463,11 @@ export default function Application() {
                       </div>
 
                       <div className="flex flex-wrap items-center justify-between gap-6 pt-6">
-                        <button
-                          type="button"
-                          onClick={handleBack}
-                          className="text-sm text-[--color-fg-muted] hover:text-[--color-fg] transition-colors duration-300 inline-flex items-center gap-2"
-                        >
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 14 14"
-                            fill="none"
-                          >
-                            <path
-                              d="M13 7H1M1 7L6.5 1.5M1 7L6.5 12.5"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                            />
-                          </svg>
-                          Back
-                        </button>
+                        <BackButton onClick={() => handleBackTo(2)} />
                         <button
                           type="submit"
-                          className="group inline-flex items-center gap-3 px-7 py-4 bg-[--color-fg] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-fg-muted] transition-all duration-500 rounded-full"
+                          disabled={!formData.investment}
+                          className="group inline-flex items-center gap-3 px-7 py-4 bg-[--color-fg] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-fg-muted] transition-all duration-500 rounded-full disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           Submit Application
                           <svg
@@ -419,29 +498,89 @@ export default function Application() {
   );
 }
 
-function StepHeader({ step }: { step: 1 | 2 }) {
-  const label = step === 1 ? "About you" : "About your business";
+function StepIntro({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-[14px] md:text-[15px] leading-relaxed text-[--color-fg-muted] border-l border-[--color-accent] pl-5">
+      {children}
+    </p>
+  );
+}
+
+function PrimaryButton({ label }: { label: string }) {
+  return (
+    <button
+      type="submit"
+      className="group inline-flex items-center gap-3 px-7 py-4 bg-[--color-fg] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-fg-muted] transition-all duration-500 rounded-full"
+    >
+      {label}
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
+        fill="none"
+        className="transition-transform duration-500 group-hover:translate-x-1"
+      >
+        <path
+          d="M1 7H13M13 7L7.5 1.5M13 7L7.5 12.5"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </svg>
+    </button>
+  );
+}
+
+function BackButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="text-sm text-[--color-fg-muted] hover:text-[--color-fg] transition-colors duration-300 inline-flex items-center gap-2"
+    >
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path
+          d="M13 7H1M1 7L6.5 1.5M1 7L6.5 12.5"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </svg>
+      Back
+    </button>
+  );
+}
+
+function StepHeader({ step }: { step: Step }) {
+  const label =
+    step === 1
+      ? "About you"
+      : step === 2
+        ? "About your business"
+        : "Investment & scope";
+
+  const progress = step === 1 ? "33%" : step === 2 ? "66%" : "100%";
 
   return (
     <div className="border-b border-[--color-line] pb-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-accent]">
-            Step {step} of 2
+            Step {step} of 3
           </span>
           <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
             · {label}
           </span>
         </div>
         <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-[--color-fg-dim]">
-          ~60 seconds
+          ~90 seconds
         </span>
       </div>
 
       {/* Progress bar */}
       <div className="h-px bg-[--color-line] overflow-hidden">
         <motion.div
-          animate={{ width: step === 1 ? "50%" : "100%" }}
+          animate={{ width: progress }}
           transition={{ duration: 0.6, ease }}
           className="h-full bg-[--color-accent]"
         />
@@ -454,7 +593,7 @@ function SubmittedPipeline({ activeStep }: { activeStep: number }) {
   const allDone = activeStep >= PIPELINE.length - 1;
 
   return (
-    <div className="border border-[--color-line-strong] p-8 md:p-12 bg-[--color-bg]">
+    <div className="border border-[--color-line-strong] p-8 md:p-12 bg-[--color-bg-card]">
       <div className="flex items-center gap-3 mb-2">
         <span className="relative flex h-2 w-2">
           <span className="absolute inline-flex h-full w-full rounded-full bg-[--color-accent] opacity-60 animate-ping" />
@@ -474,7 +613,7 @@ function SubmittedPipeline({ activeStep }: { activeStep: number }) {
 
       <p className="mt-5 text-sm text-[--color-fg-muted] max-w-md leading-relaxed">
         Every step you see below is being executed by an iKingdom agent in
-        real time. This is the same flow we install inside our clients'
+        real time. This is the same flow we install inside our clients&rsquo;
         businesses.
       </p>
 
@@ -532,7 +671,7 @@ function PipelineRow({
         opacity: status === "pending" ? 0.32 : 1,
       }}
       transition={{ duration: 0.5, ease }}
-      className="bg-[--color-bg] py-5 px-1 grid grid-cols-12 gap-4 items-center"
+      className="bg-[--color-bg-card] py-5 px-1 grid grid-cols-12 gap-4 items-center"
     >
       <div className="col-span-2 md:col-span-1">
         <span className="font-mono text-xs text-[--color-fg-dim] tabular-nums">
@@ -678,11 +817,15 @@ function Select({
         onChange={(e) => onChange(e.target.value)}
         className="w-full bg-transparent border-b border-[--color-line-strong] focus:border-[--color-accent] focus:outline-none py-3 text-[--color-fg] text-[15px] transition-colors duration-300 appearance-none cursor-pointer"
       >
-        <option value="" disabled className="bg-[--color-bg]">
+        <option value="" disabled className="bg-[--color-bg-card]">
           Select…
         </option>
         {options.map((o) => (
-          <option key={o} value={o} className="bg-[--color-bg] text-[--color-fg]">
+          <option
+            key={o}
+            value={o}
+            className="bg-[--color-bg-card] text-[--color-fg]"
+          >
             {o}
           </option>
         ))}

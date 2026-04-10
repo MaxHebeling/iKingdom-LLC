@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  /* Palette — clean editorial light */
-  --color-bg: #f5f1e8;
-  --color-bg-elevated: #ede8da;
-  --color-bg-card: #faf6ec;
+  /* Palette — true off-white (not gray, not cream), pitch black */
+  --color-bg: #fbfbfa;
+  --color-bg-elevated: #f4f4f3;
+  --color-bg-card: #ffffff;
   --color-fg: #000000;
-  --color-fg-muted: #525252;
-  --color-fg-dim: #a3a3a3;
-  --color-line: #e5e5e5;
-  --color-line-strong: #c9c9c9;
-  /* Warm gold — sophisticated accent on white */
+  --color-fg-muted: #1a1a1a;
+  --color-fg-dim: #5c5c5c;
+  --color-line: #e8e8e7;
+  --color-line-strong: #cfcfce;
+  /* Warm gold accent — only used where actually needed */
   --color-accent: #c9a96e;
   --color-accent-hover: #b8954f;
 
@@ -25,7 +25,7 @@
 
 @layer base {
   html {
-    background: #f5f1e8;
+    background: #fbfbfa;
     color: #000000;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -39,9 +39,7 @@
     line-height: 1.5;
     letter-spacing: -0.011em;
     font-weight: 500;
-    background:
-      radial-gradient(ellipse 100% 80% at 50% 0%, rgba(201, 169, 110, 0.04) 0%, transparent 60%),
-      #f5f1e8;
+    background: #fbfbfa;
     color: #000000;
     overflow-x: hidden;
   }
@@ -77,11 +75,11 @@
     border-top: 1px solid var(--color-line);
   }
 
-  /* Subtle radial spotlight — warm gold wash on white */
+  /* Subtle radial spotlight — very gentle gold wash */
   .spotlight {
     background: radial-gradient(
       ellipse 80% 60% at 50% 0%,
-      rgba(201, 169, 110, 0.10) 0%,
+      rgba(201, 169, 110, 0.05) 0%,
       transparent 70%
     );
   }

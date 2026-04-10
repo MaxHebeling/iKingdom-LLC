@@ -11,7 +11,7 @@ type ChatMessage = {
 const INITIAL_GREETING: ChatMessage = {
   role: "assistant",
   content:
-    "Hi — I'm the iKingdom Assistant. I can answer any question about how we automate businesses, our process, or whether we might be a fit for you. What would you like to know?",
+    "Hi — I'm Channel, the iKingdom Assistant. I can answer any question about how we automate businesses, our investment tiers, our process, or whether we're a fit for you. What would you like to know?",
 };
 
 export default function ChatWidget() {
@@ -107,7 +107,7 @@ export default function ChatWidget() {
         transition={{ delay: 0.6, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        aria-label={open ? "Close Sienna" : "Open Sienna — iKingdom Assistant"}
+        aria-label={open ? "Close Channel" : "Open Channel — iKingdom Assistant"}
         className="fixed bottom-24 right-6 z-[60] hidden h-[68px] w-[68px] items-center justify-center rounded-full bg-[var(--color-bg-elevated)] transition-transform sm:flex"
         style={{
           boxShadow:
@@ -151,7 +151,7 @@ export default function ChatWidget() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/assistant.jpg"
-                alt="Sienna — iKingdom Assistant"
+                alt="Channel — iKingdom Assistant"
                 className="h-[60px] w-[60px] rounded-full object-cover"
               />
               {/* Online indicator */}
@@ -185,7 +185,7 @@ export default function ChatWidget() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/assistant.jpg"
-                    alt="Sienna"
+                    alt="Channel"
                     className="h-10 w-10 rounded-full object-cover ring-2 ring-[#c9a96e]/60"
                   />
                   <span
@@ -197,6 +197,9 @@ export default function ChatWidget() {
                 </div>
                 <div>
                   <div className="font-display text-base font-semibold leading-none text-[var(--color-fg)]">
+                    Channel
+                  </div>
+                  <div className="mt-1 text-[11px] font-medium leading-none text-[var(--color-fg-muted)]">
                     iKingdom Assistant
                   </div>
                   <div className="mt-1.5 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-fg-muted)]">
@@ -246,7 +249,7 @@ export default function ChatWidget() {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src="/assistant.jpg"
-                      alt="Sienna"
+                      alt="Channel"
                       className="h-7 w-7 flex-shrink-0 rounded-full object-cover ring-1 ring-[#c9a96e]/50"
                     />
                   )}
@@ -271,7 +274,7 @@ export default function ChatWidget() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/assistant.jpg"
-                    alt="Sienna"
+                    alt="Channel"
                     className="h-7 w-7 flex-shrink-0 rounded-full object-cover ring-1 ring-[#c9a96e]/50"
                   />
                   <div className="flex items-center gap-1.5 rounded-2xl border border-[var(--color-line-strong)] bg-[var(--color-bg-elevated)] px-4 py-3">
