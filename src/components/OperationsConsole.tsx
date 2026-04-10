@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 const ease = [0.16, 1, 0.3, 1] as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Static event pool — same on server and client
+// Event pool — templates with {placeholders} get randomized in renderEvent()
 // ─────────────────────────────────────────────────────────────────────────────
 type ConsoleEvent = {
   id: number;
@@ -15,35 +15,105 @@ type ConsoleEvent = {
   action: string;
 };
 
-const EVENT_POOL: Omit<ConsoleEvent, "id" | "time">[] = [
+type EventTemplate = Omit<ConsoleEvent, "id" | "time">;
+
+const EVENT_POOL: EventTemplate[] = [
   { num: "01", action: "Application received · /apply submission" },
   { num: "03", action: "Capital threshold validated · qualified" },
-  { num: "06", action: "Fit score computed · 94% match" },
+  { num: "06", action: "Fit score computed · {fit}% match" },
   { num: "09", action: "Discovery call scheduled · Thu 2:00 PM PT" },
   { num: "17", action: "Proposal composed · sent to prospect" },
   { num: "25", action: "Codebase initialized · new tenant repo" },
-  { num: "26", action: "CRM schema generated · 47 entities" },
+  { num: "26", action: "CRM schema generated · {entities} entities" },
   { num: "28", action: "Agent scaffold generated · 10 agents" },
-  { num: "31", action: "Test suite passed · 1,247 tests · green" },
-  { num: "32", action: "Code review · 3 issues flagged" },
+  { num: "31", action: "{tests}" },
+  { num: "32", action: "Code review · {issues} issues flagged" },
   { num: "37", action: "ETL pipeline deployed · staging" },
   { num: "44", action: "Sandbox provisioned for tenant DCS" },
   { num: "47", action: "Production deployment · live" },
-  { num: "49", action: "Accuracy monitor · 98.7% sustained" },
-  { num: "51", action: "Checkpoint graduated · Agent 27 → autonomous" },
+  { num: "49", action: "Accuracy monitor · {accuracy}% sustained" },
+  { num: "51", action: "Checkpoint graduated · Agent {agent} → autonomous" },
   { num: "55", action: "Weekly status composed for tenant ECG" },
   { num: "59", action: "Question triaged · routed to partner" },
-  { num: "65", action: "Invoice generated · $187,500 · sent" },
-  { num: "73", action: "Pattern library indexed · 3 new templates" },
-  { num: "79", action: "Quality score · 98.4% across 12 tenants" },
+  { num: "65", action: "Invoice generated · ${invoice} · sent" },
+  { num: "73", action: "Pattern library indexed · {templates} new templates" },
+  { num: "79", action: "Quality score · {quality}% across deployments" },
+  { num: "81", action: "Payment received · ${payment} · reconciled" },
 ];
 
-// Initial deterministic events for first paint (no hydration issues)
-const INITIAL_EVENTS: ConsoleEvent[] = EVENT_POOL.slice(0, 6).map((e, i) => ({
-  ...e,
-  id: i,
-  time: `0${6 + i}:42:1${i}`,
-}));
+// Helpers for randomization
+function rInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function fmtMoney(n: number): string {
+  return n.toLocaleString("en-US");
+}
+
+function renderEvent(template: EventTemplate): EventTemplate {
+  let action = template.action;
+
+  if (action.includes("{fit}")) {
+    action = action.replace("{fit}", String(rInt(88, 97)));
+  }
+  if (action.includes("{entities}")) {
+    action = action.replace("{entities}", String(rInt(42, 62)));
+  }
+  if (action.includes("{tests}")) {
+    // ~15% chance of a failing suite
+    if (Math.random() < 0.15) {
+      action = action.replace(
+        "{tests}",
+        `Test suite ran · ${rInt(1200, 1300).toLocaleString()} tests · ${rInt(2, 7)} failed`,
+      );
+    } else {
+      action = action.replace(
+        "{tests}",
+        `Test suite passed · ${rInt(1200, 1300).toLocaleString()} tests · green`,
+      );
+    }
+  }
+  if (action.includes("{issues}")) {
+    action = action.replace("{issues}", String(rInt(1, 6)));
+  }
+  if (action.includes("{accuracy}")) {
+    const a = (96.2 + Math.random() * (99.4 - 96.2)).toFixed(1);
+    action = action.replace("{accuracy}", a);
+  }
+  if (action.includes("{agent}")) {
+    action = action.replace("{agent}", String(rInt(12, 79)));
+  }
+  if (action.includes("{invoice}")) {
+    // $45K - $400K
+    const v = rInt(45, 400) * 1000 + rInt(0, 999);
+    action = action.replace("{invoice}", fmtMoney(v));
+  }
+  if (action.includes("{payment}")) {
+    const v = rInt(30, 500) * 1000 + rInt(0, 999);
+    action = action.replace("{payment}", fmtMoney(v));
+  }
+  if (action.includes("{templates}")) {
+    action = action.replace("{templates}", String(rInt(1, 6)));
+  }
+  if (action.includes("{quality}")) {
+    const q = (96 + Math.random() * 3).toFixed(1);
+    action = action.replace("{quality}", q);
+  }
+
+  return { num: template.num, action };
+}
+
+// Initial deterministic events for first paint (no hydration issues).
+// We keep the raw templates here so SSR sees literal placeholders? No — we
+// need them to render cleanly. Use a deterministic initial list with
+// pre-chosen values.
+const INITIAL_EVENTS: ConsoleEvent[] = [
+  { id: 0, time: "06:42:10", num: "01", action: "Application received · /apply submission" },
+  { id: 1, time: "06:42:11", num: "03", action: "Capital threshold validated · qualified" },
+  { id: 2, time: "06:42:12", num: "06", action: "Fit score computed · 94% match" },
+  { id: 3, time: "06:42:13", num: "09", action: "Discovery call scheduled · Thu 2:00 PM PT" },
+  { id: 4, time: "06:42:14", num: "17", action: "Proposal composed · sent to prospect" },
+  { id: 5, time: "06:42:15", num: "25", action: "Codebase initialized · new tenant repo" },
+];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Tier activity bars data
@@ -215,19 +285,29 @@ function EventStream() {
   const counterRef = useRef(INITIAL_EVENTS.length);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const pick = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
-      const now = new Date();
-      const time = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
-      const newEvent: ConsoleEvent = {
-        ...pick,
-        id: counterRef.current++,
-        time,
-      };
-      setEvents((prev) => [newEvent, ...prev].slice(0, 8));
-    }, 1400);
+    let timeoutId: ReturnType<typeof setTimeout>;
 
-    return () => clearInterval(interval);
+    const schedule = () => {
+      // Vary arrival: 4000-7000ms
+      const delay = 4000 + Math.random() * 3000;
+      timeoutId = setTimeout(() => {
+        const template =
+          EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
+        const rendered = renderEvent(template);
+        const now = new Date();
+        const time = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
+        const newEvent: ConsoleEvent = {
+          ...rendered,
+          id: counterRef.current++,
+          time,
+        };
+        setEvents((prev) => [newEvent, ...prev].slice(0, 8));
+        schedule();
+      }, delay);
+    };
+
+    schedule();
+    return () => clearTimeout(timeoutId);
   }, []);
 
   return (
@@ -256,13 +336,30 @@ function EventStream() {
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// KPI Grid
+// ─────────────────────────────────────────────────────────────────────────────
+
+type KpiSpec = {
+  label: string;
+  target: number;
+  suffix: string;
+  /** If true, this KPI fluctuates — the target itself drifts over time. */
+  drift?: { min: number; max: number };
+};
+
 function KpiGrid() {
-  const kpis = [
+  const kpis: KpiSpec[] = [
     { label: "Live deployments", target: 6, suffix: "" },
     { label: "In active build", target: 3, suffix: "" },
     { label: "Agents per system", target: 80, suffix: "" },
     { label: "Functional tiers", target: 9, suffix: "" },
-    { label: "Verticals served", target: 4, suffix: "" },
+    {
+      label: "Inbound today",
+      target: 12,
+      suffix: "",
+      drift: { min: 8, max: 22 },
+    },
     { label: "Graduation threshold", target: 98, suffix: "%" },
   ];
 
@@ -275,16 +372,10 @@ function KpiGrid() {
   );
 }
 
-function Kpi({
-  label,
-  target,
-  suffix,
-}: {
-  label: string;
-  target: number;
-  suffix: string;
-}) {
+function Kpi({ label, target, suffix, drift }: KpiSpec) {
   const [value, setValue] = useState(0);
+  // liveTarget is what we're animating toward; drifts over time if `drift` set.
+  const liveTargetRef = useRef(target);
 
   useEffect(() => {
     let raf = 0;
@@ -294,17 +385,9 @@ function Kpi({
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / duration);
       const eased = 1 - Math.pow(1 - t, 3);
-      setValue(target * eased);
-      if (t < 1) raf = requestAnimationFrame(tick);
-      else {
-        // Subtle drift after settle
-        const driftInterval = setInterval(() => {
-          setValue((v) => {
-            const drift = (Math.random() - 0.5) * (target * 0.005);
-            return Math.max(0, v + drift);
-          });
-        }, 2500);
-        return () => clearInterval(driftInterval);
+      setValue(liveTargetRef.current * eased);
+      if (t < 1) {
+        raf = requestAnimationFrame(tick);
       }
     };
 
@@ -312,8 +395,28 @@ function Kpi({
     return () => cancelAnimationFrame(raf);
   }, [target]);
 
+  useEffect(() => {
+    if (!drift) return;
+    // Gradually drift the target within [min, max] every ~5s.
+    const id = setInterval(() => {
+      const current = liveTargetRef.current;
+      // Small step: ±1 or ±2 with clamping
+      const step = Math.random() < 0.5 ? -1 : 1;
+      const magnitude = Math.random() < 0.7 ? 1 : 2;
+      let next = current + step * magnitude;
+      if (next < drift.min) next = drift.min + 1;
+      if (next > drift.max) next = drift.max - 1;
+      liveTargetRef.current = next;
+      // Animate toward new target smoothly
+      setValue((v) => v + (next - v) * 0.5);
+      // Then settle fully on a follow-up tick
+      setTimeout(() => setValue(liveTargetRef.current), 400);
+    }, 5000);
+    return () => clearInterval(id);
+  }, [drift]);
+
   const display =
-    target < 10
+    target < 10 && !drift
       ? value.toFixed(1)
       : Math.round(value).toLocaleString();
 
@@ -330,22 +433,60 @@ function Kpi({
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// TierBars — episodic spikes/dips, not uniform wobble
+// ─────────────────────────────────────────────────────────────────────────────
+
+type TierState = {
+  value: number;
+  // Active perturbation — decays over cycles
+  spike: number;
+  spikeRemaining: number;
+};
+
 function TierBars() {
-  const [pulses, setPulses] = useState<Record<string, number>>({});
+  const [state, setState] = useState<Record<string, TierState>>(() => {
+    const init: Record<string, TierState> = {};
+    TIER_BARS.forEach((t) => {
+      init[t.n] = { value: t.base, spike: 0, spikeRemaining: 0 };
+    });
+    return init;
+  });
 
   useEffect(() => {
-    // Initialize from base
-    const init: Record<string, number> = {};
-    TIER_BARS.forEach((t) => (init[t.n] = t.base));
-    setPulses(init);
-
     const interval = setInterval(() => {
-      setPulses((prev) => {
+      setState((prev) => {
         const next = { ...prev };
+
+        // ~20% chance per cycle that a single random tier gets a new spike
+        if (Math.random() < 0.2) {
+          const target = TIER_BARS[Math.floor(Math.random() * TIER_BARS.length)];
+          const direction = Math.random() < 0.5 ? -1 : 1;
+          const magnitude = 0.18;
+          next[target.n] = {
+            ...next[target.n],
+            spike: direction * magnitude,
+            spikeRemaining: 3, // 3 update cycles to recover
+          };
+        }
+
         TIER_BARS.forEach((t) => {
-          // Wobble around base value
-          const wobble = (Math.random() - 0.5) * 0.18;
-          next[t.n] = Math.max(0.15, Math.min(1, t.base + wobble));
+          const current = next[t.n];
+          // Gentle wobble for everyone
+          const gentle = (Math.random() - 0.5) * 0.06;
+          // Decay active spike toward zero
+          let spike = current.spike;
+          let remaining = current.spikeRemaining;
+          if (remaining > 0) {
+            remaining -= 1;
+            spike = spike * (remaining / 3); // linear recovery
+            if (remaining === 0) spike = 0;
+          }
+          const value = Math.max(
+            0.15,
+            Math.min(1, t.base + gentle + spike),
+          );
+          next[t.n] = { value, spike, spikeRemaining: remaining };
         });
         return next;
       });
@@ -357,7 +498,8 @@ function TierBars() {
   return (
     <div className="space-y-3.5 min-h-[280px]">
       {TIER_BARS.map((tier) => {
-        const value = pulses[tier.n] ?? tier.base;
+        const s = state[tier.n];
+        const value = s?.value ?? tier.base;
         return (
           <div key={tier.n} className="flex items-center gap-4">
             <span className="font-mono text-[10px] text-[--color-fg-dim] tabular-nums w-6 flex-shrink-0">
@@ -393,21 +535,38 @@ type City = {
   count: number;
   x: number;
   y: number;
+  /** Activity intensity: affects pulse period (lower = faster). */
+  intensity: "high" | "med" | "low";
 };
 
+// 10 cities placed over the dot-grid landmasses (viewBox 100x60).
+// Intensities vary so pulses feel like a real heatmap.
 const CITIES: City[] = [
-  { id: "sd", name: "SAN DIEGO", count: 97, x: 18, y: 38 },
-  { id: "la", name: "LOS ANGELES", count: 62, x: 19, y: 36 },
-  { id: "dal", name: "DALLAS", count: 48, x: 35, y: 34 },
-  { id: "glb", name: "GLOBAL", count: 31, x: 60, y: 28 },
+  // North America — primary hubs
+  { id: "sd",  name: "SAN DIEGO",     count: 178, x: 14, y: 32, intensity: "high" },
+  { id: "la",  name: "LOS ANGELES",   count:  94, x: 13, y: 30, intensity: "high" },
+  { id: "sf",  name: "SAN FRANCISCO", count:  71, x: 12, y: 26, intensity: "high" },
+  { id: "dal", name: "DALLAS",        count:  48, x: 22, y: 34, intensity: "med" },
+  { id: "aus", name: "AUSTIN",        count:  33, x: 21, y: 36, intensity: "med" },
+  { id: "chi", name: "CHICAGO",       count:  56, x: 24, y: 26, intensity: "med" },
+  { id: "nyc", name: "NEW YORK",      count:  87, x: 28, y: 27, intensity: "high" },
+  { id: "mia", name: "MIAMI",         count:  22, x: 27, y: 38, intensity: "low" },
+  // Europe
+  { id: "lon", name: "LONDON",        count:  41, x: 49, y: 22, intensity: "med" },
+  // Asia
+  { id: "sgp", name: "SINGAPORE",     count:   9, x: 78, y: 40, intensity: "low" },
 ];
 
 // Arc pairs: [fromIndex, toIndex, dashOffsetDuration, delay]
+// Connect SD to major hubs and cross-continental links.
 const ARCS: Array<[number, number, number, number]> = [
-  [0, 2, 3.2, 0],
-  [2, 3, 4.1, 0.6],
-  [1, 3, 3.6, 1.2],
-  [0, 3, 4.8, 1.8],
+  [0, 3, 3.2, 0],   // SD → DAL
+  [0, 6, 3.8, 0.4], // SD → NYC
+  [0, 8, 5.2, 0.8], // SD → LON
+  [3, 6, 3.4, 1.2], // DAL → NYC
+  [6, 8, 4.1, 1.6], // NYC → LON
+  [8, 9, 5.8, 2.0], // LON → SGP
+  [0, 9, 6.4, 2.4], // SD → SGP
 ];
 
 function arcPath(a: City, b: City): string {
@@ -422,6 +581,18 @@ function arcPath(a: City, b: City): string {
   const cx = mx;
   const cy = my - curve;
   return `M ${a.x} ${a.y} Q ${cx} ${cy} ${b.x} ${b.y}`;
+}
+
+// Map intensity → pulse timing
+function pulseDur(intensity: City["intensity"]): number {
+  if (intensity === "high") return 2.0;
+  if (intensity === "med") return 3.0;
+  return 4.2;
+}
+function coreDur(intensity: City["intensity"]): number {
+  if (intensity === "high") return 1.6;
+  if (intensity === "med") return 2.4;
+  return 3.2;
 }
 
 function DeploymentMap() {
@@ -509,103 +680,125 @@ function DeploymentMap() {
           </g>
 
           {/* City nodes */}
-          {CITIES.map((c, i) => (
-            <g key={c.id}>
-              {/* Outer pulsing rings — SVG-native looping */}
-              <circle
-                cx={c.x}
-                cy={c.y}
-                r="0.8"
-                fill="none"
-                stroke="var(--color-accent)"
-                strokeWidth="0.2"
-                opacity="0"
-              >
-                <animate
-                  attributeName="r"
-                  from="0.8"
-                  to="5"
-                  dur="3s"
-                  begin={`${i * 0.7}s`}
-                  repeatCount="indefinite"
-                />
-                <animate
-                  attributeName="opacity"
-                  values="0;0.7;0"
-                  dur="3s"
-                  begin={`${i * 0.7}s`}
-                  repeatCount="indefinite"
-                />
-              </circle>
-              <circle
-                cx={c.x}
-                cy={c.y}
-                r="0.8"
-                fill="none"
-                stroke="var(--color-accent)"
-                strokeWidth="0.15"
-                opacity="0"
-              >
-                <animate
-                  attributeName="r"
-                  from="0.8"
-                  to="7"
-                  dur="3s"
-                  begin={`${i * 0.7 + 1.4}s`}
-                  repeatCount="indefinite"
-                />
-                <animate
-                  attributeName="opacity"
-                  values="0;0.5;0"
-                  dur="3s"
-                  begin={`${i * 0.7 + 1.4}s`}
-                  repeatCount="indefinite"
-                />
-              </circle>
-
-              {/* Soft halo */}
-              <circle cx={c.x} cy={c.y} r="3" fill="url(#cityGlow)" />
-              {/* Core dot */}
-              <circle cx={c.x} cy={c.y} r="0.9" fill="var(--color-accent)">
-                <animate
-                  attributeName="opacity"
-                  values="1;0.55;1"
-                  dur="2.2s"
-                  begin={`${i * 0.4}s`}
-                  repeatCount="indefinite"
-                />
-              </circle>
-
-              {/* Floating label */}
-              <g transform={`translate(${c.x + 2.4}, ${c.y + 0.6})`}>
-                {/* Live indicator dot */}
+          {CITIES.map((c, i) => {
+            const pDur = pulseDur(c.intensity);
+            const cDur = coreDur(c.intensity);
+            const haloR = c.intensity === "high" ? 3.2 : c.intensity === "med" ? 2.6 : 2.0;
+            return (
+              <g key={c.id}>
+                {/* Outer pulsing rings — SVG-native looping */}
                 <circle
-                  cx="0"
-                  cy="-0.7"
-                  r="0.35"
+                  cx={c.x}
+                  cy={c.y}
+                  r="0.8"
+                  fill="none"
+                  stroke="var(--color-accent)"
+                  strokeWidth="0.2"
+                  opacity="0"
+                >
+                  <animate
+                    attributeName="r"
+                    from="0.8"
+                    to={c.intensity === "high" ? "5.5" : "4.2"}
+                    dur={`${pDur}s`}
+                    begin={`${i * 0.35}s`}
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="opacity"
+                    values={
+                      c.intensity === "high"
+                        ? "0;0.8;0"
+                        : c.intensity === "med"
+                          ? "0;0.6;0"
+                          : "0;0.4;0"
+                    }
+                    dur={`${pDur}s`}
+                    begin={`${i * 0.35}s`}
+                    repeatCount="indefinite"
+                  />
+                </circle>
+                <circle
+                  cx={c.x}
+                  cy={c.y}
+                  r="0.8"
+                  fill="none"
+                  stroke="var(--color-accent)"
+                  strokeWidth="0.15"
+                  opacity="0"
+                >
+                  <animate
+                    attributeName="r"
+                    from="0.8"
+                    to={c.intensity === "high" ? "7.5" : "5.5"}
+                    dur={`${pDur}s`}
+                    begin={`${i * 0.35 + pDur / 2}s`}
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="opacity"
+                    values={
+                      c.intensity === "high"
+                        ? "0;0.55;0"
+                        : c.intensity === "med"
+                          ? "0;0.4;0"
+                          : "0;0.25;0"
+                    }
+                    dur={`${pDur}s`}
+                    begin={`${i * 0.35 + pDur / 2}s`}
+                    repeatCount="indefinite"
+                  />
+                </circle>
+
+                {/* Soft halo */}
+                <circle cx={c.x} cy={c.y} r={haloR} fill="url(#cityGlow)" />
+                {/* Core dot */}
+                <circle
+                  cx={c.x}
+                  cy={c.y}
+                  r={c.intensity === "high" ? 1.0 : c.intensity === "med" ? 0.85 : 0.7}
                   fill="var(--color-accent)"
                 >
                   <animate
                     attributeName="opacity"
-                    values="1;0.3;1"
-                    dur="1.6s"
-                    begin={`${i * 0.3}s`}
+                    values="1;0.55;1"
+                    dur={`${cDur}s`}
+                    begin={`${i * 0.25}s`}
                     repeatCount="indefinite"
                   />
                 </circle>
-                <text
-                  x="0.9"
-                  y="0"
-                  fill="var(--color-fg-muted)"
-                  fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
-                  fontSize="1.6"
-                  letterSpacing="0.08"
-                >
-                  {c.name} · {c.count}
-                </text>
+
+                {/* Floating label */}
+                <g transform={`translate(${c.x + 2.0}, ${c.y + 0.6})`}>
+                  {/* Live indicator dot */}
+                  <circle
+                    cx="0"
+                    cy="-0.7"
+                    r="0.3"
+                    fill="var(--color-accent)"
+                  >
+                    <animate
+                      attributeName="opacity"
+                      values="1;0.3;1"
+                      dur={`${cDur * 0.8}s`}
+                      begin={`${i * 0.2}s`}
+                      repeatCount="indefinite"
+                    />
+                  </circle>
+                  <text
+                    x="0.7"
+                    y="0"
+                    fill="var(--color-fg-muted)"
+                    fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
+                    fontSize="1.3"
+                    letterSpacing="0.06"
+                  >
+                    {c.name} · {c.count}
+                  </text>
+                </g>
               </g>
-            </g>
-          ))}
+            );
+          })}
 
           {/* Corner crosshair ticks for console feel */}
           <g
@@ -623,7 +816,7 @@ function DeploymentMap() {
 
       <div className="mt-4 pt-4 border-t border-[--color-line] flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.18em]">
         <span className="text-[--color-fg-dim]">Network status</span>
-        <span className="text-[--color-fg] tabular-nums">4 live · global</span>
+        <span className="text-[--color-fg] tabular-nums">10 nodes · global</span>
       </div>
     </div>
   );

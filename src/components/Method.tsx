@@ -287,6 +287,10 @@ function AccuracyMeter() {
   const ref = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState(0);
   const [started, setStarted] = useState(false);
+  const [trend, setTrend] = useState<"improving" | "stable" | "volatile">(
+    "stable",
+  );
+  const historyRef = useRef<number[]>([]);
 
   useEffect(() => {
     if (!ref.current) return;
@@ -306,22 +310,72 @@ function AccuracyMeter() {
     if (!started) return;
 
     let raf = 0;
-    let driftInterval: ReturnType<typeof setInterval> | undefined;
+    let driftTimeout: ReturnType<typeof setTimeout> | undefined;
     const start = performance.now();
-    const target = 98.0;
+    const initialTarget = 98.0;
     const duration = 2000;
+
+    // Weighted random pick in one of three bands
+    const pickValue = () => {
+      const r = Math.random();
+      if (r < 0.25) {
+        // ~25%: dip — training / struggle
+        return 96.2 + Math.random() * (97.5 - 96.2);
+      } else if (r < 0.85) {
+        // ~60%: normal operating range
+        return 97.5 + Math.random() * (98.7 - 97.5);
+      } else {
+        // ~15%: peak performance
+        return 98.7 + Math.random() * (99.4 - 98.7);
+      }
+    };
+
+    const updateTrend = (next: number) => {
+      const hist = historyRef.current;
+      hist.push(next);
+      if (hist.length > 5) hist.shift();
+      if (hist.length < 4) return;
+
+      const recent = hist.slice(-2);
+      const prior = hist.slice(0, hist.length - 2);
+      const avg = (arr: number[]) =>
+        arr.reduce((s, v) => s + v, 0) / arr.length;
+      const recentAvg = avg(recent);
+      const priorAvg = avg(prior);
+      const mean = avg(hist);
+      const variance =
+        hist.reduce((s, v) => s + (v - mean) ** 2, 0) / hist.length;
+      const stddev = Math.sqrt(variance);
+
+      if (stddev > 0.75) {
+        setTrend("volatile");
+      } else if (recentAvg - priorAvg > 0.15) {
+        setTrend("improving");
+      } else {
+        setTrend("stable");
+      }
+    };
+
+    const scheduleNext = () => {
+      const interval = 4500 + Math.random() * 3000; // 4500–7500ms
+      driftTimeout = setTimeout(() => {
+        const next = pickValue();
+        setValue(next);
+        updateTrend(next);
+        scheduleNext();
+      }, interval);
+    };
 
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / duration);
       const eased = 1 - Math.pow(1 - t, 3);
-      setValue(target * eased);
+      setValue(initialTarget * eased);
       if (t < 1) {
         raf = requestAnimationFrame(tick);
       } else {
-        // Subtle live drift around the threshold so it feels alive
-        driftInterval = setInterval(() => {
-          setValue(target + (Math.random() - 0.5) * 0.6);
-        }, 2200);
+        // Seed history so the first trend computation has context
+        historyRef.current = [initialTarget];
+        scheduleNext();
       }
     };
 
@@ -329,9 +383,16 @@ function AccuracyMeter() {
 
     return () => {
       cancelAnimationFrame(raf);
-      if (driftInterval) clearInterval(driftInterval);
+      if (driftTimeout) clearTimeout(driftTimeout);
     };
   }, [started]);
+
+  const trendLabel =
+    trend === "improving"
+      ? "↑ improving"
+      : trend === "volatile"
+        ? "↕ volatile"
+        : "↔ stable";
 
   return (
     <div
@@ -341,7 +402,7 @@ function AccuracyMeter() {
       <div className="flex items-center gap-2.5 mb-5">
         <span className="block h-1.5 w-1.5 rounded-full bg-[--color-accent]" />
         <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg-muted]">
-          Graduation threshold
+          Live system accuracy
         </span>
       </div>
 
@@ -361,6 +422,9 @@ function AccuracyMeter() {
       <div className="mt-5 pt-5 border-t border-[--color-line]">
         <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-[--color-fg-dim] leading-relaxed">
           Agents are released to autonomy upon reaching this accuracy
+        </p>
+        <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.18em] text-[--color-fg-dim] tabular-nums">
+          {trendLabel}
         </p>
       </div>
     </div>
