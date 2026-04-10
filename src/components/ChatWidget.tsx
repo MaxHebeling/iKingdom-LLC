@@ -326,7 +326,7 @@ export default function ChatWidget() {
                 </button>
               </div>
               <div className="mt-2 text-center text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-fg-muted)]">
-                Powered by Claude · Anthropic
+                Powered by iKingdom
               </div>
             </div>
           </motion.div>

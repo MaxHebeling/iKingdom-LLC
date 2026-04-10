@@ -46,10 +46,8 @@ const PIPELINE: PipelineStep[] = [
 ];
 
 const requirements = [
-  "An existing operating business with verifiable revenue",
-  "Authority to make a strategic, multi-year operational decision",
-  "Willingness to commit to a 12-month, four-phase deployment",
-  "Investment readiness starting at $35,000",
+  "Minimum $35,000 investment",
+  "12-month engagement commitment",
 ];
 
 type InvestmentTier = {
