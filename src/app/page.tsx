@@ -2,6 +2,7 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Method from "@/components/Method";
 import Capabilities from "@/components/Capabilities";
+import Continuity from "@/components/Continuity";
 import Process from "@/components/Process";
 import OperationsConsole from "@/components/OperationsConsole";
 import Proof from "@/components/Proof";
@@ -21,6 +22,7 @@ export default function Home() {
         <Hero />
         <Method />
         <Capabilities />
+        <Continuity />
         <Process />
         <OperationsConsole />
         <Proof />

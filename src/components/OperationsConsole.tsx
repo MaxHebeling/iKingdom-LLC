@@ -146,7 +146,7 @@ export default function OperationsConsole() {
           className="flex items-center gap-3 mb-20"
         >
           <span className="text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
-            04 — Live System
+            05 — Live System
           </span>
         </motion.div>
 

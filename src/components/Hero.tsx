@@ -23,11 +23,16 @@ export default function Hero() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease, delay: 0.3 }}
-          className="flex items-center gap-3 mb-10 md:mb-14"
+          className="flex items-start gap-3 mb-10 md:mb-14"
         >
-          <span className="h-px w-8 bg-[--color-accent]" />
-          <span className="text-[11px] md:text-xs uppercase tracking-[0.22em] text-[--color-fg-muted]">
-            Established · The world's first AI operations firm
+          <span className="h-px w-8 bg-[--color-accent] mt-[0.55rem]" />
+          <span className="flex flex-col gap-1.5">
+            <span className="text-[12px] md:text-sm uppercase tracking-[0.28em] text-[--color-fg] font-medium">
+              The system that scales with you
+            </span>
+            <span className="text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
+              The world's first AI operations firm
+            </span>
           </span>
         </motion.div>
 
@@ -56,12 +61,25 @@ export default function Hero() {
           final invoice — running as one coordinated, supervised system.
         </motion.p>
 
+        {/* Supporting tagline */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease, delay: 1.05 }}
+          className="mt-8 md:mt-10 flex items-center gap-3"
+        >
+          <span className="h-px w-6 bg-[--color-line-strong]" />
+          <span className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[--color-accent] font-medium">
+            Built once. Reshaped continuously. Yours forever.
+          </span>
+        </motion.div>
+
         {/* CTA row */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease, delay: 1.15 }}
-          className="mt-14 md:mt-20 flex flex-wrap items-center gap-6"
+          transition={{ duration: 1.2, ease, delay: 1.25 }}
+          className="mt-10 md:mt-14 flex flex-wrap items-center gap-6"
         >
           <a
             href="#apply"

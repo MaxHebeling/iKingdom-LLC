@@ -46,7 +46,7 @@ export default function Process() {
           className="flex items-center gap-3 mb-20"
         >
           <span className="text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
-            03 — Process
+            04 — Process
           </span>
         </motion.div>
 

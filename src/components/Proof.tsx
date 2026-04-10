@@ -95,7 +95,7 @@ export default function Proof() {
           className="flex items-center gap-3 mb-20"
         >
           <span className="text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
-            05 — Proof
+            06 — Proof
           </span>
         </motion.div>
 
