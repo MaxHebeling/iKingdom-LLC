@@ -109,27 +109,38 @@ export default function Nav({ lang = "en" }: { lang?: "en" | "es" }) {
               </a>
             );
           })}
-          {lang === "en" ? (
-            <a
-              href="/es"
-              className="text-xs font-semibold uppercase tracking-[0.18em] text-[--color-fg-muted] hover:text-[--color-fg] transition-colors"
-            >
-              ES
-            </a>
-          ) : (
-            <a
-              href="/"
-              className="text-xs font-semibold uppercase tracking-[0.18em] text-[--color-fg-muted] hover:text-[--color-fg] transition-colors"
-            >
-              EN
-            </a>
-          )}
           <a
             href="#apply"
             className="text-sm tracking-wide px-5 py-2.5 bg-[--color-fg] text-[--color-bg] hover:bg-[--color-accent] hover:text-[--color-bg] transition-all duration-500 rounded-full"
           >
             {t.apply}
           </a>
+          {/* Language toggle — far right corner, both options always visible */}
+          <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em]">
+            <a
+              href="/"
+              aria-current={lang === "en" ? "page" : undefined}
+              className={`transition-colors ${
+                lang === "en"
+                  ? "text-[--color-fg]"
+                  : "text-[--color-fg-dim] hover:text-[--color-fg]"
+              }`}
+            >
+              EN
+            </a>
+            <span className="text-[--color-fg-dim]">/</span>
+            <a
+              href="/es"
+              aria-current={lang === "es" ? "page" : undefined}
+              className={`transition-colors ${
+                lang === "es"
+                  ? "text-[--color-fg]"
+                  : "text-[--color-fg-dim] hover:text-[--color-fg]"
+              }`}
+            >
+              ES
+            </a>
+          </div>
         </div>
       </nav>
     </motion.header>
