@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
+import { getAllPosts } from "@/lib/blog";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://www.ikingdom.org";
   const lastModified = new Date();
 
-  return [
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified,
@@ -29,5 +30,65 @@ export default function sitemap(): MetadataRoute.Sitemap {
         },
       },
     },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.8,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/blog`,
+          es: `${baseUrl}/es/blog`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/es/blog`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.7,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/blog`,
+          es: `${baseUrl}/es/blog`,
+        },
+      },
+    },
   ];
+
+  // Dynamic blog post pages
+  const enPosts = getAllPosts("en");
+  const esPosts = getAllPosts("es");
+  const esSlugs = new Set(esPosts.map((p) => p.slug));
+
+  const blogPages: MetadataRoute.Sitemap = enPosts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.date),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+    alternates: {
+      languages: {
+        en: `${baseUrl}/blog/${post.slug}`,
+        ...(esSlugs.has(post.slug)
+          ? { es: `${baseUrl}/es/blog/${post.slug}` }
+          : {}),
+      },
+    },
+  }));
+
+  const esBlogPages: MetadataRoute.Sitemap = esPosts
+    .filter((post) => !enPosts.some((p) => p.slug === post.slug))
+    .map((post) => ({
+      url: `${baseUrl}/es/blog/${post.slug}`,
+      lastModified: new Date(post.date),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+      alternates: {
+        languages: {
+          es: `${baseUrl}/es/blog/${post.slug}`,
+        },
+      },
+    }));
+
+  return [...staticPages, ...blogPages, ...esBlogPages];
 }

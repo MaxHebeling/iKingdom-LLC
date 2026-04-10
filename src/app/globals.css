@@ -108,6 +108,127 @@
   }
 }
 
+/* Blog article typography */
+.prose-ikingdom {
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  color: var(--color-fg-muted);
+}
+
+.prose-ikingdom h1,
+.prose-ikingdom h2,
+.prose-ikingdom h3,
+.prose-ikingdom h4,
+.prose-ikingdom h5,
+.prose-ikingdom h6 {
+  font-family: var(--font-display);
+  color: var(--color-fg);
+  letter-spacing: -0.02em;
+  margin-top: 2.5em;
+  margin-bottom: 0.75em;
+  line-height: 1.2;
+}
+
+.prose-ikingdom h2 {
+  font-size: 1.75rem;
+}
+
+.prose-ikingdom h3 {
+  font-size: 1.375rem;
+}
+
+.prose-ikingdom h4 {
+  font-size: 1.125rem;
+}
+
+.prose-ikingdom p {
+  margin-bottom: 1.5em;
+}
+
+.prose-ikingdom a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.3s;
+}
+
+.prose-ikingdom a:hover {
+  color: var(--color-accent-hover);
+}
+
+.prose-ikingdom strong {
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+.prose-ikingdom em {
+  font-style: italic;
+}
+
+.prose-ikingdom ul,
+.prose-ikingdom ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.5em;
+}
+
+.prose-ikingdom ul {
+  list-style-type: disc;
+}
+
+.prose-ikingdom ol {
+  list-style-type: decimal;
+}
+
+.prose-ikingdom li {
+  margin-bottom: 0.5em;
+}
+
+.prose-ikingdom blockquote {
+  border-left: 3px solid var(--color-accent);
+  padding-left: 1.25em;
+  margin: 2em 0;
+  color: var(--color-fg-dim);
+  font-style: italic;
+}
+
+.prose-ikingdom pre {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  padding: 1.25em 1.5em;
+  overflow-x: auto;
+  margin: 2em 0;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.prose-ikingdom code {
+  font-size: 0.875em;
+  background: var(--color-bg-elevated);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+
+.prose-ikingdom pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.prose-ikingdom hr {
+  border: none;
+  height: 1px;
+  background: var(--color-line);
+  margin: 3em 0;
+}
+
+.prose-ikingdom img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 2em 0;
+}
+
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -12,6 +12,7 @@ const COPY = {
       { id: "proof", label: "Proof" },
       { id: "process", label: "Process" },
     ],
+    blogLink: { href: "/blog", label: "Blog" },
     apply: "Apply",
     menuOpen: "Open navigation menu",
     menuClose: "Close navigation menu",
@@ -23,6 +24,7 @@ const COPY = {
       { id: "proof", label: "Pruebas" },
       { id: "process", label: "Proceso" },
     ],
+    blogLink: { href: "/es/blog", label: "Blog" },
     apply: "Solicitar",
     menuOpen: "Abrir menú de navegación",
     menuClose: "Cerrar menú de navegación",
@@ -153,6 +155,14 @@ export default function Nav({ lang = "en" }: { lang?: "en" | "es" }) {
               );
             })}
 
+            {/* Blog link */}
+            <a
+              href={t.blogLink.href}
+              className="hidden md:inline-flex items-center gap-2 text-sm text-[--color-fg-muted] hover:text-[--color-fg] transition-colors duration-300"
+            >
+              {t.blogLink.label}
+            </a>
+
             {/* Apply CTA */}
             <motion.a
               href="#apply"
@@ -280,6 +290,22 @@ export default function Nav({ lang = "en" }: { lang?: "en" | "es" }) {
                   {link.label}
                 </motion.a>
               ))}
+
+              {/* Mobile blog link */}
+              <motion.a
+                href={t.blogLink.href}
+                onClick={closeMobileMenu}
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  duration: 0.4,
+                  delay: t.links.length * 0.06,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className="font-display text-4xl tracking-[-0.015em] text-[--color-fg] hover:text-[--color-accent] transition-colors duration-300"
+              >
+                {t.blogLink.label}
+              </motion.a>
 
               {/* Mobile language toggle */}
               <motion.div
