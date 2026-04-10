@@ -1,7 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -17,9 +16,6 @@ type HeroCopy = {
   tagline: string;
   ctaPrimary: string;
   ctaSecondary: string;
-  liveSystem: string;
-  handlingYou: string;
-  activeAcrossClients: string;
   liveDeployments: string;
   inActiveBuild: string;
   scroll: string;
@@ -37,9 +33,6 @@ const COPY: Record<Lang, HeroCopy> = {
     tagline: "Built once. Reshaped continuously. Yours forever.",
     ctaPrimary: "Begin Application",
     ctaSecondary: "See it run",
-    liveSystem: "System monitor · demo",
-    handlingYou: "Handling you · illustrative",
-    activeAcrossClients: "Active across clients · illustrative",
     liveDeployments: "Live deployments",
     inActiveBuild: "In active build",
     scroll: "Scroll",
@@ -55,9 +48,6 @@ const COPY: Record<Lang, HeroCopy> = {
     tagline: "Construido una vez. Reformado continuamente. Tuyo para siempre.",
     ctaPrimary: "Iniciar solicitud",
     ctaSecondary: "Velo en acción",
-    liveSystem: "Monitor del sistema · demo",
-    handlingYou: "Atendiéndote · ilustrativo",
-    activeAcrossClients: "Activos con clientes · ilustrativo",
     liveDeployments: "Despliegues en vivo",
     inActiveBuild: "En construcción activa",
     scroll: "Desliza",
@@ -170,37 +160,13 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
           </a>
         </motion.div>
 
-        {/* Trust strip — live system stats */}
+        {/* Trust strip — only verifiable real counts */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.4, ease, delay: 1.4 }}
-          className="mt-16 md:mt-20 flex flex-wrap items-center gap-6 md:gap-10 max-w-3xl"
+          className="mt-16 md:mt-20 flex flex-wrap items-center gap-10 md:gap-14"
         >
-          <div className="flex items-center gap-2.5">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-[--color-accent] opacity-70 animate-ping" />
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[--color-accent]" />
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg-dim] font-medium">
-              {t.liveSystem}
-            </span>
-          </div>
-          <LiveStat
-            initial={3}
-            min={2}
-            max={6}
-            interval={3500}
-            label={t.handlingYou}
-          />
-          <LiveStat
-            initial={47}
-            min={38}
-            max={78}
-            interval={1900}
-            prefix="~"
-            label={t.activeAcrossClients}
-          />
           <TrustStat value="6" label={t.liveDeployments} />
           <TrustStat value="3" label={t.inActiveBuild} />
         </motion.div>
@@ -229,63 +195,10 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
 function TrustStat({ value, label }: { value: string; label: string }) {
   return (
     <div className="flex flex-col">
-      <span className="font-display text-2xl md:text-3xl tracking-[-0.02em] text-[--color-fg] tabular-nums leading-none">
+      <span className="font-display text-3xl md:text-4xl tracking-[-0.02em] text-[--color-fg] tabular-nums leading-none">
         {value}
       </span>
-      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[--color-fg-dim] mt-2 font-medium">
-        {label}
-      </span>
-    </div>
-  );
-}
-
-function LiveStat({
-  initial,
-  min,
-  max,
-  interval,
-  label,
-  prefix,
-}: {
-  initial: number;
-  min: number;
-  max: number;
-  interval: number;
-  label: string;
-  prefix?: string;
-}) {
-  const [value, setValue] = useState(initial);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      const next = Math.floor(min + Math.random() * (max - min + 1));
-      setValue(next);
-    }, interval);
-    return () => clearInterval(id);
-  }, [min, max, interval]);
-
-  return (
-    <div className="flex flex-col">
-      <div className="font-display text-2xl md:text-3xl tracking-[-0.02em] text-[--color-fg] tabular-nums leading-none flex items-baseline">
-        {prefix && (
-          <span className="text-[--color-fg-dim] text-base mr-1">
-            {prefix}
-          </span>
-        )}
-        <AnimatePresence mode="popLayout">
-          <motion.span
-            key={value}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8, position: "absolute" }}
-            transition={{ duration: 0.4, ease }}
-            className="inline-block"
-          >
-            {value}
-          </motion.span>
-        </AnimatePresence>
-      </div>
-      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[--color-accent] mt-2 font-medium">
+      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[--color-fg-dim] mt-3 font-medium">
         {label}
       </span>
     </div>

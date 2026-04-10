@@ -15,31 +15,10 @@ type ConsoleEvent = {
   action: string;
 };
 
-type EventTemplate = Omit<ConsoleEvent, "id" | "time">;
-
-const EVENT_POOL: EventTemplate[] = [
-  { num: "01", action: "Application received · /apply submission" },
-  { num: "03", action: "Capital threshold validated · qualified" },
-  { num: "06", action: "Fit score computed · {fit}% match" },
-  { num: "09", action: "Discovery call scheduled · Thu 2:00 PM PT" },
-  { num: "17", action: "Proposal composed · sent to prospect" },
-  { num: "25", action: "Codebase initialized · new tenant repo" },
-  { num: "26", action: "CRM schema generated · {entities} entities" },
-  { num: "28", action: "Agent scaffold generated · 10 agents" },
-  { num: "31", action: "{tests}" },
-  { num: "32", action: "Code review · {issues} issues flagged" },
-  { num: "37", action: "ETL pipeline deployed · staging" },
-  { num: "44", action: "Sandbox provisioned for tenant DCS" },
-  { num: "47", action: "Production deployment · live" },
-  { num: "49", action: "Accuracy monitor · {accuracy}% sustained" },
-  { num: "51", action: "Checkpoint graduated · Agent {agent} → autonomous" },
-  { num: "55", action: "Weekly status composed for tenant ECG" },
-  { num: "59", action: "Question triaged · routed to partner" },
-  { num: "65", action: "Invoice generated · ${invoice} · sent" },
-  { num: "73", action: "Pattern library indexed · {templates} new templates" },
-  { num: "79", action: "Quality score · {quality}% across deployments" },
-  { num: "81", action: "Payment received · ${payment} · reconciled" },
-];
+type EventTemplate = {
+  num: string;
+  actionTemplate: () => string;
+};
 
 // Helpers for randomization
 function rInt(min: number, max: number): number {
@@ -48,58 +27,195 @@ function rInt(min: number, max: number): number {
 function fmtMoney(n: number): string {
   return n.toLocaleString("en-US");
 }
+function pick<T>(arr: readonly T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 
-function renderEvent(template: EventTemplate): EventTemplate {
-  let action = template.action;
+const EVENT_POOL: EventTemplate[] = [
+  {
+    num: "01",
+    actionTemplate: () =>
+      `Application ${pick(["received", "accepted", "logged", "queued"])} · ${pick([
+        "/apply submission",
+        "inbound form",
+        "web intake",
+        "new prospect",
+      ])}`,
+  },
+  {
+    num: "03",
+    actionTemplate: () =>
+      `Capital threshold ${pick(["validated", "verified", "confirmed", "cleared"])} · ${pick([
+        "qualified",
+        "approved",
+        "passed screen",
+      ])}`,
+  },
+  {
+    num: "06",
+    actionTemplate: () =>
+      `Fit score ${pick(["computed", "returned", "updated", "finalized"])} · ${rInt(85, 98)}% match`,
+  },
+  {
+    num: "09",
+    actionTemplate: () =>
+      `Discovery call ${pick(["scheduled", "booked", "confirmed"])} · ${pick([
+        "Mon 9:00 AM PT",
+        "Tue 11:30 AM PT",
+        "Wed 1:00 PM PT",
+        "Thu 2:00 PM PT",
+        "Fri 10:00 AM PT",
+      ])}`,
+  },
+  {
+    num: "17",
+    actionTemplate: () =>
+      `Proposal ${pick(["composed", "drafted", "generated", "finalized"])} · ${pick([
+        "sent to prospect",
+        "delivered",
+        "awaiting review",
+      ])}`,
+  },
+  {
+    num: "25",
+    actionTemplate: () =>
+      `Codebase ${pick(["initialized", "scaffolded", "bootstrapped"])} · ${pick([
+        "new tenant repo",
+        "fresh workspace",
+        "baseline commit",
+      ])}`,
+  },
+  {
+    num: "26",
+    actionTemplate: () =>
+      `CRM schema ${pick(["generated", "synced", "migrated"])} · ${rInt(38, 68)} entities`,
+  },
+  {
+    num: "28",
+    actionTemplate: () =>
+      `Agent scaffold ${pick(["generated", "provisioned", "instantiated"])} · ${rInt(8, 14)} agents`,
+  },
+  {
+    num: "31",
+    actionTemplate: () => {
+      const count = rInt(1200, 1300).toLocaleString();
+      if (Math.random() < 0.15) {
+        return `Test suite ${pick(["ran", "completed", "executed"])} · ${count} tests · ${rInt(2, 7)} failed`;
+      }
+      return `Test suite ${pick(["passed", "completed", "green"])} · ${count} tests · ${pick(["green", "0 failed", "all clear"])}`;
+    },
+  },
+  {
+    num: "32",
+    actionTemplate: () =>
+      `Code review ${pick(["completed", "finalized", "closed"])} · ${rInt(1, 6)} issues ${pick(["flagged", "noted", "raised"])}`,
+  },
+  {
+    num: "37",
+    actionTemplate: () =>
+      `ETL pipeline ${pick(["deployed", "promoted", "validated"])} · ${pick(["staging", "pre-prod", "canary"])}`,
+  },
+  {
+    num: "44",
+    actionTemplate: () =>
+      `Sandbox ${pick(["provisioned", "allocated", "spun up"])} for tenant ${pick(["DCS", "ECG", "HVN", "LMR", "OPT"])}`,
+  },
+  {
+    num: "47",
+    actionTemplate: () =>
+      `Production deployment · ${pick(["live", "healthy", "green", "stable"])}`,
+  },
+  {
+    num: "49",
+    actionTemplate: () =>
+      `Accuracy monitor · ${(96.2 + Math.random() * 3.2).toFixed(1)}% ${pick(["sustained", "holding", "tracked"])}`,
+  },
+  {
+    num: "51",
+    actionTemplate: () =>
+      `Checkpoint ${pick(["graduated", "promoted", "cleared"])} · Agent ${rInt(12, 79)} → ${pick(["autonomous", "self-directed", "unsupervised"])}`,
+  },
+  {
+    num: "55",
+    actionTemplate: () =>
+      `Weekly ${pick(["status", "digest", "summary"])} composed for tenant ${pick(["ECG", "DCS", "HVN", "LMR"])}`,
+  },
+  {
+    num: "59",
+    actionTemplate: () =>
+      `Question ${pick(["triaged", "routed", "classified"])} · ${pick(["routed to partner", "escalated", "assigned"])}`,
+  },
+  {
+    num: "65",
+    actionTemplate: () => {
+      const v = rInt(45, 400) * 1000 + rInt(0, 999);
+      return `Invoice ${pick(["generated", "issued", "sent"])} · $${fmtMoney(v)} · ${pick(["sent", "delivered", "pending"])}`;
+    },
+  },
+  {
+    num: "73",
+    actionTemplate: () =>
+      `Pattern library ${pick(["indexed", "updated", "synced"])} · ${rInt(1, 6)} new templates`,
+  },
+  {
+    num: "79",
+    actionTemplate: () =>
+      `Quality score · ${(96 + Math.random() * 3).toFixed(1)}% ${pick(["across deployments", "sustained", "weekly avg"])}`,
+  },
+  {
+    num: "81",
+    actionTemplate: () => {
+      const v = rInt(30, 500) * 1000 + rInt(0, 999);
+      return `Payment ${pick(["received", "posted", "cleared"])} · $${fmtMoney(v)} · ${pick(["reconciled", "matched", "booked"])}`;
+    },
+  },
+  // ─── Additional templates (8 new) spanning all 9 tiers ─────────────────
+  {
+    num: "02",
+    actionTemplate: () =>
+      `Intake form ${pick(["parsed", "normalized", "enriched"])} · ${rInt(12, 38)} fields captured`,
+  },
+  {
+    num: "13",
+    actionTemplate: () =>
+      `Architecture draft ${pick(["sketched", "reviewed", "signed off"])} · ${rInt(3, 9)} service modules`,
+  },
+  {
+    num: "29",
+    actionTemplate: () =>
+      `Migration script ${pick(["generated", "applied", "rolled forward"])} · ${rInt(4, 28)} tables`,
+  },
+  {
+    num: "38",
+    actionTemplate: () =>
+      `Data ingress ${pick(["validated", "normalized", "reconciled"])} · ${rInt(18, 94)}K rows`,
+  },
+  {
+    num: "46",
+    actionTemplate: () =>
+      `Canary ${pick(["promoted", "stabilized", "verified"])} · ${rInt(96, 99)}.${rInt(1, 9)}% healthy`,
+  },
+  {
+    num: "62",
+    actionTemplate: () =>
+      `Client success ping · ${pick(["NPS", "CSAT", "health"])} ${rInt(87, 99)} · tenant ${pick(["DCS", "ECG", "HVN", "LMR"])}`,
+  },
+  {
+    num: "68",
+    actionTemplate: () => {
+      const v = rInt(8, 120) * 1000 + rInt(0, 999);
+      return `Expense ${pick(["categorized", "reconciled", "booked"])} · $${fmtMoney(v)} · ${pick(["ops", "infra", "payroll"])}`;
+    },
+  },
+  {
+    num: "76",
+    actionTemplate: () =>
+      `Anomaly ${pick(["detected", "flagged", "investigated"])} · ${pick(["latency", "error rate", "throughput"])} · ${pick(["auto-resolved", "routing to ops", "within tolerance"])}`,
+  },
+];
 
-  if (action.includes("{fit}")) {
-    action = action.replace("{fit}", String(rInt(88, 97)));
-  }
-  if (action.includes("{entities}")) {
-    action = action.replace("{entities}", String(rInt(42, 62)));
-  }
-  if (action.includes("{tests}")) {
-    // ~15% chance of a failing suite
-    if (Math.random() < 0.15) {
-      action = action.replace(
-        "{tests}",
-        `Test suite ran · ${rInt(1200, 1300).toLocaleString()} tests · ${rInt(2, 7)} failed`,
-      );
-    } else {
-      action = action.replace(
-        "{tests}",
-        `Test suite passed · ${rInt(1200, 1300).toLocaleString()} tests · green`,
-      );
-    }
-  }
-  if (action.includes("{issues}")) {
-    action = action.replace("{issues}", String(rInt(1, 6)));
-  }
-  if (action.includes("{accuracy}")) {
-    const a = (96.2 + Math.random() * (99.4 - 96.2)).toFixed(1);
-    action = action.replace("{accuracy}", a);
-  }
-  if (action.includes("{agent}")) {
-    action = action.replace("{agent}", String(rInt(12, 79)));
-  }
-  if (action.includes("{invoice}")) {
-    // $45K - $400K
-    const v = rInt(45, 400) * 1000 + rInt(0, 999);
-    action = action.replace("{invoice}", fmtMoney(v));
-  }
-  if (action.includes("{payment}")) {
-    const v = rInt(30, 500) * 1000 + rInt(0, 999);
-    action = action.replace("{payment}", fmtMoney(v));
-  }
-  if (action.includes("{templates}")) {
-    action = action.replace("{templates}", String(rInt(1, 6)));
-  }
-  if (action.includes("{quality}")) {
-    const q = (96 + Math.random() * 3).toFixed(1);
-    action = action.replace("{quality}", q);
-  }
-
-  return { num: template.num, action };
+function renderEvent(template: EventTemplate): { num: string; action: string } {
+  return { num: template.num, action: template.actionTemplate() };
 }
 
 // Section → agent number mapping for real telemetry section events.
@@ -402,6 +518,36 @@ function EventStreamPanel({ lang = "en" }: { lang?: Lang }) {
   // Re-render every 5s so the LIVE badge can drop off after 60s of silence.
   const [nowTick, setNowTick] = useState<number>(() => Date.now());
 
+  // On mount, immediately replace the deterministic SSR initial list with
+  // a freshly randomized batch so the event stream content differs visibly
+  // across page visits. This runs client-side only — SSR still sees
+  // INITIAL_EVENTS, avoiding hydration mismatches.
+  useEffect(() => {
+    // Pick 6 distinct templates (or fewer if pool is smaller)
+    const pool = [...EVENT_POOL];
+    const picks: EventTemplate[] = [];
+    const sampleSize = Math.min(6, pool.length);
+    for (let i = 0; i < sampleSize; i++) {
+      const idx = Math.floor(Math.random() * pool.length);
+      picks.push(pool.splice(idx, 1)[0]);
+    }
+    const now = Date.now();
+    const fresh: ConsoleEvent[] = picks.map((tpl, i) => {
+      const rendered = renderEvent(tpl);
+      // Back-date each event by a few seconds so the stream looks like
+      // recent history rather than a burst.
+      const stamp = new Date(now - (sampleSize - i) * (1500 + Math.floor(Math.random() * 2500)));
+      const time = `${String(stamp.getHours()).padStart(2, "0")}:${String(stamp.getMinutes()).padStart(2, "0")}:${String(stamp.getSeconds()).padStart(2, "0")}`;
+      return {
+        id: counterRef.current++,
+        time,
+        num: rendered.num,
+        action: rendered.action,
+      };
+    });
+    setEvents(fresh);
+  }, []);
+
   // Template event scheduler — same cadence & behavior as before, but
   // ~50/50 chance per tick of instead pulling from the real-event buffer
   // (populated by the /api/telemetry/live poll). Real events are still
@@ -555,6 +701,15 @@ type KpiSpec = {
 
 function KpiGrid({ lang = "en" }: { lang?: Lang }) {
   const t = COPY[lang];
+  // Randomize the initial "Inbound today" target per-visit (10-16 range).
+  // Runs only client-side via useState initializer — SSR gets the
+  // deterministic default (12) first, then the client picks a fresh value
+  // on mount, so hydration stays clean.
+  const [inboundInitial, setInboundInitial] = useState(12);
+  useEffect(() => {
+    setInboundInitial(10 + Math.floor(Math.random() * 7)); // 10..16
+  }, []);
+
   const kpis: KpiSpec[] = [
     { label: t.kpis.liveDeployments, target: 6, suffix: "" },
     { label: t.kpis.inActiveBuild, target: 3, suffix: "" },
@@ -562,7 +717,7 @@ function KpiGrid({ lang = "en" }: { lang?: Lang }) {
     { label: t.kpis.functionalTiers, target: 9, suffix: "" },
     {
       label: t.kpis.inboundToday,
-      target: 12,
+      target: inboundInitial,
       suffix: "",
       drift: { min: 8, max: 22 },
     },
@@ -659,8 +814,35 @@ function TierBars({ lang = "en" }: { lang?: Lang }) {
     });
     return init;
   });
+  // Per-visit randomized baseline for each tier. SSR uses the deterministic
+  // TIER_BARS.base values; the client swaps in a perturbed copy in the first
+  // useEffect tick so every visit starts from a slightly different place.
+  const basesRef = useRef<Record<string, number>>(
+    Object.fromEntries(TIER_BARS.map((t) => [t.n, t.base])),
+  );
 
   useEffect(() => {
+    // Initialize with slightly randomized base values per visit (±5%).
+    const init: Record<string, number> = {};
+    TIER_BARS.forEach((t) => {
+      init[t.n] = Math.max(
+        0.15,
+        Math.min(1, t.base + (Math.random() - 0.5) * 0.1),
+      );
+    });
+    basesRef.current = init;
+    setState((prev) => {
+      const next: Record<string, TierState> = { ...prev };
+      TIER_BARS.forEach((t) => {
+        next[t.n] = {
+          value: init[t.n],
+          spike: 0,
+          spikeRemaining: 0,
+        };
+      });
+      return next;
+    });
+
     const interval = setInterval(() => {
       setState((prev) => {
         const next = { ...prev };
@@ -689,9 +871,10 @@ function TierBars({ lang = "en" }: { lang?: Lang }) {
             spike = spike * (remaining / 3); // linear recovery
             if (remaining === 0) spike = 0;
           }
+          const base = basesRef.current[t.n] ?? t.base;
           const value = Math.max(
             0.15,
-            Math.min(1, t.base + gentle + spike),
+            Math.min(1, base + gentle + spike),
           );
           next[t.n] = { value, spike, spikeRemaining: remaining };
         });

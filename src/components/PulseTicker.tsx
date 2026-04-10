@@ -66,24 +66,97 @@ type TemplateEvent = {
   render: () => string;
 };
 
+// Shared vocabulary pools — let templates pull verbs/states from the same
+// lexicon so the ticker feels like it's narrating one coherent system.
+const VERIFY_VERBS = [
+  "validated",
+  "verified",
+  "cleared",
+  "confirmed",
+  "checked",
+  "audited",
+] as const;
+const QUALIFY_STATES = [
+  "qualifying",
+  "qualified",
+  "pre-qualified",
+  "flagged for review",
+  "scoring",
+  "scored",
+] as const;
+const COMPOSE_VERBS = [
+  "composed",
+  "drafted",
+  "written",
+  "generated",
+  "built",
+  "produced",
+  "created",
+] as const;
+const SENT_VERBS = ["sent", "delivered", "dispatched", "transmitted"] as const;
+const LIVE_STATES = [
+  "live",
+  "active",
+  "running",
+  "operational",
+  "online",
+] as const;
+const TIME_QUALIFIERS = [
+  "today",
+  "this week",
+  "last 24h",
+  "last hour",
+  "this quarter",
+] as const;
+const TENANT_CODES = [
+  "DCS",
+  "ECG",
+  "NRT",
+  "VLT",
+  "ACQ",
+  "HRZ",
+  "LUM",
+  "ORI",
+  "PRM",
+  "AXL",
+] as const;
+
 const TEMPLATES: TemplateEvent[] = [
   // Tier 01 — Application Intake & Qualification
-  { num: "01", render: () => "Application received · /apply submission" },
+  {
+    num: "01",
+    render: () =>
+      `Application ${pick([
+        "received",
+        "ingested",
+        "captured",
+        "logged",
+      ])} · ${pick(["/apply submission", "web form", "partner referral", "inbound"])}`,
+  },
   {
     num: "02",
-    render: () => "Identity verified · public records cross-referenced",
+    render: () =>
+      `Identity ${pick(VERIFY_VERBS)} · ${pick([
+        "public records cross-referenced",
+        "KYC pass complete",
+        "registry match",
+        "entity confirmed",
+      ])}`,
   },
   {
     num: "03",
     render: () =>
-      `Capital threshold validated · ${
-        Math.random() < 0.92 ? "qualifying" : "flagged for review"
-      }`,
+      `Capital threshold ${pick(VERIFY_VERBS)} · ${pick(QUALIFY_STATES)}`,
   },
   {
     num: "04",
     render: () =>
-      `Industry classified · ${pick([
+      `Industry ${pick([
+        "classified",
+        "tagged",
+        "segmented",
+        "categorized",
+      ])} · ${pick([
         "construction",
         "logistics",
         "healthcare",
@@ -91,292 +164,391 @@ const TEMPLATES: TemplateEvent[] = [
         "manufacturing",
         "legal",
         "real estate",
-      ])} · tier match`,
+        "biotech",
+        "energy",
+        "education",
+      ])} · ${pick(["tier match", "sector fit", "vertical locked"])}`,
   },
   {
     num: "05",
-    render: () => `Scope sized · ${randInt(60, 92)}-agent engagement projected`,
+    render: () =>
+      `Scope sized · ${randInt(55, 96)}-agent engagement ${pick([
+        "projected",
+        "forecast",
+        "modeled",
+        "estimated",
+      ])}`,
   },
   {
     num: "06",
-    render: () => `Fit score computed · ${randInt(88, 97)}% match`,
+    render: () =>
+      `Fit score ${pick(["computed", "calculated", "resolved", "scored"])} · ${randInt(
+        84,
+        98,
+      )}% match`,
   },
   {
     num: "07",
     render: () =>
-      `Attribution recorded · ${pick([
-        "referral",
-        "direct",
-        "partner",
-        "inbound",
-      ])} · partner network`,
+      `Attribution ${pick(["recorded", "logged", "captured", "traced"])} · ${pick(
+        ["referral", "direct", "partner", "inbound", "outbound", "event"],
+      )} · partner network`,
   },
   {
     num: "08",
-    render: () => "Routed to senior partner intake queue",
+    render: () =>
+      `${pick(["Routed", "Forwarded", "Escalated", "Handed off"])} to senior partner intake queue`,
   },
 
   // Tier 02 — Discovery & Architecture
   {
     num: "09",
-    render: () => `Discovery call scheduled · ${randomDayTime()}`,
+    render: () =>
+      `Discovery call ${pick(["scheduled", "booked", "confirmed", "slotted"])} · ${randomDayTime()}`,
   },
   {
     num: "10",
-    render: () => `Pre-call brief composed · ${randInt(3, 6)} pages · sent`,
+    render: () =>
+      `Pre-call brief ${pick(COMPOSE_VERBS)} · ${randInt(3, 8)} pages · ${pick(SENT_VERBS)}`,
   },
   {
     num: "11",
     render: () =>
-      `Discovery call transcribed · ${randInt(38, 62)} min · indexed`,
+      `Discovery call ${pick([
+        "transcribed",
+        "processed",
+        "summarized",
+        "indexed",
+      ])} · ${randInt(32, 68)} min · ${pick(["indexed", "archived", "embedded"])}`,
   },
   {
     num: "12",
     render: () =>
-      `${randInt(8, 16)} pain points extracted · prioritized by impact`,
+      `${randInt(6, 18)} pain points ${pick([
+        "extracted",
+        "surfaced",
+        "identified",
+        "mapped",
+      ])} · prioritized by ${pick(["impact", "urgency", "effort", "value"])}`,
   },
   {
     num: "13",
-    render: () => `Workflows mapped · ${randInt(18, 32)} internal processes`,
+    render: () =>
+      `Workflows ${pick(["mapped", "charted", "diagrammed", "traced"])} · ${randInt(
+        16,
+        36,
+      )} internal processes`,
   },
   {
     num: "14",
-    render: () => `Tiers allocated · ${randInt(7, 9)} active for engagement`,
+    render: () =>
+      `Tiers ${pick(["allocated", "assigned", "provisioned"])} · ${randInt(6, 9)} active for engagement`,
   },
   {
     num: "15",
     render: () =>
-      `Agent topology designed · ${randInt(72, 88)} agents specified`,
+      `Agent topology ${pick(COMPOSE_VERBS)} · ${randInt(68, 92)} agents ${pick([
+        "specified",
+        "scoped",
+        "defined",
+        "planned",
+      ])}`,
   },
   {
     num: "16",
-    render: () => "Engagement plan drafted · sent to client",
+    render: () =>
+      `Engagement plan ${pick(COMPOSE_VERBS)} · ${pick(SENT_VERBS)} to client`,
   },
 
   // Tier 03 — Engagement & Contracting
   {
     num: "17",
-    render: () => `Proposal composed · ${randInt(18, 28)} pages · delivered`,
+    render: () =>
+      `Proposal ${pick(COMPOSE_VERBS)} · ${randInt(16, 32)} pages · ${pick(SENT_VERBS)}`,
   },
   {
     num: "18",
     render: () =>
-      `Pricing tier finalized · ${formatDollars(
-        randInt(325000, 485000),
-      )} base`,
+      `Pricing tier ${pick([
+        "finalized",
+        "locked",
+        "set",
+        "approved",
+      ])} · ${formatDollars(randInt(295000, 525000))} base`,
   },
   {
     num: "19",
-    render: () => "Contract generated · awaiting signature",
+    render: () =>
+      `Contract ${pick(["generated", "drafted", "prepared"])} · ${pick([
+        "awaiting signature",
+        "in review",
+        "sent to counsel",
+      ])}`,
   },
   {
     num: "20",
     render: () => {
       const issues = Math.random() < 0.75 ? 0 : randInt(1, 3);
-      return `Legal review pass · ${issues} issues flagged${
+      return `Legal review ${pick(["pass", "complete", "cycle"])} · ${issues} issues flagged${
         issues > 0 ? " · resolved" : ""
       }`;
     },
   },
   {
     num: "21",
-    render: () => "Signature received · executed · countersigned",
+    render: () =>
+      `Signature ${pick(["received", "captured", "logged"])} · ${pick([
+        "executed",
+        "finalized",
+        "recorded",
+      ])} · countersigned`,
   },
   {
     num: "22",
-    render: () => "Onboarding kicked off · welcome packet sent",
+    render: () =>
+      `Onboarding ${pick(["kicked off", "initiated", "started", "launched"])} · welcome packet ${pick(SENT_VERBS)}`,
   },
   {
     num: "23",
-    render: () => "Kickoff anchored · all stakeholders confirmed",
+    render: () =>
+      `Kickoff ${pick(["anchored", "completed", "locked", "held"])} · all stakeholders ${pick(["confirmed", "aligned", "briefed"])}`,
   },
   {
     num: "24",
-    render: () => `Stakeholder map built · ${randInt(5, 11)} contacts indexed`,
+    render: () =>
+      `Stakeholder map ${pick(["built", "assembled", "compiled"])} · ${randInt(4, 13)} contacts ${pick(["indexed", "captured", "tagged"])}`,
   },
 
   // Tier 04 — Build & Code Generation
   {
     num: "25",
-    render: () => "Codebase initialized · new tenant repo · live",
+    render: () =>
+      `Codebase ${pick([
+        "initialized",
+        "scaffolded",
+        "bootstrapped",
+        "provisioned",
+      ])} · new tenant repo · ${pick(LIVE_STATES)}`,
   },
   {
     num: "26",
     render: () =>
-      `CRM schema generated · ${randInt(38, 58)} entities · ${randInt(
-        210,
-        280,
+      `CRM schema ${pick(COMPOSE_VERBS)} · ${randInt(36, 62)} entities · ${randInt(
+        195,
+        295,
       )} fields`,
   },
   {
     num: "27",
-    render: () => `Workflows composed · ${randInt(14, 24)} flows scaffolded`,
+    render: () =>
+      `Workflows ${pick(COMPOSE_VERBS)} · ${randInt(12, 28)} flows ${pick([
+        "scaffolded",
+        "stubbed",
+        "wired",
+      ])}`,
   },
   {
     num: "28",
     render: () =>
-      `Agent scaffold generated · Tier 04 · ${randInt(8, 12)} agents`,
+      `Agent scaffold ${pick(COMPOSE_VERBS)} · Tier 0${randInt(3, 6)} · ${randInt(6, 14)} agents`,
   },
   {
     num: "29",
     render: () =>
-      `UI components built · ${randInt(18, 32)} screens · ${randInt(
-        72,
-        104,
+      `UI components ${pick(COMPOSE_VERBS)} · ${randInt(16, 36)} screens · ${randInt(
+        68,
+        118,
       )} components`,
   },
   {
     num: "30",
-    render: () => `API composer · ${randInt(32, 48)} endpoints exposed`,
+    render: () =>
+      `API composer · ${randInt(28, 56)} endpoints ${pick([
+        "exposed",
+        "wired",
+        "published",
+        "documented",
+      ])}`,
   },
   {
     num: "31",
     render: () => {
-      // ~12% of runs show a small failure count — self-heals next pass
-      const total = randInt(1200, 1300);
+      const total = randInt(1180, 1340);
       if (Math.random() < 0.12) {
         const failing = randInt(1, 4);
-        return `Test suite · ${formatInt(
-          total,
-        )} tests · ${failing} failing · retrying`;
+        return `Test suite · ${formatInt(total)} tests · ${failing} failing · ${pick(["retrying", "auto-healing", "investigating"])}`;
       }
-      return `Test suite passed · ${formatInt(total)} tests · green`;
+      return `Test suite ${pick(["passed", "cleared", "green"])} · ${formatInt(total)} tests · ${pick(["green", "all pass"])}`;
     },
   },
   {
     num: "32",
     render: () => {
-      const issues = randInt(0, 5);
+      const issues = randInt(0, 6);
       return `Code review · ${issues} issues flagged${
-        issues > 0 ? " · resolved" : " · clean"
+        issues > 0 ? ` · ${pick(["resolved", "patched", "fixed"])}` : ` · ${pick(["clean", "clear", "approved"])}`
       }`;
     },
   },
   {
     num: "33",
     render: () =>
-      `Documentation generated · ${randInt(120, 170)} pages · published`,
+      `Documentation ${pick(COMPOSE_VERBS)} · ${randInt(110, 185)} pages · ${pick([
+        "published",
+        "indexed",
+        "released",
+      ])}`,
   },
   {
     num: "34",
-    render: () => `Build pipeline · ${randInt(10, 18)} jobs queued · running`,
+    render: () =>
+      `Build pipeline · ${randInt(8, 22)} jobs ${pick(["queued", "dispatched", "scheduled"])} · ${pick(LIVE_STATES)}`,
   },
 
   // Tier 05 — Integration & Data
   {
     num: "35",
-    render: () => `Data sources cataloged · ${randInt(35, 60)} connectors found`,
+    render: () =>
+      `Data sources ${pick(["cataloged", "indexed", "discovered", "enumerated"])} · ${randInt(
+        32,
+        68,
+      )} connectors ${pick(["found", "registered", "mapped"])}`,
   },
   {
     num: "36",
     render: () =>
-      `Migration plan drafted · ${randFloat(2.4, 4.8, 1)}M records · ${randInt(
-        5,
-        10,
+      `Migration plan ${pick(COMPOSE_VERBS)} · ${randFloat(2.1, 5.4, 1)}M records · ${randInt(
+        4,
+        12,
       )} days`,
   },
   {
     num: "37",
-    render: () => "ETL pipeline deployed · staging · running",
+    render: () =>
+      `ETL pipeline ${pick(["deployed", "rolled out", "activated"])} · ${pick(["staging", "production", "shadow"])} · ${pick(LIVE_STATES)}`,
   },
   {
     num: "38",
-    render: () => "CRM sync established · bidirectional · live",
+    render: () =>
+      `CRM sync ${pick(["established", "wired", "activated"])} · ${pick(["bidirectional", "two-way", "realtime"])} · ${pick(LIVE_STATES)}`,
   },
   {
     num: "39",
-    render: () => "Calendar integration · Google + Outlook · live",
+    render: () =>
+      `Calendar integration · ${pick(["Google + Outlook", "Google Workspace", "Microsoft 365", "iCal + Google"])} · ${pick(LIVE_STATES)}`,
   },
   {
     num: "40",
-    render: () => "Email + SMS channels wired · live",
+    render: () =>
+      `${pick([
+        "Email + SMS",
+        "SMS + WhatsApp",
+        "Email + Voice",
+        "Omnichannel",
+      ])} channels ${pick(["wired", "provisioned", "connected"])} · ${pick(LIVE_STATES)}`,
   },
   {
     num: "41",
     render: () =>
-      `Voice channel wired · ${randInt(2, 8)} numbers provisioned`,
+      `Voice channel ${pick(["wired", "provisioned", "activated"])} · ${randInt(2, 10)} numbers ${pick(["provisioned", "assigned", "online"])}`,
   },
   {
     num: "42",
-    render: () => "Payments integration · live · processing",
+    render: () =>
+      `Payments integration · ${pick(LIVE_STATES)} · ${pick([
+        "processing",
+        "settling",
+        "reconciling",
+      ])}`,
   },
   {
     num: "43",
-    render: () => "SSO configured · OAuth + SAML · live",
+    render: () =>
+      `SSO ${pick(["configured", "wired", "enabled"])} · ${pick([
+        "OAuth + SAML",
+        "SAML 2.0",
+        "OIDC + SAML",
+        "OAuth2",
+      ])} · ${pick(LIVE_STATES)}`,
   },
   {
     num: "44",
     render: () =>
-      `Sandbox provisioned for tenant ${pick([
-        "DCS",
-        "ECG",
-        "NRT",
-        "VLT",
-        "ACQ",
-        "HRZ",
-      ])}`,
+      `Sandbox ${pick(["provisioned", "spun up", "allocated"])} for tenant ${pick(TENANT_CODES)}`,
   },
 
   // Tier 06 — Deployment & Supervision
   {
     num: "45",
-    render: () => `Staging deployment · ${randInt(8, 16)} services · live`,
+    render: () =>
+      `Staging deployment · ${randInt(6, 20)} services · ${pick(LIVE_STATES)}`,
   },
   {
     num: "46",
     render: () => {
-      const total = randInt(40, 56);
+      const total = randInt(38, 62);
       const failed = Math.random() < 0.15 ? randInt(1, 2) : 0;
       if (failed > 0) {
-        return `Smoke tests · ${total} checks · ${failed} failed · retrying`;
+        return `Smoke tests · ${total} checks · ${failed} failed · ${pick(["retrying", "re-running"])}`;
       }
-      return `Smoke tests · ${total} checks · all passed`;
+      return `Smoke tests · ${total} checks · ${pick(["all passed", "green", "clean"])}`;
     },
   },
   {
     num: "47",
-    render: () => "Production deployment · live · zero downtime",
+    render: () =>
+      `Production deployment · ${pick(LIVE_STATES)} · ${pick([
+        "zero downtime",
+        "blue/green",
+        "canary complete",
+        "rolling update",
+      ])}`,
   },
   {
     num: "48",
-    render: () => "Checkpoint initialized · agent under review",
+    render: () =>
+      `Checkpoint ${pick(["initialized", "opened", "staged"])} · agent under ${pick(["review", "audit", "evaluation"])}`,
   },
   {
     num: "49",
     render: () =>
-      `Accuracy monitor · ${randFloat(96.2, 99.4, 1)}% sustained · 30 day`,
+      `Accuracy monitor · ${randFloat(95.8, 99.6, 1)}% sustained · ${pick(["30 day", "7 day", "14 day", "90 day"])}`,
   },
   {
     num: "50",
-    render: () => `Human review queue · ${randInt(2, 9)} pending · routed`,
+    render: () =>
+      `Human review queue · ${randInt(1, 11)} pending · ${pick(["routed", "triaged", "assigned"])}`,
   },
   {
     num: "51",
     render: () =>
-      `Checkpoint graduated · Agent ${String(randInt(1, 80)).padStart(
-        2,
-        "0",
-      )} → autonomous`,
+      `Checkpoint ${pick(["graduated", "promoted", "advanced"])} · Agent ${String(
+        randInt(1, 80),
+      ).padStart(2, "0")} → ${pick(["autonomous", "unsupervised", "production"])}`,
   },
   {
     num: "52",
     render: () =>
-      `Rollback ready · checkpoint v${randInt(2, 5)}.${randInt(
-        0,
-        9,
-      )} cached`,
+      `Rollback ready · checkpoint v${randInt(2, 6)}.${randInt(0, 9)} ${pick([
+        "cached",
+        "archived",
+        "snapshotted",
+      ])}`,
   },
   {
     num: "53",
     render: () =>
-      `Incident · auto-resolved · 0 downtime · ${randInt(12, 94)}s`,
+      `Incident · ${pick([
+        "auto-resolved",
+        "self-healed",
+        "mitigated",
+      ])} · 0 downtime · ${randInt(8, 112)}s`,
   },
   {
     num: "54",
     render: () => {
-      const total = randInt(10, 14);
-      const nominal =
-        Math.random() < 0.85 ? total : total - randInt(1, 2);
+      const total = randInt(10, 16);
+      const nominal = Math.random() < 0.85 ? total : total - randInt(1, 2);
       const color = nominal === total ? "green" : "amber";
       return `Tenant health · ${nominal} of ${total} nominal · ${color}`;
     },
@@ -386,21 +558,17 @@ const TEMPLATES: TemplateEvent[] = [
   {
     num: "55",
     render: () =>
-      `Weekly status composed · tenant ${pick([
-        "ECG",
-        "DCS",
-        "NRT",
-        "VLT",
-        "HRZ",
-      ])} · sent`,
+      `Weekly status ${pick(COMPOSE_VERBS)} · tenant ${pick(TENANT_CODES)} · ${pick(SENT_VERBS)}`,
   },
   {
     num: "56",
-    render: () => `Stakeholder update sent · ${randInt(7, 16)} recipients`,
+    render: () =>
+      `Stakeholder update ${pick(SENT_VERBS)} · ${randInt(5, 19)} recipients`,
   },
   {
     num: "57",
-    render: () => `Training material · ${randInt(20, 36)} modules generated`,
+    render: () =>
+      `Training material · ${randInt(18, 42)} modules ${pick(COMPOSE_VERBS)}`,
   },
   {
     num: "58",
@@ -409,132 +577,149 @@ const TEMPLATES: TemplateEvent[] = [
         "9am",
         "10am",
         "11am",
+        "1pm",
         "2pm",
         "3pm",
-      ])} · ${randInt(2, 9)} attendees`,
+        "4pm",
+      ])} · ${randInt(2, 12)} attendees`,
   },
   {
     num: "59",
-    render: () => "Question triaged · routed to senior partner",
+    render: () =>
+      `Question ${pick(["triaged", "routed", "classified"])} · ${pick([
+        "routed to senior partner",
+        "escalated to engineering",
+        "handled by L1",
+        "forwarded to client success",
+      ])}`,
   },
   {
     num: "60",
-    render: () => `Knowledge base · ${randInt(220, 290)} articles indexed`,
+    render: () =>
+      `Knowledge base · ${randInt(210, 310)} articles ${pick([
+        "indexed",
+        "embedded",
+        "published",
+      ])}`,
   },
   {
     num: "61",
-    render: () => "Change request captured · scoped · approved",
+    render: () =>
+      `Change request ${pick(["captured", "logged", "recorded"])} · ${pick(["scoped", "sized", "estimated"])} · ${pick(["approved", "queued", "scheduled"])}`,
   },
   {
     num: "62",
     render: () =>
-      `Satisfaction survey · ${randFloat(
-        8.8,
-        9.8,
-        1,
-      )} / 10 · sent to lead`,
+      `Satisfaction survey · ${randFloat(8.6, 9.9, 1)} / 10 · ${pick(SENT_VERBS)} to lead`,
   },
   {
     num: "63",
     render: () =>
-      `Retention forecast · ${randInt(92, 98)}% renewal probability`,
+      `Retention forecast · ${randInt(90, 99)}% renewal probability`,
   },
   {
     num: "64",
-    render: () => "Renewal initiated · year 2 contract drafted",
+    render: () =>
+      `Renewal ${pick(["initiated", "opened", "kicked off"])} · year ${randInt(2, 4)} contract ${pick(["drafted", "prepared", "sent"])}`,
   },
 
   // Tier 08 — Finance & Operations
   {
     num: "65",
     render: () =>
-      `Invoice generated · ${formatDollars(randInt(45000, 400000))} · sent`,
+      `Invoice ${pick(["generated", "issued", "prepared"])} · ${formatDollars(
+        randInt(38000, 425000),
+      )} · ${pick(SENT_VERBS)}`,
   },
   {
     num: "66",
     render: () =>
-      `Payment received · ${formatDollars(
-        randInt(30000, 500000),
-      )} · reconciled`,
+      `Payment ${pick(["received", "cleared", "settled"])} · ${formatDollars(
+        randInt(28000, 525000),
+      )} · ${pick(["reconciled", "posted", "logged"])}`,
   },
   {
     num: "67",
     render: () =>
-      `Subscription renewed · tier ${randInt(1, 4)} · ${pick([
+      `Subscription ${pick(["renewed", "extended", "rolled over"])} · tier ${randInt(1, 4)} · ${pick([
         "annual",
         "multi-year",
+        "quarterly",
+        "biennial",
       ])}`,
   },
   {
     num: "68",
-    render: () => "Vendor costs tracked · monthly · indexed",
+    render: () =>
+      `Vendor costs ${pick(["tracked", "audited", "reconciled"])} · ${pick([
+        "monthly",
+        "weekly",
+        "quarterly",
+      ])} · ${pick(["indexed", "posted", "filed"])}`,
   },
   {
     num: "69",
-    render: () => `Engagement P&L updated · margin ${randInt(68, 82)}%`,
+    render: () =>
+      `Engagement P&L ${pick(["updated", "refreshed", "recalculated"])} · margin ${randInt(66, 84)}%`,
   },
   {
     num: "70",
-    render: () =>
-      `Tax compliance · Q${randInt(1, 4)} filing · filed`,
+    render: () => `Tax compliance · Q${randInt(1, 4)} filing · ${pick(["filed", "submitted", "accepted"])}`,
   },
   {
     num: "71",
     render: () =>
-      `Contract lifecycle · ${randInt(2, 6)} active · ${randInt(
-        0,
-        2,
-      )} expiring`,
+      `Contract lifecycle · ${randInt(2, 7)} active · ${randInt(0, 3)} ${pick(["expiring", "renewing", "pending"])}`,
   },
   {
     num: "72",
     render: () =>
-      `Capacity planner · ${randInt(3, 6)} of 6 slots filled · Q${randInt(
-        1,
-        4,
-      )}`,
+      `Capacity planner · ${randInt(3, 6)} of 6 slots filled · Q${randInt(1, 4)}`,
   },
 
   // Tier 09 — Intelligence & Learning
   {
     num: "73",
-    render: () => `Pattern library · ${randInt(2, 6)} new templates indexed`,
+    render: () =>
+      `Pattern library · ${randInt(2, 8)} new templates ${pick(["indexed", "embedded", "cataloged"])}`,
   },
   {
     num: "74",
     render: () =>
-      `Cross-tenant insight · ${randInt(1, 5)} patterns matched`,
+      `Cross-tenant insight · ${randInt(1, 6)} patterns ${pick(["matched", "surfaced", "identified"])}`,
   },
   {
     num: "75",
-    render: () => `Deployment velocity · +${randInt(7, 18)}% MoM`,
+    render: () =>
+      `Deployment velocity · +${randInt(5, 22)}% ${pick(["MoM", "QoQ", "WoW"])}`,
   },
   {
     num: "76",
     render: () =>
-      `Win/loss analyzed · ${randInt(78, 92)}% close rate · Q${randInt(
-        1,
-        4,
-      )}`,
+      `Win/loss ${pick(["analyzed", "reviewed", "scored"])} · ${randInt(76, 94)}% close rate · Q${randInt(1, 4)}`,
   },
   {
     num: "77",
     render: () =>
-      `Pricing optimized · ${pick([
+      `Pricing ${pick(["optimized", "tuned", "recalibrated"])} · ${pick([
         "base",
         "mid",
         "premium",
-      ])} tier · validated`,
+        "enterprise",
+      ])} tier · ${pick(VERIFY_VERBS)}`,
   },
   {
     num: "78",
     render: () =>
-      `System telemetry · all green · ${randInt(10, 14)} tenants`,
+      `System telemetry · all ${pick(["green", "nominal", "healthy"])} · ${randInt(
+        9,
+        16,
+      )} tenants`,
   },
   {
     num: "79",
     render: () =>
-      `Quality score · ${randFloat(96, 99.5, 1)}% across deployments`,
+      `Quality score · ${randFloat(95.5, 99.7, 1)}% across deployments`,
   },
   {
     num: "80",
@@ -542,7 +727,85 @@ const TEMPLATES: TemplateEvent[] = [
       `Checkpoint graduation · Agent ${String(randInt(1, 80)).padStart(
         2,
         "0",
-      )} promoted`,
+      )} ${pick(["promoted", "advanced", "graduated"])}`,
+  },
+
+  // ---- New templates (spread across tiers, reusing agent numbers) ----
+  {
+    num: "04",
+    render: () =>
+      `Tenant onboarded · welcome packet · day 1 · ${pick(TENANT_CODES)}`,
+  },
+  {
+    num: "18",
+    render: () =>
+      `Pricing tier · adjusted · ${randFloat(0.4, 4.8, 1)}% variance · ${pick(TIME_QUALIFIERS)}`,
+  },
+  {
+    num: "28",
+    render: () =>
+      `Training run complete · model ${pick([
+        "v2.1",
+        "v2.4",
+        "v3.0",
+        "v3.2",
+      ])} · ${pick(["ready", "deployed", "shipped"])}`,
+  },
+  {
+    num: "36",
+    render: () =>
+      `Embeddings refreshed · ${formatInt(randInt(420000, 960000))} vectors · ${pick([
+        "reindexed",
+        "updated",
+        "repacked",
+      ])}`,
+  },
+  {
+    num: "48",
+    render: () =>
+      `Pattern matched · ${pick([
+        "billing",
+        "churn",
+        "usage",
+        "escalation",
+        "intent",
+      ])} · cross-tenant · ${pick(TIME_QUALIFIERS)}`,
+  },
+  {
+    num: "54",
+    render: () =>
+      `Autoscaler · ${pick(["scaled up", "scaled down", "held steady"])} · ${randInt(
+        8,
+        24,
+      )} workers · ${pick(LIVE_STATES)}`,
+  },
+  {
+    num: "60",
+    render: () =>
+      `FAQ generator · ${randInt(8, 22)} new entries · ${pick([
+        "indexed",
+        "published",
+        "reviewed",
+      ])}`,
+  },
+  {
+    num: "66",
+    render: () =>
+      `Budget variance · ${pick(["under", "on", "near"])} target · ${randFloat(0.2, 3.8, 1)}% delta · ${pick(TIME_QUALIFIERS)}`,
+  },
+  {
+    num: "74",
+    render: () =>
+      `Anomaly detector · ${randInt(0, 3)} signals · ${pick([
+        "noted",
+        "cleared",
+        "logged",
+      ])} · ${pick(TIME_QUALIFIERS)}`,
+  },
+  {
+    num: "78",
+    render: () =>
+      `Heartbeat · ${randInt(9, 16)} tenants · ${pick(LIVE_STATES)} · ${pick(TIME_QUALIFIERS)}`,
   },
 ];
 
