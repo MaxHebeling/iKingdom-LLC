@@ -46,8 +46,11 @@ const PIPELINE: PipelineStep[] = [
 ];
 
 const requirements = [
-  "Minimum $35,000 investment",
-  "12-month engagement commitment",
+  "Six-figure or larger annual revenue, verifiable",
+  "An established operating business, not a side project",
+  "A team and operational layer worth scaling, not replacing",
+  "Authority to make decisions beyond the next quarter",
+  "Ambition large enough to require autonomous infrastructure",
 ];
 
 type InvestmentTier = {
@@ -219,7 +222,7 @@ export default function Application() {
               className="mt-12"
             >
               <p className="text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim] mb-6">
-                Minimum criteria
+                Who we deploy with
               </p>
               <ul className="space-y-4">
                 {requirements.map((r) => (
