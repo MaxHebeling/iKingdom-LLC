@@ -1,8 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-
-const ease = [0.16, 1, 0.3, 1] as const;
+import { useRef } from "react";
+import { gsap, useGSAP } from "@/lib/gsap";
 
 type Lang = "en" | "es";
 
@@ -54,11 +53,134 @@ const COPY: Record<Lang, HeroCopy> = {
   },
 };
 
+/** Split text into word spans for staggered clip-path animation */
+function WordSplit({
+  text,
+  className,
+}: {
+  text: string;
+  className?: string;
+}) {
+  return (
+    <>
+      {text.split(" ").map((word, i) => (
+        <span
+          key={i}
+          className="inline-block overflow-hidden"
+        >
+          <span className={`hero-word inline-block ${className ?? ""}`}>
+            {word}
+          </span>
+          {i < text.split(" ").length - 1 && (
+            <span className="inline-block">&nbsp;</span>
+          )}
+        </span>
+      ))}
+    </>
+  );
+}
+
 export default function Hero({ lang = "en" }: { lang?: Lang }) {
   const t = COPY[lang];
+  const containerRef = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      const ease = "cubic-bezier(0.16, 1, 0.3, 1)";
+      const customEase = "power3.out";
+
+      const tl = gsap.timeline({ defaults: { ease: customEase } });
+
+      // 1. Eyebrow: fade in + slide up, stagger the two lines
+      tl.fromTo(
+        ".hero-eyebrow-line",
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.8, stagger: 0.12 },
+        0
+      );
+
+      // 2. Headline: clip-path reveal per word (cinematic hero moment)
+      // Words start visible (no opacity:0) but clipped from bottom — LCP-safe
+      tl.fromTo(
+        ".hero-word",
+        { clipPath: "inset(100% 0 0 0)" },
+        {
+          clipPath: "inset(0% 0 0 0)",
+          duration: 0.9,
+          stagger: 0.08,
+          ease: "power4.out",
+        },
+        0.1
+      );
+
+      // Calculate when headline finishes to sequence subhead
+      const wordCount =
+        t.headlineBefore.split(" ").length +
+        1 + // italic word
+        t.headlineAfter.trim().split(" ").length;
+      const headlineEnd = 0.1 + 0.9 + (wordCount - 1) * 0.08;
+
+      // 3. Subhead: fade in + slide up, starts 0.2s after headline finishes
+      tl.fromTo(
+        ".hero-subhead",
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 1 },
+        headlineEnd + 0.2
+      );
+
+      // 4. Tagline: gold line draws from width 0 -> full, then text fades in
+      tl.fromTo(
+        ".hero-tagline-line",
+        { width: 0 },
+        { width: 24, duration: 0.6 },
+        headlineEnd + 0.4
+      );
+      tl.fromTo(
+        ".hero-tagline-text",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.7 },
+        headlineEnd + 0.7
+      );
+
+      // 5. CTA buttons: slide up + fade in, staggered
+      tl.fromTo(
+        ".hero-cta",
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.8, stagger: 0.1 },
+        headlineEnd + 0.6
+      );
+
+      // 6. Stats bar: fade in last
+      tl.fromTo(
+        ".hero-stats",
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 1 },
+        headlineEnd + 0.8
+      );
+
+      // 7. Scroll affordance
+      tl.fromTo(
+        ".hero-scroll",
+        { opacity: 0 },
+        { opacity: 1, duration: 1.2 },
+        headlineEnd + 1.2
+      );
+
+      // Scroll affordance bounce (infinite)
+      gsap.to(".hero-scroll-bar", {
+        y: 8,
+        duration: 1.2,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+    },
+    { scope: containerRef }
+  );
 
   return (
     <section
+      ref={containerRef}
       id="top"
       aria-label={lang === "es" ? "Inicio" : "Hero"}
       className="relative min-h-screen flex flex-col justify-center overflow-hidden"
@@ -71,71 +193,48 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
 
       <div className="relative max-w-[1400px] mx-auto px-6 md:px-10 w-full pt-32 md:pt-40 pb-24">
         {/* Eyebrow */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease, delay: 0.3 }}
-          className="flex items-start gap-3 mb-10 md:mb-14"
-        >
+        <div className="flex items-start gap-3 mb-10 md:mb-14">
           <span className="h-px w-8 bg-[--color-accent] mt-[0.55rem]" />
           <span className="flex flex-col gap-1.5">
-            <span className="text-[12px] md:text-sm uppercase tracking-[0.28em] text-[--color-fg] font-medium">
+            <span className="hero-eyebrow-line text-[12px] md:text-sm uppercase tracking-[0.28em] text-[--color-fg] font-medium opacity-0">
               {t.eyebrowTop}
             </span>
-            <span className="text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
+            <span className="hero-eyebrow-line text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim] opacity-0">
               {t.eyebrowBottom}
             </span>
           </span>
-        </motion.div>
+        </div>
 
-        {/* Headline — rendered immediately (no opacity:0 delay) for fast LCP */}
-        <h1
-          className="font-display text-balance text-[clamp(3rem,9vw,9.5rem)] leading-[0.92] tracking-[-0.025em] text-[--color-fg] animate-reveal"
-        >
-          {t.headlineBefore}
+        {/* Headline — rendered immediately visible via clip-path (LCP safe) */}
+        <h1 className="font-display text-balance text-[clamp(3rem,9vw,9.5rem)] leading-[0.92] tracking-[-0.025em] text-[--color-fg]">
+          <WordSplit text={t.headlineBefore} />
           <br />
-          <span className="italic text-[--color-accent]">
-            {t.headlineItalic}
+          <span className="inline-block overflow-hidden">
+            <span className="hero-word inline-block italic text-[--color-accent]">
+              {t.headlineItalic}
+            </span>
           </span>
-          {t.headlineAfter}
+          <WordSplit text={t.headlineAfter.trimStart()} />
         </h1>
 
         {/* Subhead */}
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease, delay: 0.9 }}
-          className="mt-12 md:mt-16 max-w-2xl text-pretty text-base md:text-lg leading-relaxed text-[--color-fg-muted]"
-        >
+        <p className="hero-subhead mt-12 md:mt-16 max-w-2xl text-pretty text-base md:text-lg leading-relaxed text-[--color-fg-muted] opacity-0">
           {t.subhead}
-        </motion.p>
+        </p>
 
         {/* Supporting tagline */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease, delay: 1.05 }}
-          className="mt-8 md:mt-10 flex items-center gap-3"
-        >
-          <span className="h-px w-6 bg-[--color-line-strong]" />
-          <span className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[--color-accent] font-medium">
+        <div className="mt-8 md:mt-10 flex items-center gap-3">
+          <span className="hero-tagline-line h-px bg-[--color-line-strong]" style={{ width: 0 }} />
+          <span className="hero-tagline-text font-mono text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[--color-accent] font-medium opacity-0">
             {t.tagline}
           </span>
-        </motion.div>
+        </div>
 
         {/* CTA row */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease, delay: 1.25 }}
-          className="mt-10 md:mt-14 flex flex-wrap items-center gap-6"
-        >
-          <motion.a
+        <div className="mt-10 md:mt-14 flex flex-wrap items-center gap-6">
+          <a
             href="#apply"
-            className="group relative inline-flex items-center gap-3 px-7 py-4 bg-[--color-fg] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-accent] hover:text-[--color-bg] transition-all duration-500 rounded-full overflow-hidden"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ duration: 0.25, ease }}
+            className="hero-cta group relative inline-flex items-center gap-3 px-7 py-4 bg-[--color-fg] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-accent] hover:text-[--color-bg] transition-all duration-500 rounded-full overflow-hidden opacity-0"
           >
             <span className="relative z-10">{t.ctaPrimary}</span>
             <svg
@@ -153,43 +252,29 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
                 strokeLinecap="round"
               />
             </svg>
-          </motion.a>
+          </a>
           <a
             href="#console"
-            className="text-sm text-[--color-fg-muted] hover:text-[--color-fg] transition-colors duration-300 underline underline-offset-4 decoration-[--color-line-strong] hover:decoration-[--color-fg]"
+            className="hero-cta text-sm text-[--color-fg-muted] hover:text-[--color-fg] transition-colors duration-300 underline underline-offset-4 decoration-[--color-line-strong] hover:decoration-[--color-fg] opacity-0"
           >
             {t.ctaSecondary}
           </a>
-        </motion.div>
+        </div>
 
         {/* Trust strip — only verifiable real counts */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.4, ease, delay: 1.4 }}
-          className="mt-16 md:mt-20 flex flex-wrap items-center gap-10 md:gap-14"
-        >
+        <div className="hero-stats mt-16 md:mt-20 flex flex-wrap items-center gap-10 md:gap-14 opacity-0">
           <TrustStat value="6" label={t.liveDeployments} />
           <TrustStat value="3" label={t.inActiveBuild} />
-        </motion.div>
+        </div>
       </div>
 
-      {/* Scroll affordance — placeholder marker for next block */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.5, delay: 2 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
-      >
+      {/* Scroll affordance */}
+      <div className="hero-scroll absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-0">
         <span className="text-[10px] uppercase tracking-[0.3em] text-[--color-fg-dim]">
           {t.scroll}
         </span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-          className="w-px h-10 bg-gradient-to-b from-[--color-fg-dim] to-transparent"
-        />
-      </motion.div>
+        <div className="hero-scroll-bar w-px h-10 bg-gradient-to-b from-[--color-fg-dim] to-transparent" />
+      </div>
     </section>
   );
 }

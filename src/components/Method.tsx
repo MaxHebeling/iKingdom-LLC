@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -218,9 +219,27 @@ const COPY = {
 export default function Method({ lang = "en" }: { lang?: Lang }) {
   const [openTier, setOpenTier] = useState<string | null>(null);
   const t = COPY[lang];
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      gsap.to(".method-headline", {
+        yPercent: -20,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+    },
+    { scope: sectionRef }
+  );
 
   return (
     <section
+      ref={sectionRef}
       id="method"
       aria-label={lang === "es" ? "Método" : "Method"}
       className="relative py-32 md:py-48 border-t border-[--color-line]"
@@ -245,7 +264,7 @@ export default function Method({ lang = "en" }: { lang?: Lang }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.4, ease }}
-          className="font-display text-balance text-[clamp(2.25rem,6vw,5.5rem)] leading-[0.95] tracking-[-0.02em] max-w-5xl"
+          className="method-headline font-display text-balance text-[clamp(2.25rem,6vw,5.5rem)] leading-[0.95] tracking-[-0.02em] max-w-5xl"
         >
           {t.headlineLine1}
           <br />

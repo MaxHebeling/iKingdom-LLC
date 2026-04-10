@@ -5,6 +5,8 @@ import JsonLdSchemas from "@/components/JsonLdSchemas";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import MetaPixel from "@/components/MetaPixel";
 import CookieConsent from "@/components/CookieConsent";
+import MagneticCursor from "@/components/MagneticCursor";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -142,8 +144,11 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        {children}
-        <CookieConsent />
+        <MagneticCursor />
+        <SmoothScroll>
+          {children}
+          <CookieConsent />
+        </SmoothScroll>
       </body>
     </html>
   );
