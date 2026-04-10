@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
+import BackgroundDepth from "@/components/BackgroundDepth";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -44,7 +45,10 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${instrumentSerif.variable} antialiased`}
     >
-      <body className="relative">{children}</body>
+      <body className="relative">
+        <BackgroundDepth />
+        {children}
+      </body>
     </html>
   );
 }
