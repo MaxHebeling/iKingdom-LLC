@@ -228,9 +228,8 @@ export default function ChatWidget() {
                 alt="Channel — iKingdom Assistant"
                 width={60}
                 height={60}
-                loading="eager"
-                decoding="sync"
-                fetchPriority="high"
+                loading="lazy"
+                decoding="async"
                 className="h-[60px] w-[60px] rounded-full object-cover"
               />
               {/* Online indicator */}

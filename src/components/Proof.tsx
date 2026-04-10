@@ -188,6 +188,7 @@ export default function Proof({ lang = "en" }: { lang?: Lang }) {
   return (
     <section
       id="proof"
+      aria-label={lang === "es" ? "Pruebas" : "Proof"}
       className="relative py-32 md:py-48 border-t border-[--color-line]"
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10">

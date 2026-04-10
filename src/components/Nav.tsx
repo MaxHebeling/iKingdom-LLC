@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useEffect, useState } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { useEffect, useState, useCallback } from "react";
+import Image from "next/image";
 
 const COPY = {
   en: {
@@ -12,6 +13,8 @@ const COPY = {
       { id: "process", label: "Process" },
     ],
     apply: "Apply",
+    menuOpen: "Open navigation menu",
+    menuClose: "Close navigation menu",
   },
   es: {
     links: [
@@ -21,6 +24,8 @@ const COPY = {
       { id: "process", label: "Proceso" },
     ],
     apply: "Solicitar",
+    menuOpen: "Abrir menú de navegación",
+    menuClose: "Cerrar menú de navegación",
   },
 } as const;
 
@@ -33,6 +38,29 @@ export default function Nav({ lang = "en" }: { lang?: "en" | "es" }) {
   const progressScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   const [activeSection, setActiveSection] = useState<string>("top");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Close mobile menu on Escape key
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileMenuOpen(false);
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [mobileMenuOpen]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
@@ -53,96 +81,245 @@ export default function Nav({ lang = "en" }: { lang?: "en" | "es" }) {
     return () => observers.forEach((o) => o.disconnect());
   }, []);
 
+  const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
+
   const t = COPY[lang];
 
   return (
-    <motion.header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md">
-      <motion.div
-        style={{ opacity: bgOpacity }}
-        className="absolute inset-0 bg-[--color-bg]/90 -z-10"
-      />
-      <motion.div
-        style={{ opacity: borderOpacity }}
-        className="absolute bottom-0 inset-x-0 h-px bg-[--color-line-strong]"
-      />
+    <>
+      <motion.header
+        className="fixed top-0 inset-x-0 z-50 backdrop-blur-md"
+        role="banner"
+      >
+        <motion.div
+          style={{ opacity: bgOpacity }}
+          className="absolute inset-0 bg-[--color-bg]/90 -z-10"
+        />
+        <motion.div
+          style={{ opacity: borderOpacity }}
+          className="absolute bottom-0 inset-x-0 h-px bg-[--color-line-strong]"
+        />
 
-      {/* Scroll progress line — gold thread that fills as you read */}
-      <motion.div
-        style={{ scaleX: progressScale, transformOrigin: "0% 50%" }}
-        className="absolute top-0 inset-x-0 h-[2px] bg-[--color-accent] origin-left z-10"
-      />
+        {/* Scroll progress line */}
+        <motion.div
+          style={{ scaleX: progressScale, transformOrigin: "0% 50%" }}
+          className="absolute top-0 inset-x-0 h-[2px] bg-[--color-accent] origin-left z-10"
+          aria-hidden="true"
+        />
 
-      <nav className="max-w-[1400px] mx-auto px-6 md:px-10 h-16 md:h-20 flex items-center justify-between">
-        <a href="#top" className="block hover:opacity-80 transition-opacity duration-500">
-          <img
-            src="/ikingdom-logo.png?v=1"
-            alt="iKingdom"
-            width={140}
-            height={36}
-            className="h-7 md:h-9 w-auto"
-            loading="eager"
-            decoding="sync"
-          />
-        </a>
-        <div className="flex items-center gap-8">
-          {t.links.map((link) => {
-            const isActive = activeSection === link.id;
-            return (
+        <nav
+          className="max-w-[1400px] mx-auto px-6 md:px-10 h-16 md:h-20 flex items-center justify-between"
+          aria-label="Main navigation"
+        >
+          <a
+            href="#top"
+            className="block hover:opacity-80 transition-opacity duration-500"
+          >
+            <Image
+              src="/ikingdom-logo.png"
+              alt="iKingdom — AI Operations Firm | Autonomous Business Automation"
+              width={140}
+              height={36}
+              className="h-7 md:h-9 w-auto"
+              priority
+            />
+          </a>
+          <div className="flex items-center gap-8">
+            {/* Desktop nav links */}
+            {t.links.map((link) => {
+              const isActive = activeSection === link.id;
+              return (
+                <a
+                  key={link.id}
+                  href={`#${link.id}`}
+                  aria-current={isActive ? "true" : undefined}
+                  className={`hidden md:inline-flex items-center gap-2 text-sm transition-colors duration-300 ${
+                    isActive
+                      ? "text-[--color-fg]"
+                      : "text-[--color-fg-muted] hover:text-[--color-fg]"
+                  }`}
+                >
+                  <motion.span
+                    animate={{
+                      width: isActive ? 16 : 0,
+                      opacity: isActive ? 1 : 0,
+                    }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    className="block h-px bg-[--color-accent]"
+                    aria-hidden="true"
+                  />
+                  {link.label}
+                </a>
+              );
+            })}
+
+            {/* Apply CTA */}
+            <motion.a
+              href="#apply"
+              className="text-sm tracking-wide px-5 py-2.5 bg-[--color-fg] text-[--color-bg] hover:bg-[--color-accent] hover:text-[--color-bg] transition-all duration-500 rounded-full"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {t.apply}
+            </motion.a>
+
+            {/* Language toggle */}
+            <div
+              className="hidden md:flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em]"
+              role="group"
+              aria-label="Language selector"
+            >
               <a
-                key={link.id}
-                href={`#${link.id}`}
-                className={`hidden md:inline-flex items-center gap-2 text-sm transition-colors duration-300 ${
-                  isActive
+                href="/"
+                aria-current={lang === "en" ? "page" : undefined}
+                hrefLang="en"
+                className={`transition-colors ${
+                  lang === "en"
                     ? "text-[--color-fg]"
-                    : "text-[--color-fg-muted] hover:text-[--color-fg]"
+                    : "text-[--color-fg-dim] hover:text-[--color-fg]"
                 }`}
               >
-                <motion.span
-                  animate={{
-                    width: isActive ? 16 : 0,
-                    opacity: isActive ? 1 : 0,
-                  }}
-                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                  className="block h-px bg-[--color-accent]"
-                />
-                {link.label}
+                EN
               </a>
-            );
-          })}
-          <a
-            href="#apply"
-            className="text-sm tracking-wide px-5 py-2.5 bg-[--color-fg] text-[--color-bg] hover:bg-[--color-accent] hover:text-[--color-bg] transition-all duration-500 rounded-full"
-          >
-            {t.apply}
-          </a>
-          {/* Language toggle — far right corner, both options always visible */}
-          <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em]">
-            <a
-              href="/"
-              aria-current={lang === "en" ? "page" : undefined}
-              className={`transition-colors ${
-                lang === "en"
-                  ? "text-[--color-fg]"
-                  : "text-[--color-fg-dim] hover:text-[--color-fg]"
-              }`}
+              <span className="text-[--color-fg-dim]" aria-hidden="true">
+                /
+              </span>
+              <a
+                href="/es"
+                aria-current={lang === "es" ? "page" : undefined}
+                hrefLang="es"
+                className={`transition-colors ${
+                  lang === "es"
+                    ? "text-[--color-fg]"
+                    : "text-[--color-fg-dim] hover:text-[--color-fg]"
+                }`}
+              >
+                ES
+              </a>
+            </div>
+
+            {/* Mobile hamburger button */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              aria-expanded={mobileMenuOpen}
+              aria-label={mobileMenuOpen ? t.menuClose : t.menuOpen}
+              className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5"
             >
-              EN
-            </a>
-            <span className="text-[--color-fg-dim]">/</span>
-            <a
-              href="/es"
-              aria-current={lang === "es" ? "page" : undefined}
-              className={`transition-colors ${
-                lang === "es"
-                  ? "text-[--color-fg]"
-                  : "text-[--color-fg-dim] hover:text-[--color-fg]"
-              }`}
-            >
-              ES
-            </a>
+              <motion.span
+                animate={
+                  mobileMenuOpen
+                    ? { rotate: 45, y: 4 }
+                    : { rotate: 0, y: 0 }
+                }
+                transition={{ duration: 0.3 }}
+                className="block w-5 h-px bg-[--color-fg]"
+              />
+              <motion.span
+                animate={
+                  mobileMenuOpen ? { opacity: 0 } : { opacity: 1 }
+                }
+                transition={{ duration: 0.2 }}
+                className="block w-5 h-px bg-[--color-fg]"
+              />
+              <motion.span
+                animate={
+                  mobileMenuOpen
+                    ? { rotate: -45, y: -4 }
+                    : { rotate: 0, y: 0 }
+                }
+                transition={{ duration: 0.3 }}
+                className="block w-5 h-px bg-[--color-fg]"
+              />
+            </button>
           </div>
-        </div>
-      </nav>
-    </motion.header>
+        </nav>
+      </motion.header>
+
+      {/* Mobile menu overlay */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-40 md:hidden"
+          >
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-[--color-bg]/95 backdrop-blur-sm"
+              onClick={closeMobileMenu}
+              aria-hidden="true"
+            />
+
+            {/* Menu content */}
+            <motion.nav
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="relative pt-24 px-6 flex flex-col gap-8"
+              aria-label="Mobile navigation"
+            >
+              {t.links.map((link, i) => (
+                <motion.a
+                  key={link.id}
+                  href={`#${link.id}`}
+                  onClick={closeMobileMenu}
+                  initial={{ opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: i * 0.06,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="font-display text-4xl tracking-[-0.015em] text-[--color-fg] hover:text-[--color-accent] transition-colors duration-300"
+                >
+                  {link.label}
+                </motion.a>
+              ))}
+
+              {/* Mobile language toggle */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="flex items-center gap-3 mt-4 text-sm font-semibold uppercase tracking-[0.18em]"
+              >
+                <a
+                  href="/"
+                  onClick={closeMobileMenu}
+                  hrefLang="en"
+                  className={`transition-colors ${
+                    lang === "en"
+                      ? "text-[--color-fg]"
+                      : "text-[--color-fg-dim] hover:text-[--color-fg]"
+                  }`}
+                >
+                  EN
+                </a>
+                <span className="text-[--color-fg-dim]" aria-hidden="true">
+                  /
+                </span>
+                <a
+                  href="/es"
+                  onClick={closeMobileMenu}
+                  hrefLang="es"
+                  className={`transition-colors ${
+                    lang === "es"
+                      ? "text-[--color-fg]"
+                      : "text-[--color-fg-dim] hover:text-[--color-fg]"
+                  }`}
+                >
+                  ES
+                </a>
+              </motion.div>
+            </motion.nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

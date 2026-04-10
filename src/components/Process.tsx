@@ -77,6 +77,7 @@ export default function Process({ lang = "en" }: { lang?: Lang }) {
   return (
     <section
       id="process"
+      aria-label={lang === "es" ? "Proceso" : "Process"}
       className="relative py-32 md:py-48 border-t border-[--color-line]"
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10">

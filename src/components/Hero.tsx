@@ -60,6 +60,7 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
   return (
     <section
       id="top"
+      aria-label={lang === "es" ? "Inicio" : "Hero"}
       className="relative min-h-screen flex flex-col justify-center overflow-hidden"
     >
       {/* Cinematic spotlight wash */}
@@ -132,17 +133,21 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
           transition={{ duration: 1.2, ease, delay: 1.25 }}
           className="mt-10 md:mt-14 flex flex-wrap items-center gap-6"
         >
-          <a
+          <motion.a
             href="#apply"
-            className="group relative inline-flex items-center gap-3 px-7 py-4 bg-[--color-fg] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-accent] hover:text-[--color-bg] transition-all duration-500 rounded-full"
+            className="group relative inline-flex items-center gap-3 px-7 py-4 bg-[--color-fg] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-accent] hover:text-[--color-bg] transition-all duration-500 rounded-full overflow-hidden"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ duration: 0.25, ease }}
           >
-            {t.ctaPrimary}
+            <span className="relative z-10">{t.ctaPrimary}</span>
             <svg
               width="14"
               height="14"
               viewBox="0 0 14 14"
               fill="none"
-              className="transition-transform duration-500 group-hover:translate-x-1"
+              aria-hidden="true"
+              className="relative z-10 transition-transform duration-500 group-hover:translate-x-1"
             >
               <path
                 d="M1 7H13M13 7L7.5 1.5M13 7L7.5 12.5"
@@ -151,7 +156,7 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
                 strokeLinecap="round"
               />
             </svg>
-          </a>
+          </motion.a>
           <a
             href="#console"
             className="text-sm text-[--color-fg-muted] hover:text-[--color-fg] transition-colors duration-300 underline underline-offset-4 decoration-[--color-line-strong] hover:decoration-[--color-fg]"

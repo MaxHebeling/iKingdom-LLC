@@ -1,36 +1,81 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
-import Method from "@/components/Method";
-import Capabilities from "@/components/Capabilities";
-import Continuity from "@/components/Continuity";
-import Process from "@/components/Process";
-import OperationsConsole from "@/components/OperationsConsole";
-import Proof from "@/components/Proof";
-import Application from "@/components/Application";
 import Footer from "@/components/Footer";
-import AgentTrace from "@/components/AgentTrace";
-import PulseTicker from "@/components/PulseTicker";
-import ChatWidget from "@/components/ChatWidget";
-import EngagementTracker from "@/components/EngagementTracker";
+
+const Method = dynamic(() => import("@/components/Method"));
+const Capabilities = dynamic(() => import("@/components/Capabilities"));
+const Continuity = dynamic(() => import("@/components/Continuity"));
+const Process = dynamic(() => import("@/components/Process"));
+const OperationsConsole = dynamic(
+  () => import("@/components/OperationsConsole"),
+);
+const Proof = dynamic(() => import("@/components/Proof"));
+const Application = dynamic(() => import("@/components/Application"));
+const AgentTrace = dynamic(() => import("@/components/AgentTrace"));
+const PulseTicker = dynamic(() => import("@/components/PulseTicker"));
+const ChatWidget = dynamic(() => import("@/components/ChatWidget"));
+const EngagementTracker = dynamic(
+  () => import("@/components/EngagementTracker"),
+);
 
 export const metadata: Metadata = {
-  title: "iKingdom — La primera firma de operaciones de IA del mundo",
+  title:
+    "iKingdom — La Primera Firma de Operaciones de IA | Automatizacion Empresarial con IA | San Diego",
   description:
-    "iKingdom diseña y despliega operaciones autónomas de IA para empresas ambiciosas. Ochenta agentes. Nueve niveles. Una empresa completamente automatizada. Solo por solicitud.",
+    "iKingdom es la primera firma de operaciones de IA del mundo. Desplegamos 80 agentes autonomos de IA en 9 niveles para automatizar tu empresa completa — desde captura de prospectos hasta facturacion. Automatizacion empresarial y consultoria de IA para empresas de $1M-$100M. San Diego, CA. Solo por solicitud.",
+  keywords: [
+    "operaciones de IA",
+    "firma de operaciones de IA",
+    "automatizacion empresarial",
+    "automatizacion de IA",
+    "consultoria de IA",
+    "agentes autonomos de IA",
+    "automatizacion de procesos de negocio",
+    "despliegue de agentes de IA",
+    "soluciones de IA empresarial",
+    "IA para negocios",
+    "empresa de IA San Diego",
+  ],
   alternates: {
-    canonical: "https://ikingdom.org/es",
+    canonical: "https://www.ikingdom.org/es",
     languages: {
-      en: "https://ikingdom.org/",
-      es: "https://ikingdom.org/es",
+      en: "https://www.ikingdom.org",
+      es: "https://www.ikingdom.org/es",
     },
   },
   openGraph: {
-    title: "iKingdom — La primera firma de operaciones de IA del mundo",
+    title: "iKingdom — La Primera Firma de Operaciones de IA del Mundo",
     description:
-      "Ochenta agentes. Nueve niveles. Una empresa completamente automatizada. Solo por solicitud.",
+      "La primera firma de operaciones de IA del mundo. 80 agentes autonomos. 9 niveles operacionales. Construimos empresas que se operan solas. Inversion desde $35K. Solo por solicitud.",
     type: "website",
     locale: "es_ES",
+    alternateLocale: "en_US",
+    url: "https://www.ikingdom.org/es",
+    siteName: "iKingdom",
+    images: [
+      {
+        url: "/ikingdom-logo.png",
+        width: 1200,
+        height: 630,
+        alt: "iKingdom — La primera firma de operaciones de IA del mundo que despliega agentes autonomos para automatizacion empresarial",
+        type: "image/png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "iKingdom — La Primera Firma de Operaciones de IA del Mundo",
+    description:
+      "La primera firma de operaciones de IA. 80 agentes de IA. 9 niveles. Construimos empresas que se operan solas. San Diego, CA.",
+    images: ["/ikingdom-logo.png"],
+  },
+  other: {
+    "geo.region": "US-CA",
+    "geo.placename": "San Diego",
+    "geo.position": "32.7157;-117.1611",
+    ICBM: "32.7157, -117.1611",
   },
 };
 
@@ -41,7 +86,7 @@ export default function HomeES() {
       <Nav lang="es" />
       <AgentTrace lang="es" />
       <PulseTicker />
-      <main className="relative">
+      <main id="main-content" className="relative">
         <Hero lang="es" />
         <Method lang="es" />
         <Capabilities lang="es" />

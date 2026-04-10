@@ -1,6 +1,9 @@
 {
-  "name": "iKingdom",
+  "name": "iKingdom — AI Operations Firm",
   "short_name": "iKingdom",
+  "description": "The world's first AI operations firm. 80 agents, 9 tiers, one autonomous business.",
+  "start_url": "/",
+  "id": "/",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -15,7 +18,10 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  "theme_color": "#fbfbfa",
+  "background_color": "#fbfbfa",
+  "display": "standalone",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["business", "technology"]
 }

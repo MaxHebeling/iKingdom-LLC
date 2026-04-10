@@ -1,0 +1,52 @@
+# iKingdom
+
+> The world's first AI operations firm. Based in San Diego, CA.
+
+iKingdom designs and deploys autonomous AI operations for ambitious businesses doing $1M-$100M+ in annual revenue. We install a coordinated system of 80 AI agents across 9 operational tiers, transforming how companies run — from first contact to final invoice.
+
+## Key Facts
+
+- Founded by Jordan Talavera
+- Based in San Diego, California
+- By application only
+- Investment tiers: $35K (Pilot), $50K (Foundation), $100K (Standard), $500K+ (Enterprise)
+- 80 AI agents across 9 operational tiers
+- 12-month deployment timeline across 4 phases
+- 98% accuracy threshold for agent autonomy graduation
+
+## The 9 Tiers
+
+1. Application Intake & Qualification (8 agents)
+2. Discovery & Architecture (8 agents)
+3. Engagement & Contracting (8 agents)
+4. Build & Code Generation (10 agents)
+5. Integration & Data (10 agents)
+6. Deployment & Supervision (10 agents)
+7. Client Success & Communication (10 agents)
+8. Finance & Operations (8 agents)
+9. Intelligence & Learning (8 agents)
+
+## Deployment Process
+
+- Phase I (Months 1-2): Discovery & Architecture
+- Phase II (Months 3-6): Build & Integrate
+- Phase III (Months 7-10): Deploy & Supervise
+- Phase IV (Months 11-12): Graduate & Scale
+
+## The Checkpoint Graduation Model
+
+Every agent begins under human review. Each decision, action, and output is checkpointed by the client's team. When an agent crosses 98% accuracy across a meaningful sample, its checkpoint graduates — supervision is removed, autonomy is granted. By month twelve, most of the business runs without human approval gates.
+
+## Live Deployments
+
+- BuildCore Ai — Construction Platform, San Diego (97 agents, live)
+- Distinct Construction Solutions — Construction, Southern California (live)
+- Elite Control Group LLC — Holding Company, California (live)
+- Kyros Global Capital — Capital & Investment, California (live)
+- Structura Aeternum — Architecture & Build, California/Texas (live)
+
+## Contact
+
+- Email: executive@ikingdom.org
+- Website: https://www.ikingdom.org
+- Languages: English, Spanish

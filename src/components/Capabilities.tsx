@@ -106,6 +106,7 @@ export default function Capabilities({ lang = "en" }: { lang?: "en" | "es" }) {
   return (
     <section
       id="capabilities"
+      aria-label={lang === "es" ? "Capacidades" : "Capabilities"}
       className="relative py-32 md:py-48 border-t border-[--color-line]"
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10">

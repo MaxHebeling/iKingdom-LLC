@@ -64,6 +64,7 @@ export default function Continuity({ lang = "en" }: { lang?: "en" | "es" }) {
   return (
     <section
       id="continuity"
+      aria-label={lang === "es" ? "Continuidad" : "Continuity"}
       className="relative py-32 md:py-48 border-t border-[--color-line]"
     >
       <div className="max-w-[1400px] mx-auto px-6 md:px-10">

@@ -361,6 +361,7 @@ export default function OperationsConsole({ lang = "en" }: { lang?: Lang } = {})
   return (
     <section
       id="console"
+      aria-label={lang === "es" ? "Consola de Operaciones" : "Operations Console"}
       className="relative py-32 md:py-48 border-t border-[--color-line] overflow-hidden"
     >
       <div className="relative max-w-[1400px] mx-auto px-6 md:px-10">

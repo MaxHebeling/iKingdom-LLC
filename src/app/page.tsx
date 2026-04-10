@@ -1,17 +1,24 @@
+import dynamic from "next/dynamic";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
-import Method from "@/components/Method";
-import Capabilities from "@/components/Capabilities";
-import Continuity from "@/components/Continuity";
-import Process from "@/components/Process";
-import OperationsConsole from "@/components/OperationsConsole";
-import Proof from "@/components/Proof";
-import Application from "@/components/Application";
 import Footer from "@/components/Footer";
-import AgentTrace from "@/components/AgentTrace";
-import PulseTicker from "@/components/PulseTicker";
-import ChatWidget from "@/components/ChatWidget";
-import EngagementTracker from "@/components/EngagementTracker";
+
+// Heavy below-fold components loaded dynamically to reduce initial JS bundle
+const Method = dynamic(() => import("@/components/Method"));
+const Capabilities = dynamic(() => import("@/components/Capabilities"));
+const Continuity = dynamic(() => import("@/components/Continuity"));
+const Process = dynamic(() => import("@/components/Process"));
+const OperationsConsole = dynamic(
+  () => import("@/components/OperationsConsole"),
+);
+const Proof = dynamic(() => import("@/components/Proof"));
+const Application = dynamic(() => import("@/components/Application"));
+const AgentTrace = dynamic(() => import("@/components/AgentTrace"));
+const PulseTicker = dynamic(() => import("@/components/PulseTicker"));
+const ChatWidget = dynamic(() => import("@/components/ChatWidget"));
+const EngagementTracker = dynamic(
+  () => import("@/components/EngagementTracker"),
+);
 
 export default function Home() {
   return (
@@ -20,7 +27,7 @@ export default function Home() {
       <Nav lang="en" />
       <AgentTrace lang="en" />
       <PulseTicker />
-      <main className="relative">
+      <main id="main-content" className="relative">
         <Hero lang="en" />
         <Method lang="en" />
         <Capabilities lang="en" />
