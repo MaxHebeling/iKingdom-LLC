@@ -190,8 +190,13 @@ export default function ChatWidget() {
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/assistant.jpg"
+                src="/assistant.jpg?v=2"
                 alt="Channel — iKingdom Assistant"
+                width={60}
+                height={60}
+                loading="eager"
+                decoding="sync"
+                fetchPriority="high"
                 className="h-[60px] w-[60px] rounded-full object-cover"
               />
               {/* Online indicator */}
@@ -224,8 +229,12 @@ export default function ChatWidget() {
                 <div className="relative h-10 w-10 flex-shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="/assistant.jpg"
+                    src="/assistant.jpg?v=2"
                     alt="Channel"
+                    width={40}
+                    height={40}
+                    loading="eager"
+                    decoding="sync"
                     className="h-10 w-10 rounded-full object-cover ring-2 ring-[#c9a96e]/60"
                   />
                   <span
@@ -339,8 +348,12 @@ export default function ChatWidget() {
                     {m.role === "assistant" && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src="/assistant.jpg"
+                        src="/assistant.jpg?v=2"
                         alt="Channel"
+                        width={28}
+                        height={28}
+                        loading="eager"
+                        decoding="sync"
                         className="h-7 w-7 flex-shrink-0 rounded-full object-cover ring-1 ring-[#c9a96e]/50"
                       />
                     )}
@@ -364,8 +377,12 @@ export default function ChatWidget() {
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src="/assistant.jpg"
+                      src="/assistant.jpg?v=2"
                       alt="Channel"
+                      width={28}
+                      height={28}
+                      loading="eager"
+                      decoding="sync"
                       className="h-7 w-7 flex-shrink-0 rounded-full object-cover ring-1 ring-[#c9a96e]/50"
                     />
                     <div className="flex items-center gap-1.5 rounded-2xl border border-[var(--color-line-strong)] bg-[var(--color-bg-elevated)] px-4 py-3">

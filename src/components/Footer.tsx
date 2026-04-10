@@ -5,9 +5,13 @@ export default function Footer() {
       <div className="max-w-[1400px] mx-auto px-6 md:px-10">
         <div className="grid md:grid-cols-12 gap-12">
           <div className="md:col-span-5">
-            <p className="font-display text-3xl md:text-4xl tracking-tight">
-              iKingdom
-            </p>
+            <img
+              src="/ikingdom-logo.png?v=1"
+              alt="iKingdom"
+              width={220}
+              height={56}
+              className="h-10 md:h-12 w-auto"
+            />
             <p className="mt-4 text-sm text-[--color-fg-muted] max-w-sm leading-relaxed">
               The world's first AI operations firm. Designing and deploying
               autonomous companies for those building what comes next.

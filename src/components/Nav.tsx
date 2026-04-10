@@ -57,11 +57,16 @@ export default function Nav() {
       />
 
       <nav className="max-w-[1400px] mx-auto px-6 md:px-10 h-16 md:h-20 flex items-center justify-between">
-        <a
-          href="#top"
-          className="font-display text-2xl md:text-[28px] tracking-tight text-[--color-fg] hover:text-[--color-accent] transition-colors duration-500"
-        >
-          iKingdom
+        <a href="#top" className="block hover:opacity-80 transition-opacity duration-500">
+          <img
+            src="/ikingdom-logo.png?v=1"
+            alt="iKingdom"
+            width={140}
+            height={36}
+            className="h-7 md:h-9 w-auto"
+            loading="eager"
+            decoding="sync"
+          />
         </a>
         <div className="flex items-center gap-8">
           {NAV_LINKS.map((link) => {
