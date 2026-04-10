@@ -4,11 +4,11 @@ import Footer from "@/components/Footer";
 import ContactForm from "../../contact/ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contacto — Ponte en Contacto | iKingdom",
+  title: "Contacto — Ponte en Contacto",
   description:
     "Comun\u00EDcate con iKingdom para consultor\u00EDa en operaciones de IA, despliegue de agentes aut\u00F3nomos y automatizaci\u00F3n empresarial. Con sede en San Diego, CA.",
   openGraph: {
-    title: "Contacto — Ponte en Contacto | iKingdom",
+    title: "Contacto — Ponte en Contacto",
     description:
       "Comun\u00EDcate con iKingdom para consultor\u00EDa en operaciones de IA y despliegue de agentes aut\u00F3nomos.",
     type: "website",

@@ -12,6 +12,12 @@ export const metadata: Metadata = {
       es: "https://www.ikingdom.org/es/terms",
     },
   },
+  openGraph: {
+    title: "Terms of Service | iKingdom",
+    description: "Terms governing use of iKingdom website and AI operations services.",
+    url: "https://www.ikingdom.org/terms",
+    type: "website",
+  },
 };
 
 const sections = [

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Nosotros — iKingdom",
+  title: "Nosotros — La Firma Detrás del Sistema",
   description:
     "iKingdom es la primera firma de operaciones con IA del mundo. Fundada por Jordan Talavera en San Diego, CA. 80 agentes, 9 niveles, operaciones totalmente autonomas.",
   alternates: {
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Nosotros — iKingdom",
+    title: "Nosotros — La Firma Detrás del Sistema",
     description:
       "La firma detras del sistema. Conoce a iKingdom, nuestro fundador Jordan Talavera y como desplegamos 80 agentes de IA en 9 niveles.",
     url: "https://www.ikingdom.org/es/about",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nosotros — iKingdom",
+    title: "Nosotros — La Firma Detrás del Sistema",
     description:
       "La firma detras del sistema. 80 agentes de IA. 9 niveles. Fundada por Jordan Talavera en San Diego, CA.",
     images: ["/og-image.png"],

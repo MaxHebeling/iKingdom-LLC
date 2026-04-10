@@ -12,6 +12,12 @@ export const metadata: Metadata = {
       es: "https://www.ikingdom.org/es/privacy",
     },
   },
+  openGraph: {
+    title: "Privacy Policy | iKingdom",
+    description: "How iKingdom collects, uses, and protects your data. CCPA compliant.",
+    url: "https://www.ikingdom.org/privacy",
+    type: "website",
+  },
 };
 
 const sections = [

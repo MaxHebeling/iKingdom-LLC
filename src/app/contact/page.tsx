@@ -4,11 +4,11 @@ import Footer from "@/components/Footer";
 import ContactForm from "./ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contact — Get in Touch | iKingdom",
+  title: "Contact — Get in Touch",
   description:
     "Reach out to iKingdom for AI operations consulting, autonomous agent deployment, and business automation inquiries. Based in San Diego, CA.",
   openGraph: {
-    title: "Contact — Get in Touch | iKingdom",
+    title: "Contact — Get in Touch",
     description:
       "Reach out to iKingdom for AI operations consulting and autonomous agent deployment.",
     type: "website",

@@ -23,7 +23,7 @@ const EngagementTracker = dynamic(
 
 export const metadata: Metadata = {
   title:
-    "La Primera Firma de Operaciones de IA | Automatización Empresarial | San Diego",
+    "Primera Firma de Operaciones de IA | San Diego",
   description:
     "Desplegamos 80 agentes autónomos de IA en 9 niveles para automatizar tu empresa. Inversión desde $35K. San Diego, CA. Solo por solicitud.",
   keywords: [

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "About — iKingdom",
+  title: "About — The Firm Behind the System",
   description:
     "iKingdom is the world's first AI operations firm. Founded by Jordan Talavera in San Diego, CA. 80 agents, 9 tiers, full autonomous operations.",
   alternates: {
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "About — iKingdom",
+    title: "About — The Firm Behind the System",
     description:
       "The firm behind the system. Learn about iKingdom, our founder Jordan Talavera, and how we deploy 80 AI agents across 9 tiers.",
     url: "https://www.ikingdom.org/about",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "About — iKingdom",
+    title: "About — The Firm Behind the System",
     description:
       "The firm behind the system. 80 AI agents. 9 tiers. Founded by Jordan Talavera in San Diego, CA.",
     images: ["/og-image.png"],
