@@ -7,7 +7,7 @@ const COPY = {
   en: {
     links: [
       { id: "method", label: "Method" },
-      { id: "console", label: "Live System" },
+      { id: "console", label: "System" },
       { id: "proof", label: "Proof" },
       { id: "process", label: "Process" },
     ],
@@ -16,7 +16,7 @@ const COPY = {
   es: {
     links: [
       { id: "method", label: "Método" },
-      { id: "console", label: "Sistema en Vivo" },
+      { id: "console", label: "Sistema" },
       { id: "proof", label: "Pruebas" },
       { id: "process", label: "Proceso" },
     ],

@@ -163,17 +163,17 @@ type Lang = "en" | "es";
 
 const COPY = {
   en: {
-    sectionLabel: "05 — Live System",
+    sectionLabel: "05 — System Console",
     headlineLine1: "Watch a company",
     headlineLine2: "operate itself.",
     intro:
-      "This is the dashboard we use to run iKingdom itself. Application intake, discovery, build, deployment, supervision, finance — all handled by the same architecture we install for our clients. You're looking at our own house in real time.",
-    topBar: "iKingdom · Internal Operations · Live",
-    liveBadge: "Live",
+      "This is an illustrative reconstruction of the dashboard we use to run iKingdom itself. Application intake, discovery, build, deployment, supervision, finance — all handled by the same architecture we install for our clients. Real visitor events from this page are mixed into the stream when they occur; everything else is simulated for demonstration.",
+    topBar: "iKingdom · Internal Operations · Demo",
+    liveBadge: "Demo",
     panels: {
-      eventStream: { title: "Event Stream", subtitle: "Last 60 seconds" },
-      telemetry: { title: "Today's Telemetry", subtitle: "Refreshing live" },
-      tierActivity: { title: "Tier Activity", subtitle: "Realtime utilization" },
+      eventStream: { title: "Event Stream", subtitle: "Simulated · real events when present" },
+      telemetry: { title: "Today's Telemetry", subtitle: "Illustrative" },
+      tierActivity: { title: "Tier Activity", subtitle: "Simulated utilization" },
       deployments: { title: "Deployments", subtitle: "All inbound → primary" },
     },
     kpis: {
@@ -198,20 +198,20 @@ const COPY = {
     networkStatus: "Network status",
     networkCount: "10 nodes · 1 core",
     disclaimer:
-      "Live telemetry from iKingdom's internal tenant. Some values are throttled or rounded for public display. The architecture is identical to what we install for clients.",
+      "Illustrative reconstruction of iKingdom's internal console. Real visitor events from this page are mixed into the stream when they occur; everything else is simulated for demonstration. The architecture is identical to what we install for clients.",
   },
   es: {
-    sectionLabel: "05 — Sistema en Vivo",
+    sectionLabel: "05 — Consola del Sistema",
     headlineLine1: "Mira una compañía",
     headlineLine2: "operarse sola.",
     intro:
-      "Este es el panel que usamos para operar iKingdom. Recepción de solicitudes, descubrimiento, construcción, despliegue, supervisión, finanzas — todo manejado por la misma arquitectura que instalamos para nuestros clientes. Estás viendo nuestra propia casa en tiempo real.",
-    topBar: "iKingdom · Operaciones Internas · En Vivo",
-    liveBadge: "En Vivo",
+      "Esta es una reconstrucción ilustrativa del panel que usamos para operar iKingdom. Recepción de solicitudes, descubrimiento, construcción, despliegue, supervisión, finanzas — todo manejado por la misma arquitectura que instalamos para nuestros clientes. Los eventos reales de visitantes de esta página se mezclan cuando ocurren; el resto es simulado para demostración.",
+    topBar: "iKingdom · Operaciones Internas · Demo",
+    liveBadge: "Demo",
     panels: {
-      eventStream: { title: "Flujo de Eventos", subtitle: "Últimos 60 segundos" },
-      telemetry: { title: "Telemetría de Hoy", subtitle: "Actualizando en vivo" },
-      tierActivity: { title: "Actividad por Nivel", subtitle: "Utilización en tiempo real" },
+      eventStream: { title: "Flujo de Eventos", subtitle: "Simulado · eventos reales al llegar" },
+      telemetry: { title: "Telemetría de Hoy", subtitle: "Ilustrativo" },
+      tierActivity: { title: "Actividad por Nivel", subtitle: "Utilización simulada" },
       deployments: { title: "Despliegues", subtitle: "Todo entrante → principal" },
     },
     kpis: {
@@ -236,7 +236,7 @@ const COPY = {
     networkStatus: "Estado de la red",
     networkCount: "10 nodos · 1 núcleo",
     disclaimer:
-      "Telemetría en vivo del tenant interno de iKingdom. Algunos valores son limitados o redondeados para visualización pública. La arquitectura es idéntica a la que instalamos para nuestros clientes.",
+      "Reconstrucción ilustrativa del panel interno de iKingdom. Los eventos reales de visitantes de esta página se mezclan en el flujo cuando ocurren; el resto es simulado para demostración. La arquitectura es idéntica a la que instalamos para nuestros clientes.",
   },
 } as const;
 

@@ -177,7 +177,7 @@ const COPY = {
       "When an agent crosses 98% accuracy across a meaningful sample, its checkpoint graduates — supervision is removed, autonomy is granted. The agent now runs unattended. Your people get their hours back.",
     checkpointP3:
       "By month twelve, most of your business is running without human approval gates. By month eighteen, you've stopped thinking about it.",
-    accuracyLiveLabel: "Live system accuracy",
+    accuracyLiveLabel: "System accuracy · illustrative",
     accuracyFooter:
       "Agents are released to autonomy upon reaching this accuracy",
     trendImproving: "↑ improving",
@@ -203,7 +203,7 @@ const COPY = {
       "Cuando un agente supera el 98% de precisión sobre una muestra significativa, su verificación se gradúa — la supervisión se elimina, la autonomía se otorga. El agente ahora opera sin supervisión. Tu gente recupera sus horas.",
     checkpointP3:
       "Para el mes doce, la mayor parte de tu negocio funciona sin compuertas de aprobación humana. Para el mes dieciocho, ya ni piensas en ello.",
-    accuracyLiveLabel: "Precisión del sistema en vivo",
+    accuracyLiveLabel: "Precisión del sistema · ilustrativa",
     accuracyFooter:
       "Los agentes son liberados a autonomía al alcanzar esta precisión",
     trendImproving: "↑ mejorando",

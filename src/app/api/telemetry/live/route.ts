@@ -23,8 +23,11 @@ export async function OPTIONS(): Promise<Response> {
 
 export async function GET(): Promise<Response> {
   try {
-    // Last 200 lines OR last 60 seconds of events — whichever is smaller.
-    const events = await readRecent(200, 60);
+    // Pull a generous window so the 90s active-session cutoff in aggregate()
+    // can actually see every recently-active visitor. 2000 lines covers
+    // dozens of concurrent visitors pinging every 4–8s without early sessions
+    // getting truncated off the tail.
+    const events = await readRecent(2000, 120);
     const stats = aggregate(events);
     return jsonResponse(stats);
   } catch (err) {

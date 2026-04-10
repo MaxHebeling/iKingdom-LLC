@@ -29,6 +29,7 @@ const TRACKED_SECTIONS = [
 
 const FLUSH_INTERVAL_MS = 4000;
 const IDLE_THRESHOLD_MS = 5000;
+const HEARTBEAT_INTERVAL_MS = 8000;
 const SESSION_KEY = "ikingdom:telemetry:sessionId";
 
 type QueuedEvent = {
@@ -234,6 +235,15 @@ export default function EngagementTracker() {
       }
     }, FLUSH_INTERVAL_MS);
 
+    // --- presence heartbeat ---
+    // Pure liveness ping so an idle reader who isn't scrolling or clicking
+    // still counts as a live visitor. Without this, a quiet visitor would
+    // drop out of the activeSessions count as soon as the 90s staleness
+    // window elapsed on their last real event.
+    const presenceInterval = window.setInterval(() => {
+      enqueue({ type: "heartbeat", ts: Date.now() });
+    }, HEARTBEAT_INTERVAL_MS);
+
     // --- periodic flush ---
     const flushInterval = window.setInterval(() => {
       flush(false);
@@ -278,6 +288,7 @@ export default function EngagementTracker() {
       }
       window.clearInterval(idleInterval);
       window.clearInterval(heartbeatInterval);
+      window.clearInterval(presenceInterval);
       window.clearInterval(flushInterval);
       document.removeEventListener("visibilitychange", handleVisibility);
       window.removeEventListener("pagehide", handleVisibility);
