@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
-import MarginMarks from "@/components/MarginMarks";
 
 const inter = Inter({
   variable: "--font-inter",
