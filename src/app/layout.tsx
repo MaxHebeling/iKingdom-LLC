@@ -45,10 +45,7 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${instrumentSerif.variable} antialiased`}
     >
-      <body className="relative">
-        <MarginMarks />
-        {children}
-      </body>
+      <body className="relative">{children}</body>
     </html>
   );
 }
