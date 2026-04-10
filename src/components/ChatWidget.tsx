@@ -190,7 +190,7 @@ export default function ChatWidget() {
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/channel.png?v=4"
+                src="/channel.png?v=5"
                 alt="Channel — iKingdom Assistant"
                 width={60}
                 height={60}
@@ -226,16 +226,16 @@ export default function ChatWidget() {
             {/* Header */}
             <div className="flex items-center justify-between border-b border-[var(--color-line-strong)] bg-[var(--color-bg-elevated)] px-5 py-4">
               <div className="flex items-center gap-3">
-                <div className="relative h-10 w-10 flex-shrink-0">
+                <div className="relative h-12 w-12 flex-shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="/channel.png?v=4"
+                    src="/channel.png?v=5"
                     alt="Channel"
-                    width={40}
-                    height={40}
+                    width={48}
+                    height={48}
                     loading="eager"
                     decoding="sync"
-                    className="h-10 w-10 rounded-full object-cover ring-2 ring-[#c9a96e]/60"
+                    className="h-12 w-12 rounded-full object-cover ring-2 ring-[#c9a96e]/60"
                   />
                   <span
                     aria-hidden
@@ -348,13 +348,13 @@ export default function ChatWidget() {
                     {m.role === "assistant" && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src="/channel.png?v=4"
+                        src="/channel.png?v=5"
                         alt="Channel"
-                        width={28}
-                        height={28}
+                        width={40}
+                        height={40}
                         loading="eager"
                         decoding="sync"
-                        className="h-7 w-7 flex-shrink-0 rounded-full object-cover ring-1 ring-[#c9a96e]/50"
+                        className="h-10 w-10 flex-shrink-0 rounded-full object-cover ring-1 ring-[#c9a96e]/50"
                       />
                     )}
                     <div
@@ -377,13 +377,13 @@ export default function ChatWidget() {
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src="/channel.png?v=4"
+                      src="/channel.png?v=5"
                       alt="Channel"
-                      width={28}
-                      height={28}
+                      width={40}
+                      height={40}
                       loading="eager"
                       decoding="sync"
-                      className="h-7 w-7 flex-shrink-0 rounded-full object-cover ring-1 ring-[#c9a96e]/50"
+                      className="h-10 w-10 flex-shrink-0 rounded-full object-cover ring-1 ring-[#c9a96e]/50"
                     />
                     <div className="flex items-center gap-1.5 rounded-2xl border border-[var(--color-line-strong)] bg-[var(--color-bg-elevated)] px-4 py-3">
                       <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c9a96e] [animation-delay:-0.3s]" />
