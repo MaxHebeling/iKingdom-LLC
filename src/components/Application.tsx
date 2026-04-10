@@ -222,7 +222,7 @@ export default function Application() {
               className="mt-12"
             >
               <p className="text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim] mb-6">
-                Who we deploy with
+                If this is you
               </p>
               <ul className="space-y-4">
                 {requirements.map((r) => (
