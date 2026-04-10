@@ -56,10 +56,10 @@ export const metadata: Metadata = {
     siteName: "iKingdom",
     images: [
       {
-        url: "/ikingdom-logo.png",
+        url: "/og-image-es.png",
         width: 1200,
         height: 630,
-        alt: "iKingdom — La primera firma de operaciones de IA del mundo que despliega agentes autonomos para automatizacion empresarial",
+        alt: "iKingdom — La primera firma de operaciones de IA del mundo. 80 agentes. 9 niveles. San Diego, CA.",
         type: "image/png",
       },
     ],
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     title: "iKingdom — La Primera Firma de Operaciones de IA del Mundo",
     description:
       "La primera firma de operaciones de IA. 80 agentes de IA. 9 niveles. Construimos empresas que se operan solas. San Diego, CA.",
-    images: ["/ikingdom-logo.png"],
+    images: ["/og-image-es.png"],
   },
   other: {
     "geo.region": "US-CA",
