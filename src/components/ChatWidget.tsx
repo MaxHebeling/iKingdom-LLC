@@ -1,12 +1,46 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 type ChatMessage = {
   role: "user" | "assistant";
   content: string;
 };
+
+// Minimal, SSR-safe inline markdown renderer. Handles **bold** and *italic*
+// as a fallback in case Channel slips into markdown despite the system prompt
+// instructions. Any other markdown passes through as plain text.
+function renderInlineMarkdown(text: string): React.ReactNode {
+  const parts: React.ReactNode[] = [];
+  let remaining = text;
+  let key = 0;
+
+  while (remaining.length > 0) {
+    // **bold** first (greedy-safe non-greedy match, dotall for newlines)
+    const boldMatch = remaining.match(/^([\s\S]*?)\*\*([\s\S]+?)\*\*/);
+    if (boldMatch) {
+      if (boldMatch[1]) parts.push(boldMatch[1]);
+      parts.push(<strong key={key++}>{boldMatch[2]}</strong>);
+      remaining = remaining.slice(boldMatch[0].length);
+      continue;
+    }
+    // *italic* — not adjacent to another *
+    const italicMatch = remaining.match(
+      /^([\s\S]*?)(?<!\*)\*(?!\*)([^*\n]+?)\*(?!\*)/
+    );
+    if (italicMatch) {
+      if (italicMatch[1]) parts.push(italicMatch[1]);
+      parts.push(<em key={key++}>{italicMatch[2]}</em>);
+      remaining = remaining.slice(italicMatch[0].length);
+      continue;
+    }
+    parts.push(remaining);
+    break;
+  }
+
+  return parts;
+}
 
 type Language = "en" | "es";
 
@@ -364,7 +398,9 @@ export default function ChatWidget() {
                           : "border border-[var(--color-line-strong)] bg-[var(--color-bg-elevated)] text-[var(--color-fg)]"
                       }`}
                     >
-                      {m.content}
+                      {m.role === "assistant"
+                        ? renderInlineMarkdown(m.content)
+                        : m.content}
                     </div>
                   </motion.div>
                 ))}

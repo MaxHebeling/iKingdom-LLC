@@ -13,24 +13,24 @@ import PulseTicker from "@/components/PulseTicker";
 import ChatWidget from "@/components/ChatWidget";
 import EngagementTracker from "@/components/EngagementTracker";
 
-export default function Home() {
+export default function HomeES() {
   return (
     <>
       <EngagementTracker />
-      <Nav lang="en" />
+      <Nav lang="es" />
       <AgentTrace />
       <PulseTicker />
       <main className="relative">
-        <Hero lang="en" />
-        <Method lang="en" />
-        <Capabilities lang="en" />
-        <Continuity lang="en" />
-        <Process lang="en" />
-        <OperationsConsole lang="en" />
-        <Proof lang="en" />
-        <Application lang="en" />
+        <Hero lang="es" />
+        <Method lang="es" />
+        <Capabilities lang="es" />
+        <Continuity lang="es" />
+        <Process lang="es" />
+        <OperationsConsole lang="es" />
+        <Proof lang="es" />
+        <Application lang="es" />
       </main>
-      <Footer lang="en" />
+      <Footer lang="es" />
       <ChatWidget />
     </>
   );
