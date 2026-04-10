@@ -3,16 +3,30 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useState } from "react";
 
-const NAV_LINKS = [
-  { id: "method", label: "Method" },
-  { id: "console", label: "Live System" },
-  { id: "proof", label: "Proof" },
-  { id: "process", label: "Process" },
-];
+const COPY = {
+  en: {
+    links: [
+      { id: "method", label: "Method" },
+      { id: "console", label: "Live System" },
+      { id: "proof", label: "Proof" },
+      { id: "process", label: "Process" },
+    ],
+    apply: "Apply",
+  },
+  es: {
+    links: [
+      { id: "method", label: "Método" },
+      { id: "console", label: "Sistema en Vivo" },
+      { id: "proof", label: "Pruebas" },
+      { id: "process", label: "Proceso" },
+    ],
+    apply: "Solicitar",
+  },
+} as const;
 
 const SECTION_IDS = ["top", "method", "capabilities", "process", "console", "proof", "apply"];
 
-export default function Nav() {
+export default function Nav({ lang = "en" }: { lang?: "en" | "es" }) {
   const { scrollY, scrollYProgress } = useScroll();
   const borderOpacity = useTransform(scrollY, [0, 80], [0, 1]);
   const bgOpacity = useTransform(scrollY, [0, 80], [0, 0.9]);
@@ -38,6 +52,8 @@ export default function Nav() {
     });
     return () => observers.forEach((o) => o.disconnect());
   }, []);
+
+  const t = COPY[lang];
 
   return (
     <motion.header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md">
@@ -69,7 +85,7 @@ export default function Nav() {
           />
         </a>
         <div className="flex items-center gap-8">
-          {NAV_LINKS.map((link) => {
+          {t.links.map((link) => {
             const isActive = activeSection === link.id;
             return (
               <a
@@ -93,11 +109,26 @@ export default function Nav() {
               </a>
             );
           })}
+          {lang === "en" ? (
+            <a
+              href="/es"
+              className="text-xs font-semibold uppercase tracking-[0.18em] text-[--color-fg-muted] hover:text-[--color-fg] transition-colors"
+            >
+              ES
+            </a>
+          ) : (
+            <a
+              href="/"
+              className="text-xs font-semibold uppercase tracking-[0.18em] text-[--color-fg-muted] hover:text-[--color-fg] transition-colors"
+            >
+              EN
+            </a>
+          )}
           <a
             href="#apply"
             className="text-sm tracking-wide px-5 py-2.5 bg-[--color-fg] text-[--color-bg] hover:bg-[--color-accent] hover:text-[--color-bg] transition-all duration-500 rounded-full"
           >
-            Apply
+            {t.apply}
           </a>
         </div>
       </nav>

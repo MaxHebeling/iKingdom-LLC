@@ -5,7 +5,68 @@ import { useEffect, useState } from "react";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-export default function Hero() {
+type Lang = "en" | "es";
+
+type HeroCopy = {
+  eyebrowTop: string;
+  eyebrowBottom: string;
+  headlineBefore: string;
+  headlineItalic: string;
+  headlineAfter: string;
+  subhead: string;
+  tagline: string;
+  ctaPrimary: string;
+  ctaSecondary: string;
+  liveSystem: string;
+  handlingYou: string;
+  activeAcrossClients: string;
+  liveDeployments: string;
+  inActiveBuild: string;
+  scroll: string;
+};
+
+const COPY: Record<Lang, HeroCopy> = {
+  en: {
+    eyebrowTop: "The system that scales with you",
+    eyebrowBottom: "The world's first AI operations firm",
+    headlineBefore: "We build the first",
+    headlineItalic: "companies",
+    headlineAfter: " that run themselves.",
+    subhead:
+      "We design and install autonomous AI operations inside ambitious businesses. Eighty agents. Nine tiers. From first contact to final invoice — running as one coordinated, supervised system.",
+    tagline: "Built once. Reshaped continuously. Yours forever.",
+    ctaPrimary: "Begin Application",
+    ctaSecondary: "See it run",
+    liveSystem: "Live system",
+    handlingYou: "Handling you",
+    activeAcrossClients: "Active across clients",
+    liveDeployments: "Live deployments",
+    inActiveBuild: "In active build",
+    scroll: "Scroll",
+  },
+  es: {
+    eyebrowTop: "El sistema que escala contigo",
+    eyebrowBottom: "La primera firma de operaciones de IA del mundo",
+    headlineBefore: "Construimos las primeras",
+    headlineItalic: "compañías",
+    headlineAfter: " que operan solas.",
+    subhead:
+      "Diseñamos e instalamos operaciones autónomas de IA dentro de empresas ambiciosas. Ochenta agentes. Nueve niveles. Desde el primer contacto hasta la última factura — funcionando como un sistema único, coordinado y supervisado.",
+    tagline: "Construido una vez. Reformado continuamente. Tuyo para siempre.",
+    ctaPrimary: "Iniciar solicitud",
+    ctaSecondary: "Velo en acción",
+    liveSystem: "Sistema en vivo",
+    handlingYou: "Atendiéndote",
+    activeAcrossClients: "Activos con clientes",
+    liveDeployments: "Despliegues en vivo",
+    inActiveBuild: "En construcción activa",
+    scroll: "Desliza",
+  },
+};
+
+export default function Hero({ lang = "en" }: { lang?: Lang }) {
+  const t = COPY[lang];
+
   return (
     <section
       id="top"
@@ -28,10 +89,10 @@ export default function Hero() {
           <span className="h-px w-8 bg-[--color-accent] mt-[0.55rem]" />
           <span className="flex flex-col gap-1.5">
             <span className="text-[12px] md:text-sm uppercase tracking-[0.28em] text-[--color-fg] font-medium">
-              The system that scales with you
+              {t.eyebrowTop}
             </span>
             <span className="text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
-              The world's first AI operations firm
+              {t.eyebrowBottom}
             </span>
           </span>
         </motion.div>
@@ -43,10 +104,12 @@ export default function Hero() {
           transition={{ duration: 1.4, ease, delay: 0.5 }}
           className="font-display text-balance text-[clamp(3rem,9vw,9.5rem)] leading-[0.92] tracking-[-0.025em] text-[--color-fg]"
         >
-          We build the first
+          {t.headlineBefore}
           <br />
-          <span className="italic text-[--color-accent]">companies</span>{" "}
-          that run themselves.
+          <span className="italic text-[--color-accent]">
+            {t.headlineItalic}
+          </span>
+          {t.headlineAfter}
         </motion.h1>
 
         {/* Subhead */}
@@ -56,9 +119,7 @@ export default function Hero() {
           transition={{ duration: 1.2, ease, delay: 0.9 }}
           className="mt-12 md:mt-16 max-w-2xl text-pretty text-base md:text-lg leading-relaxed text-[--color-fg-muted]"
         >
-          We design and install autonomous AI operations inside ambitious
-          businesses. Eighty agents. Nine tiers. From first contact to
-          final invoice — running as one coordinated, supervised system.
+          {t.subhead}
         </motion.p>
 
         {/* Supporting tagline */}
@@ -70,7 +131,7 @@ export default function Hero() {
         >
           <span className="h-px w-6 bg-[--color-line-strong]" />
           <span className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[--color-accent] font-medium">
-            Built once. Reshaped continuously. Yours forever.
+            {t.tagline}
           </span>
         </motion.div>
 
@@ -85,7 +146,7 @@ export default function Hero() {
             href="#apply"
             className="group relative inline-flex items-center gap-3 px-7 py-4 bg-[--color-fg] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-accent] hover:text-[--color-bg] transition-all duration-500 rounded-full"
           >
-            Begin Application
+            {t.ctaPrimary}
             <svg
               width="14"
               height="14"
@@ -105,7 +166,7 @@ export default function Hero() {
             href="#console"
             className="text-sm text-[--color-fg-muted] hover:text-[--color-fg] transition-colors duration-300 underline underline-offset-4 decoration-[--color-line-strong] hover:decoration-[--color-fg]"
           >
-            See it run
+            {t.ctaSecondary}
           </a>
         </motion.div>
 
@@ -122,7 +183,7 @@ export default function Hero() {
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[--color-accent]" />
             </span>
             <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg-dim] font-medium">
-              Live system
+              {t.liveSystem}
             </span>
           </div>
           <LiveStat
@@ -130,7 +191,7 @@ export default function Hero() {
             min={2}
             max={6}
             interval={3500}
-            label="Handling you"
+            label={t.handlingYou}
           />
           <LiveStat
             initial={47}
@@ -138,10 +199,10 @@ export default function Hero() {
             max={78}
             interval={1900}
             prefix="~"
-            label="Active across clients"
+            label={t.activeAcrossClients}
           />
-          <TrustStat value="6" label="Live deployments" />
-          <TrustStat value="3" label="In active build" />
+          <TrustStat value="6" label={t.liveDeployments} />
+          <TrustStat value="3" label={t.inActiveBuild} />
         </motion.div>
       </div>
 
@@ -153,7 +214,7 @@ export default function Hero() {
         className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
       >
         <span className="text-[10px] uppercase tracking-[0.3em] text-[--color-fg-dim]">
-          Scroll
+          {t.scroll}
         </span>
         <motion.div
           animate={{ y: [0, 8, 0] }}

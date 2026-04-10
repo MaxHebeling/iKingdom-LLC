@@ -155,7 +155,93 @@ const TIER_BARS = [
   { n: "09", name: "Intelligence", base: 0.93 },
 ];
 
-export default function OperationsConsole() {
+// ─────────────────────────────────────────────────────────────────────────────
+// Bilingual copy — UI strings only. Data arrays above (events, cities) stay
+// in English on purpose (they're log-entry / proper-noun content).
+// ─────────────────────────────────────────────────────────────────────────────
+type Lang = "en" | "es";
+
+const COPY = {
+  en: {
+    sectionLabel: "05 — Live System",
+    headlineLine1: "Watch a company",
+    headlineLine2: "operate itself.",
+    intro:
+      "This is the dashboard we use to run iKingdom itself. Application intake, discovery, build, deployment, supervision, finance — all handled by the same architecture we install for our clients. You're looking at our own house in real time.",
+    topBar: "iKingdom · Internal Operations · Live",
+    liveBadge: "Live",
+    panels: {
+      eventStream: { title: "Event Stream", subtitle: "Last 60 seconds" },
+      telemetry: { title: "Today's Telemetry", subtitle: "Refreshing live" },
+      tierActivity: { title: "Tier Activity", subtitle: "Realtime utilization" },
+      deployments: { title: "Deployments", subtitle: "All inbound → primary" },
+    },
+    kpis: {
+      liveDeployments: "Live deployments",
+      inActiveBuild: "In active build",
+      agentsPerSystem: "Agents per system",
+      functionalTiers: "Functional tiers",
+      inboundToday: "Inbound today",
+      graduationThreshold: "Graduation threshold",
+    },
+    tiers: {
+      "01": "Application Intake",
+      "02": "Discovery & Arch.",
+      "03": "Engagement",
+      "04": "Build & Code",
+      "05": "Integration & Data",
+      "06": "Deployment",
+      "07": "Client Success",
+      "08": "Finance & Ops",
+      "09": "Intelligence",
+    } as Record<string, string>,
+    networkStatus: "Network status",
+    networkCount: "10 nodes · 1 core",
+    disclaimer:
+      "Live telemetry from iKingdom's internal tenant. Some values are throttled or rounded for public display. The architecture is identical to what we install for clients.",
+  },
+  es: {
+    sectionLabel: "05 — Sistema en Vivo",
+    headlineLine1: "Mira una compañía",
+    headlineLine2: "operarse sola.",
+    intro:
+      "Este es el panel que usamos para operar iKingdom. Recepción de solicitudes, descubrimiento, construcción, despliegue, supervisión, finanzas — todo manejado por la misma arquitectura que instalamos para nuestros clientes. Estás viendo nuestra propia casa en tiempo real.",
+    topBar: "iKingdom · Operaciones Internas · En Vivo",
+    liveBadge: "En Vivo",
+    panels: {
+      eventStream: { title: "Flujo de Eventos", subtitle: "Últimos 60 segundos" },
+      telemetry: { title: "Telemetría de Hoy", subtitle: "Actualizando en vivo" },
+      tierActivity: { title: "Actividad por Nivel", subtitle: "Utilización en tiempo real" },
+      deployments: { title: "Despliegues", subtitle: "Todo entrante → principal" },
+    },
+    kpis: {
+      liveDeployments: "Despliegues en vivo",
+      inActiveBuild: "En construcción activa",
+      agentsPerSystem: "Agentes por sistema",
+      functionalTiers: "Niveles funcionales",
+      inboundToday: "Entradas hoy",
+      graduationThreshold: "Umbral de graduación",
+    },
+    tiers: {
+      "01": "Recepción de Solicitudes",
+      "02": "Descubrimiento y Arq.",
+      "03": "Compromiso",
+      "04": "Construcción y Código",
+      "05": "Integración y Datos",
+      "06": "Despliegue",
+      "07": "Éxito del Cliente",
+      "08": "Finanzas y Ops",
+      "09": "Inteligencia",
+    } as Record<string, string>,
+    networkStatus: "Estado de la red",
+    networkCount: "10 nodos · 1 núcleo",
+    disclaimer:
+      "Telemetría en vivo del tenant interno de iKingdom. Algunos valores son limitados o redondeados para visualización pública. La arquitectura es idéntica a la que instalamos para nuestros clientes.",
+  },
+} as const;
+
+export default function OperationsConsole({ lang = "en" }: { lang?: Lang } = {}) {
+  const t = COPY[lang];
   return (
     <section
       id="console"
@@ -171,7 +257,7 @@ export default function OperationsConsole() {
           className="flex items-center gap-3 mb-20"
         >
           <span className="text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
-            05 — Live System
+            {t.sectionLabel}
           </span>
         </motion.div>
 
@@ -182,10 +268,10 @@ export default function OperationsConsole() {
           transition={{ duration: 1.4, ease }}
           className="font-display text-balance text-[clamp(2.25rem,6vw,5.5rem)] leading-[0.95] tracking-[-0.02em] max-w-5xl"
         >
-          Watch a company
+          {t.headlineLine1}
           <br />
           <span className="italic text-[--color-fg-muted]">
-            operate itself.
+            {t.headlineLine2}
           </span>
         </motion.h2>
 
@@ -196,10 +282,7 @@ export default function OperationsConsole() {
           transition={{ duration: 1.2, ease, delay: 0.2 }}
           className="mt-10 max-w-2xl text-base md:text-lg text-[--color-fg-muted] leading-relaxed"
         >
-          This is the dashboard we use to run iKingdom itself. Application
-          intake, discovery, build, deployment, supervision, finance — all
-          handled by the same architecture we install for our clients.
-          You're looking at our own house in real time.
+          {t.intro}
         </motion.p>
 
         {/* The console */}
@@ -219,7 +302,7 @@ export default function OperationsConsole() {
                 <span className="w-2.5 h-2.5 rounded-full bg-[--color-fg-dim]/60" />
               </div>
               <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg-muted] ml-3">
-                iKingdom · Internal Operations · Live
+                {t.topBar}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -228,7 +311,7 @@ export default function OperationsConsole() {
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[--color-accent]" />
               </span>
               <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-accent]">
-                Live
+                {t.liveBadge}
               </span>
             </div>
           </div>
@@ -237,28 +320,28 @@ export default function OperationsConsole() {
           <div className="grid lg:grid-cols-12 gap-px bg-[--color-line]">
             {/* Event Stream */}
             <div className="lg:col-span-5 bg-white p-6 md:p-8">
-              <EventStreamPanel />
+              <EventStreamPanel lang={lang} />
             </div>
 
             {/* KPI Counters */}
             <div className="lg:col-span-7 bg-white p-6 md:p-8">
-              <PanelHeader title="Today's Telemetry" subtitle="Refreshing live" />
-              <KpiGrid />
+              <PanelHeader title={t.panels.telemetry.title} subtitle={t.panels.telemetry.subtitle} />
+              <KpiGrid lang={lang} />
             </div>
 
             {/* Tier Activity */}
             <div className="lg:col-span-7 bg-white p-6 md:p-8">
               <PanelHeader
-                title="Tier Activity"
-                subtitle="Realtime utilization"
+                title={t.panels.tierActivity.title}
+                subtitle={t.panels.tierActivity.subtitle}
               />
-              <TierBars />
+              <TierBars lang={lang} />
             </div>
 
             {/* Deployment map */}
             <div className="lg:col-span-5 bg-white p-6 md:p-8">
-              <PanelHeader title="Deployments" subtitle="All inbound → primary" />
-              <DeploymentMap />
+              <PanelHeader title={t.panels.deployments.title} subtitle={t.panels.deployments.subtitle} />
+              <DeploymentMap lang={lang} />
             </div>
           </div>
         </motion.div>
@@ -270,9 +353,7 @@ export default function OperationsConsole() {
           transition={{ duration: 1.2, ease, delay: 0.5 }}
           className="mt-10 text-center text-xs text-[--color-fg-dim] max-w-xl mx-auto"
         >
-          Live telemetry from iKingdom's internal tenant. Some values are
-          throttled or rounded for public display. The architecture is
-          identical to what we install for clients.
+          {t.disclaimer}
         </motion.p>
       </div>
     </section>
@@ -310,7 +391,8 @@ function formatNowTime(): string {
   return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
 }
 
-function EventStreamPanel() {
+function EventStreamPanel({ lang = "en" }: { lang?: Lang }) {
+  const t = COPY[lang];
   const [events, setEvents] = useState<ConsoleEvent[]>(INITIAL_EVENTS);
   const counterRef = useRef(INITIAL_EVENTS.length);
   // Track which real event IDs (by ts+sessionId) we've already ingested
@@ -422,8 +504,8 @@ function EventStreamPanel() {
   return (
     <>
       <PanelHeader
-        title="Event Stream"
-        subtitle="Last 60 seconds"
+        title={t.panels.eventStream.title}
+        subtitle={t.panels.eventStream.subtitle}
         badge={
           isRealLive ? (
             <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-[--color-accent]/10 text-[--color-accent] text-[9px] tracking-[0.16em] font-medium">
@@ -471,19 +553,20 @@ type KpiSpec = {
   drift?: { min: number; max: number };
 };
 
-function KpiGrid() {
+function KpiGrid({ lang = "en" }: { lang?: Lang }) {
+  const t = COPY[lang];
   const kpis: KpiSpec[] = [
-    { label: "Live deployments", target: 6, suffix: "" },
-    { label: "In active build", target: 3, suffix: "" },
-    { label: "Agents per system", target: 80, suffix: "" },
-    { label: "Functional tiers", target: 9, suffix: "" },
+    { label: t.kpis.liveDeployments, target: 6, suffix: "" },
+    { label: t.kpis.inActiveBuild, target: 3, suffix: "" },
+    { label: t.kpis.agentsPerSystem, target: 80, suffix: "" },
+    { label: t.kpis.functionalTiers, target: 9, suffix: "" },
     {
-      label: "Inbound today",
+      label: t.kpis.inboundToday,
       target: 12,
       suffix: "",
       drift: { min: 8, max: 22 },
     },
-    { label: "Graduation threshold", target: 98, suffix: "%" },
+    { label: t.kpis.graduationThreshold, target: 98, suffix: "%" },
   ];
 
   return (
@@ -567,7 +650,8 @@ type TierState = {
   spikeRemaining: number;
 };
 
-function TierBars() {
+function TierBars({ lang = "en" }: { lang?: Lang }) {
+  const t = COPY[lang];
   const [state, setState] = useState<Record<string, TierState>>(() => {
     const init: Record<string, TierState> = {};
     TIER_BARS.forEach((t) => {
@@ -629,7 +713,7 @@ function TierBars() {
               {tier.n}
             </span>
             <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[--color-fg-muted] w-32 md:w-40 flex-shrink-0 truncate">
-              {tier.name}
+              {t.tiers[tier.n] ?? tier.name}
             </span>
             <div className="flex-1 h-1.5 bg-[--color-line] overflow-hidden rounded-full">
               <motion.div
@@ -692,7 +776,8 @@ function spokePath(c: City): string {
 const CITY_PULSE_DUR = 6.0;
 const CITY_CORE_DUR = 4.4;
 
-function DeploymentMap() {
+function DeploymentMap({ lang = "en" }: { lang?: Lang }) {
+  const t = COPY[lang];
   // Faint dot-grid background — rough landmass silhouette via ellipse masks.
   const gridDots: Array<{ cx: number; cy: number }> = [];
   for (let y = 6; y <= 54; y += 2) {
@@ -989,8 +1074,8 @@ function DeploymentMap() {
       </div>
 
       <div className="mt-4 pt-4 border-t border-[--color-line] flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.18em]">
-        <span className="text-[--color-fg-dim]">Network status</span>
-        <span className="text-[--color-fg] tabular-nums">10 nodes · 1 core</span>
+        <span className="text-[--color-fg-dim]">{t.networkStatus}</span>
+        <span className="text-[--color-fg] tabular-nums">{t.networkCount}</span>
       </div>
     </div>
   );

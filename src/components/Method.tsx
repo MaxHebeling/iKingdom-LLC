@@ -5,16 +5,20 @@ import { useEffect, useRef, useState } from "react";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
+type Lang = "en" | "es";
+
 type Tier = {
   n: string;
-  name: string;
+  nameEn: string;
+  nameEs: string;
   agents: { num: string; name: string }[];
 };
 
 const TIERS: Tier[] = [
   {
     n: "01",
-    name: "Application Intake & Qualification",
+    nameEn: "Application Intake & Qualification",
+    nameEs: "Recepción y Calificación de Solicitudes",
     agents: [
       { num: "01", name: "Application Receiver" },
       { num: "02", name: "Identity Verifier" },
@@ -28,7 +32,8 @@ const TIERS: Tier[] = [
   },
   {
     n: "02",
-    name: "Discovery & Architecture",
+    nameEn: "Discovery & Architecture",
+    nameEs: "Descubrimiento y Arquitectura",
     agents: [
       { num: "09", name: "Discovery Call Scheduler" },
       { num: "10", name: "Pre-Call Brief Composer" },
@@ -42,7 +47,8 @@ const TIERS: Tier[] = [
   },
   {
     n: "03",
-    name: "Engagement & Contracting",
+    nameEn: "Engagement & Contracting",
+    nameEs: "Compromiso y Contratación",
     agents: [
       { num: "17", name: "Proposal Composer" },
       { num: "18", name: "Pricing Architect" },
@@ -56,7 +62,8 @@ const TIERS: Tier[] = [
   },
   {
     n: "04",
-    name: "Build & Code Generation",
+    nameEn: "Build & Code Generation",
+    nameEs: "Construcción y Generación de Código",
     agents: [
       { num: "25", name: "Codebase Initializer" },
       { num: "26", name: "CRM Schema Generator" },
@@ -72,7 +79,8 @@ const TIERS: Tier[] = [
   },
   {
     n: "05",
-    name: "Integration & Data",
+    nameEn: "Integration & Data",
+    nameEs: "Integración y Datos",
     agents: [
       { num: "35", name: "Data Source Cataloger" },
       { num: "36", name: "Migration Planner" },
@@ -88,7 +96,8 @@ const TIERS: Tier[] = [
   },
   {
     n: "06",
-    name: "Deployment & Supervision",
+    nameEn: "Deployment & Supervision",
+    nameEs: "Despliegue y Supervisión",
     agents: [
       { num: "45", name: "Staging Deployer" },
       { num: "46", name: "Smoke Test Runner" },
@@ -104,7 +113,8 @@ const TIERS: Tier[] = [
   },
   {
     n: "07",
-    name: "Client Success & Communication",
+    nameEn: "Client Success & Communication",
+    nameEs: "Éxito del Cliente y Comunicación",
     agents: [
       { num: "55", name: "Weekly Status Composer" },
       { num: "56", name: "Stakeholder Update Sender" },
@@ -120,7 +130,8 @@ const TIERS: Tier[] = [
   },
   {
     n: "08",
-    name: "Finance & Operations",
+    nameEn: "Finance & Operations",
+    nameEs: "Finanzas y Operaciones",
     agents: [
       { num: "65", name: "Invoice Generator" },
       { num: "66", name: "Payment Tracker" },
@@ -134,7 +145,8 @@ const TIERS: Tier[] = [
   },
   {
     n: "09",
-    name: "Intelligence & Learning",
+    nameEn: "Intelligence & Learning",
+    nameEs: "Inteligencia y Aprendizaje",
     agents: [
       { num: "73", name: "Pattern Library Indexer" },
       { num: "74", name: "Cross-Tenant Insight" },
@@ -148,8 +160,64 @@ const TIERS: Tier[] = [
   },
 ];
 
-export default function Method() {
+const COPY = {
+  en: {
+    sectionLabel: "01 — Method",
+    headlineLine1: "Eighty agents.",
+    headlineLine2: "Nine tiers.",
+    headlineItalic: "One company that operates itself.",
+    intro:
+      "We don't sell software. We don't consult. We use this system on ourselves — and we install one tailored to you. The eighty agents below are the ones running iKingdom right now. Yours will look different, because your business is different. The architecture will be the same.",
+    checkpointEyebrow: "The Checkpoint Graduation Model",
+    checkpointHeadingLine1: "Trust is earned,",
+    checkpointHeadingLine2: "not assumed.",
+    checkpointP1:
+      "Every agent we deploy begins under human review. Each decision, each action, each output is checkpointed by your team. We measure accuracy continuously.",
+    checkpointP2:
+      "When an agent crosses 98% accuracy across a meaningful sample, its checkpoint graduates — supervision is removed, autonomy is granted. The agent now runs unattended. Your people get their hours back.",
+    checkpointP3:
+      "By month twelve, most of your business is running without human approval gates. By month eighteen, you've stopped thinking about it.",
+    accuracyLiveLabel: "Live system accuracy",
+    accuracyFooter:
+      "Agents are released to autonomy upon reaching this accuracy",
+    trendImproving: "↑ improving",
+    trendStable: "↔ stable",
+    trendVolatile: "↕ volatile",
+    ladderHeader: "The system that runs iKingdom",
+    ladderHint: "Click any tier to inspect",
+    agentsWord: "agents",
+  },
+  es: {
+    sectionLabel: "01 — Método",
+    headlineLine1: "Ochenta agentes.",
+    headlineLine2: "Nueve niveles.",
+    headlineItalic: "Una empresa que se opera sola.",
+    intro:
+      "No vendemos software. No hacemos consultoría. Usamos este sistema con nosotros mismos — y te instalamos uno hecho a tu medida. Los ochenta agentes que ves abajo son los que operan iKingdom ahora mismo. Los tuyos se verán diferentes, porque tu negocio es diferente. La arquitectura será la misma.",
+    checkpointEyebrow: "El Modelo de Graduación por Verificación",
+    checkpointHeadingLine1: "La confianza se gana,",
+    checkpointHeadingLine2: "no se asume.",
+    checkpointP1:
+      "Cada agente que desplegamos comienza bajo revisión humana. Cada decisión, cada acción, cada resultado es verificado por tu equipo. Medimos la precisión continuamente.",
+    checkpointP2:
+      "Cuando un agente supera el 98% de precisión sobre una muestra significativa, su verificación se gradúa — la supervisión se elimina, la autonomía se otorga. El agente ahora opera sin supervisión. Tu gente recupera sus horas.",
+    checkpointP3:
+      "Para el mes doce, la mayor parte de tu negocio funciona sin compuertas de aprobación humana. Para el mes dieciocho, ya ni piensas en ello.",
+    accuracyLiveLabel: "Precisión del sistema en vivo",
+    accuracyFooter:
+      "Los agentes son liberados a autonomía al alcanzar esta precisión",
+    trendImproving: "↑ mejorando",
+    trendStable: "↔ estable",
+    trendVolatile: "↕ volátil",
+    ladderHeader: "El sistema que opera iKingdom",
+    ladderHint: "Haz clic en cualquier nivel para inspeccionar",
+    agentsWord: "agentes",
+  },
+} as const;
+
+export default function Method({ lang = "en" }: { lang?: Lang }) {
   const [openTier, setOpenTier] = useState<string | null>(null);
+  const t = COPY[lang];
 
   return (
     <section
@@ -166,7 +234,7 @@ export default function Method() {
           className="flex items-center gap-3 mb-20"
         >
           <span className="text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
-            01 — Method
+            {t.sectionLabel}
           </span>
         </motion.div>
 
@@ -178,11 +246,11 @@ export default function Method() {
           transition={{ duration: 1.4, ease }}
           className="font-display text-balance text-[clamp(2.25rem,6vw,5.5rem)] leading-[0.95] tracking-[-0.02em] max-w-5xl"
         >
-          Eighty agents.
+          {t.headlineLine1}
           <br />
-          Nine tiers.{" "}
+          {t.headlineLine2}{" "}
           <span className="italic text-[--color-fg-muted]">
-            One company that operates itself.
+            {t.headlineItalic}
           </span>
         </motion.h2>
 
@@ -193,11 +261,7 @@ export default function Method() {
           transition={{ duration: 1.2, ease, delay: 0.2 }}
           className="mt-12 max-w-2xl text-base md:text-lg text-[--color-fg-muted] leading-relaxed"
         >
-          We don't sell software. We don't consult. We use this system on
-          ourselves — and we install one tailored to you. The eighty agents
-          below are the ones running iKingdom right now. Yours will look
-          different, because your business is different. The architecture
-          will be the same.
+          {t.intro}
         </motion.p>
 
         {/* Checkpoint Graduation */}
@@ -210,15 +274,15 @@ export default function Method() {
             className="md:col-span-5"
           >
             <p className="text-[11px] uppercase tracking-[0.22em] text-[--color-accent] mb-6">
-              The Checkpoint Graduation Model
+              {t.checkpointEyebrow}
             </p>
             <h3 className="font-display text-3xl md:text-5xl leading-[1.05] tracking-[-0.015em] mb-10">
-              Trust is earned,
+              {t.checkpointHeadingLine1}
               <br />
-              not assumed.
+              {t.checkpointHeadingLine2}
             </h3>
 
-            <AccuracyMeter />
+            <AccuracyMeter lang={lang} />
           </motion.div>
 
           <motion.div
@@ -228,22 +292,9 @@ export default function Method() {
             transition={{ duration: 1.2, ease, delay: 0.15 }}
             className="md:col-span-7 space-y-6 text-[--color-fg-muted] text-base md:text-[17px] leading-relaxed"
           >
-            <p>
-              Every agent we deploy begins under human review. Each decision,
-              each action, each output is checkpointed by your team. We
-              measure accuracy continuously.
-            </p>
-            <p>
-              When an agent crosses 98% accuracy across a meaningful sample,
-              its checkpoint graduates — supervision is removed, autonomy is
-              granted. The agent now runs unattended. Your people get their
-              hours back.
-            </p>
-            <p className="text-[--color-fg]">
-              By month twelve, most of your business is running without
-              human approval gates. By month eighteen, you've stopped
-              thinking about it.
-            </p>
+            <p>{t.checkpointP1}</p>
+            <p>{t.checkpointP2}</p>
+            <p className="text-[--color-fg]">{t.checkpointP3}</p>
           </motion.div>
         </div>
 
@@ -257,10 +308,10 @@ export default function Method() {
             className="flex items-baseline justify-between mb-10"
           >
             <p className="text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
-              The system that runs iKingdom
+              {t.ladderHeader}
             </p>
             <p className="text-[10px] uppercase tracking-[0.18em] text-[--color-fg-dim]">
-              Click any tier to inspect
+              {t.ladderHint}
             </p>
           </motion.div>
 
@@ -274,6 +325,8 @@ export default function Method() {
                 onToggle={() =>
                   setOpenTier(openTier === tier.n ? null : tier.n)
                 }
+                lang={lang}
+                agentsWord={t.agentsWord}
               />
             ))}
           </div>
@@ -283,7 +336,7 @@ export default function Method() {
   );
 }
 
-function AccuracyMeter() {
+function AccuracyMeter({ lang }: { lang: Lang }) {
   const ref = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState(0);
   const [started, setStarted] = useState(false);
@@ -291,6 +344,7 @@ function AccuracyMeter() {
     "stable",
   );
   const historyRef = useRef<number[]>([]);
+  const t = COPY[lang];
 
   useEffect(() => {
     if (!ref.current) return;
@@ -389,10 +443,10 @@ function AccuracyMeter() {
 
   const trendLabel =
     trend === "improving"
-      ? "↑ improving"
+      ? t.trendImproving
       : trend === "volatile"
-        ? "↕ volatile"
-        : "↔ stable";
+        ? t.trendVolatile
+        : t.trendStable;
 
   return (
     <div
@@ -402,7 +456,7 @@ function AccuracyMeter() {
       <div className="flex items-center gap-2.5 mb-5">
         <span className="block h-1.5 w-1.5 rounded-full bg-[--color-accent]" />
         <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg-muted]">
-          Live system accuracy
+          {t.accuracyLiveLabel}
         </span>
       </div>
 
@@ -421,7 +475,7 @@ function AccuracyMeter() {
 
       <div className="mt-5 pt-5 border-t border-[--color-line-strong]">
         <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-[--color-fg-dim] leading-relaxed">
-          Agents are released to autonomy upon reaching this accuracy
+          {t.accuracyFooter}
         </p>
         <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.18em] text-[--color-fg-dim] tabular-nums">
           {trendLabel}
@@ -436,12 +490,17 @@ function TierRow({
   index,
   isOpen,
   onToggle,
+  lang,
+  agentsWord,
 }: {
   tier: Tier;
   index: number;
   isOpen: boolean;
   onToggle: () => void;
+  lang: Lang;
+  agentsWord: string;
 }) {
+  const tierName = lang === "es" ? tier.nameEs : tier.nameEn;
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -473,10 +532,12 @@ function TierRow({
               : "text-[--color-fg] group-hover:text-[--color-accent]"
           }`}
         >
-          {tier.name}
+          {tierName}
         </h4>
         <span className="col-span-3 md:col-span-2 text-right text-xs md:text-sm text-[--color-fg-muted] tabular-nums pr-2 md:pr-4 flex items-center justify-end gap-3">
-          <span>{tier.agents.length} agents</span>
+          <span>
+            {tier.agents.length} {agentsWord}
+          </span>
           <motion.svg
             animate={{ rotate: isOpen ? 45 : 0 }}
             transition={{ duration: 0.5, ease }}
