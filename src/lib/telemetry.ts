@@ -1,20 +1,21 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { getRedisClient } from "@/lib/redis";
 
 /**
  * Server-side telemetry helpers for the iKingdom engagement pipeline.
  *
- * Storage model (production): Vercel KV (Upstash Redis). Events are pushed
+ * Storage model (production): Redis via REDIS_URL. Events are pushed
  * onto a single list at `telemetry:events` (newest first via LPUSH) and
  * periodically trimmed to ~10k entries.
  *
- * Storage model (local dev / no KV env): newline-delimited JSON file at
+ * Storage model (local dev / no Redis env): newline-delimited JSON file at
  * `data/engagement.jsonl`, one event per line. Kept small (~5MB) by
  * truncating the oldest lines when the file grows past the cap.
  *
- * Selection is automatic: if `KV_REST_API_URL` and `KV_REST_API_TOKEN` are
- * set in the environment, KV is used; otherwise we fall back to the file
- * path so local development keeps working without any config.
+ * Selection is automatic: if `REDIS_URL` is set in the environment, Redis
+ * is used; otherwise we fall back to the file path so local development
+ * keeps working without any config.
  */
 
 export type TelemetryEventType =
@@ -61,20 +62,8 @@ const KV_MAX_LIST_SIZE = 10_000;
 const KV_TRIM_INTERVAL_MS = 60_000;
 let lastKvTrimAt = 0;
 
-function hasKvEnv(): boolean {
-  return Boolean(
-    process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
-  );
-}
-
-// Lazy so `import` side-effects don't force @vercel/kv at module load
-// when KV isn't configured (helps local dev and build-time analysis).
-let kvClientPromise: Promise<typeof import("@vercel/kv").kv> | null = null;
-function getKv(): Promise<typeof import("@vercel/kv").kv> {
-  if (!kvClientPromise) {
-    kvClientPromise = import("@vercel/kv").then((mod) => mod.kv);
-  }
-  return kvClientPromise;
+function hasRedisEnv(): boolean {
+  return Boolean(process.env.REDIS_URL);
 }
 
 // ---------------------------------------------------------------------------
@@ -157,28 +146,30 @@ export async function appendEvents(
   const stored = normalizeEvents(sessionId, events);
   if (stored.length === 0) return 0;
 
-  if (hasKvEnv()) {
+  if (hasRedisEnv()) {
     try {
-      const kv = await getKv();
-      // LPUSH newest-first. Pass each event as a separate string arg.
+      const redis = await getRedisClient();
+      // LPUSH newest-first. Pass each event as a separate string.
       const payloads = stored.map((s) => JSON.stringify(s));
-      await kv.lpush(KV_KEY, ...payloads);
+      for (const p of payloads) {
+        await redis.lPush(KV_KEY, p);
+      }
 
       // Periodically trim the list to KV_MAX_LIST_SIZE to keep it bounded.
       const now = Date.now();
       if (now - lastKvTrimAt > KV_TRIM_INTERVAL_MS) {
         lastKvTrimAt = now;
         try {
-          await kv.ltrim(KV_KEY, 0, KV_MAX_LIST_SIZE - 1);
+          await redis.lTrim(KV_KEY, 0, KV_MAX_LIST_SIZE - 1);
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);
-          console.warn("[telemetry] kv ltrim failed:", msg);
+          console.warn("[telemetry] redis ltrim failed:", msg);
         }
       }
       return stored.length;
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      console.error("[telemetry] kv lpush failed:", msg);
+      console.error("[telemetry] redis lpush failed:", msg);
       throw err;
     }
   }
@@ -206,23 +197,18 @@ export async function readRecent(
 ): Promise<StoredEvent[]> {
   const cutoff = Date.now() - maxAgeSeconds * 1000;
 
-  if (hasKvEnv()) {
+  if (hasRedisEnv()) {
     try {
-      const kv = await getKv();
+      const redis = await getRedisClient();
       // LPUSH stores newest-first at index 0; take the first maxLines.
-      const raw = await kv.lrange(KV_KEY, 0, Math.max(0, maxLines - 1));
+      const raw = await redis.lRange(KV_KEY, 0, Math.max(0, maxLines - 1));
       const events: StoredEvent[] = [];
       for (const item of raw) {
-        // @vercel/kv auto-deserializes JSON if it can; otherwise it's a string.
         let parsed: StoredEvent | null = null;
-        if (typeof item === "string") {
-          try {
-            parsed = JSON.parse(item) as StoredEvent;
-          } catch {
-            parsed = null;
-          }
-        } else if (item && typeof item === "object") {
-          parsed = item as unknown as StoredEvent;
+        try {
+          parsed = JSON.parse(item) as StoredEvent;
+        } catch {
+          parsed = null;
         }
         if (
           parsed &&
@@ -238,7 +224,7 @@ export async function readRecent(
       return events;
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      console.error("[telemetry] kv lrange failed:", msg);
+      console.error("[telemetry] redis lrange failed:", msg);
       return [];
     }
   }

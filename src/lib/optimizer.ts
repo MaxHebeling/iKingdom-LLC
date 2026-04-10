@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { promises as fs } from "fs";
 import path from "path";
-import { kv } from "@vercel/kv";
+import { getRedisClient } from "@/lib/redis";
 
 export type OptimizeInput = {
   section: string;
@@ -31,10 +31,8 @@ const DATA_DIR = path.join(process.cwd(), "data");
 const VARIANTS_PATH = path.join(DATA_DIR, "variants.json");
 const KV_VARIANTS_KEY = "optimizer:variants";
 
-function isKvAvailable(): boolean {
-  return Boolean(
-    process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
-  );
+function isRedisAvailable(): boolean {
+  return Boolean(process.env.REDIS_URL);
 }
 
 const SYSTEM_PROMPT = `You are the Optimizer Agent for iKingdom — the world's first AI operations firm. iKingdom designs and installs autonomous AI operations inside ambitious businesses, deploying eighty agents across nine functional tiers as a living operational layer.
@@ -190,15 +188,19 @@ async function ensureDataDir(): Promise<void> {
 }
 
 export async function loadActiveVariants(): Promise<ActiveVariants> {
-  if (isKvAvailable()) {
+  if (isRedisAvailable()) {
     try {
-      const stored = await kv.get<ActiveVariants>(KV_VARIANTS_KEY);
-      if (stored && typeof stored === "object") {
-        return stored;
+      const redis = await getRedisClient();
+      const raw = await redis.get(KV_VARIANTS_KEY);
+      if (raw) {
+        const stored = JSON.parse(raw) as ActiveVariants;
+        if (stored && typeof stored === "object") {
+          return stored;
+        }
       }
       return {};
     } catch (err) {
-      console.error("[optimizer] kv.get error:", err);
+      console.error("[optimizer] redis.get error:", err);
       return {};
     }
   }
@@ -227,8 +229,9 @@ export async function saveVariant(
   const current = await loadActiveVariants();
   current[section] = variant;
 
-  if (isKvAvailable()) {
-    await kv.set(KV_VARIANTS_KEY, current);
+  if (isRedisAvailable()) {
+    const redis = await getRedisClient();
+    await redis.set(KV_VARIANTS_KEY, JSON.stringify(current));
     return current;
   }
 
