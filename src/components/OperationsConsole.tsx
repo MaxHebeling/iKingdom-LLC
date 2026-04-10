@@ -60,16 +60,6 @@ const TIER_BARS = [
   { n: "09", name: "Intelligence", base: 0.93 },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Map deployment dots — real iKingdom geographic footprint
-// ─────────────────────────────────────────────────────────────────────────────
-const DEPLOYMENT_DOTS = [
-  { x: 18, y: 38, label: "San Diego" },     // BuildCore + DCS
-  { x: 19, y: 36, label: "Los Angeles" },   // California cluster
-  { x: 35, y: 34, label: "Dallas" },        // Texas
-  { x: 60, y: 28, label: "Global" },        // Online mortgage brokerage
-];
-
 export default function OperationsConsole() {
   return (
     <section
@@ -173,9 +163,9 @@ export default function OperationsConsole() {
               <TierBars />
             </div>
 
-            {/* Map */}
+            {/* Deployment map */}
             <div className="lg:col-span-5 bg-[--color-bg-elevated]/40 p-6 md:p-8">
-              <PanelHeader title="Deployments" subtitle="6 live · 3 in build" />
+              <PanelHeader title="Deployments" subtitle="Across the network" />
               <DeploymentMap />
             </div>
           </div>
@@ -393,78 +383,247 @@ function TierBars() {
   );
 }
 
-function DeploymentMap() {
-  return (
-    <div className="relative min-h-[280px]">
-      {/* Stylized world dot grid */}
-      <svg
-        viewBox="0 0 100 60"
-        className="w-full h-auto"
-        preserveAspectRatio="xMidYMid meet"
-      >
-        {/* Background dot grid */}
-        {Array.from({ length: 30 }).map((_, row) =>
-          Array.from({ length: 50 }).map((_, col) => {
-            const x = col * 2;
-            const y = row * 2;
-            return (
-              <circle
-                key={`${row}-${col}`}
-                cx={x}
-                cy={y}
-                r={0.18}
-                fill="var(--color-line-strong)"
-              />
-            );
-          }),
-        )}
+// ─────────────────────────────────────────────────────────────────────────────
+// DeploymentMap — stylized SVG world map with pulsing cities and data arcs
+// ─────────────────────────────────────────────────────────────────────────────
 
-        {/* Deployment pulses */}
-        {DEPLOYMENT_DOTS.map((dot, i) => (
-          <g key={dot.label}>
-            <circle
-              cx={dot.x}
-              cy={dot.y}
-              r="1.4"
-              fill="var(--color-accent)"
-              opacity="0.95"
-            >
-              <animate
-                attributeName="opacity"
-                values="0.95;0.4;0.95"
-                dur={`${2 + (i % 3)}s`}
-                repeatCount="indefinite"
-              />
-            </circle>
-            <circle
-              cx={dot.x}
-              cy={dot.y}
-              r="1.4"
-              fill="none"
-              stroke="var(--color-accent)"
-              strokeWidth="0.3"
-              opacity="0.6"
-            >
-              <animate
-                attributeName="r"
-                values="1.4;5;1.4"
-                dur={`${2.5 + (i % 4)}s`}
-                repeatCount="indefinite"
-              />
-              <animate
-                attributeName="opacity"
-                values="0.6;0;0.6"
-                dur={`${2.5 + (i % 4)}s`}
-                repeatCount="indefinite"
-              />
-            </circle>
+type City = {
+  id: string;
+  name: string;
+  count: number;
+  x: number;
+  y: number;
+};
+
+const CITIES: City[] = [
+  { id: "sd", name: "SAN DIEGO", count: 97, x: 18, y: 38 },
+  { id: "la", name: "LOS ANGELES", count: 62, x: 19, y: 36 },
+  { id: "dal", name: "DALLAS", count: 48, x: 35, y: 34 },
+  { id: "glb", name: "GLOBAL", count: 31, x: 60, y: 28 },
+];
+
+// Arc pairs: [fromIndex, toIndex, dashOffsetDuration, delay]
+const ARCS: Array<[number, number, number, number]> = [
+  [0, 2, 3.2, 0],
+  [2, 3, 4.1, 0.6],
+  [1, 3, 3.6, 1.2],
+  [0, 3, 4.8, 1.8],
+];
+
+function arcPath(a: City, b: City): string {
+  // Quadratic curve whose control point is pulled "up" (toward y=0) to form an arc.
+  const mx = (a.x + b.x) / 2;
+  const my = (a.y + b.y) / 2;
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  // Perpendicular offset scaled by distance — bigger arc for longer links.
+  const curve = Math.min(18, dist * 0.45);
+  const cx = mx;
+  const cy = my - curve;
+  return `M ${a.x} ${a.y} Q ${cx} ${cy} ${b.x} ${b.y}`;
+}
+
+function DeploymentMap() {
+  // Faint dot-grid background — rough landmass silhouette via ellipse masks.
+  const gridDots: Array<{ cx: number; cy: number }> = [];
+  for (let y = 6; y <= 54; y += 2) {
+    for (let x = 4; x <= 96; x += 2) {
+      // Approximate continents: skip dots outside rough landmass regions.
+      const inAmericas =
+        (x >= 10 && x <= 30 && y >= 18 && y <= 50) ||
+        (x >= 22 && x <= 34 && y >= 36 && y <= 54);
+      const inEurAfr =
+        (x >= 46 && x <= 58 && y >= 14 && y <= 30) ||
+        (x >= 48 && x <= 58 && y >= 28 && y <= 50);
+      const inAsia =
+        (x >= 58 && x <= 86 && y >= 14 && y <= 36) ||
+        (x >= 78 && x <= 90 && y >= 38 && y <= 50);
+      const inOceania = x >= 80 && x <= 92 && y >= 42 && y <= 52;
+      if (inAmericas || inEurAfr || inAsia || inOceania) {
+        gridDots.push({ cx: x, cy: y });
+      }
+    }
+  }
+
+  return (
+    <div className="min-h-[280px] flex flex-col">
+      <div className="relative flex-1 rounded-md border border-[--color-line] bg-[#120a04]/60 overflow-hidden">
+        <svg
+          viewBox="0 0 100 60"
+          className="w-full h-full"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <defs>
+            <radialGradient id="cityGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="var(--color-accent)" stopOpacity="0.9" />
+              <stop offset="60%" stopColor="var(--color-accent)" stopOpacity="0.2" />
+              <stop offset="100%" stopColor="var(--color-accent)" stopOpacity="0" />
+            </radialGradient>
+            <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="var(--color-accent)" stopOpacity="0" />
+              <stop offset="50%" stopColor="var(--color-accent)" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="var(--color-accent)" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+
+          {/* Dot grid landmasses */}
+          <g fill="var(--color-accent)" opacity="0.18">
+            {gridDots.map((d, i) => (
+              <circle key={i} cx={d.cx} cy={d.cy} r="0.35" />
+            ))}
           </g>
-        ))}
-      </svg>
+
+          {/* Animated data arcs */}
+          <g fill="none" strokeLinecap="round">
+            {ARCS.map(([fromIdx, toIdx, dur, delay], i) => {
+              const path = arcPath(CITIES[fromIdx], CITIES[toIdx]);
+              return (
+                <g key={i}>
+                  {/* Static faint base arc */}
+                  <path
+                    d={path}
+                    stroke="var(--color-accent)"
+                    strokeOpacity="0.12"
+                    strokeWidth="0.25"
+                  />
+                  {/* Flowing dashed arc */}
+                  <path
+                    d={path}
+                    stroke="url(#arcGrad)"
+                    strokeWidth="0.55"
+                    strokeDasharray="6 40"
+                  >
+                    <animate
+                      attributeName="stroke-dashoffset"
+                      from="46"
+                      to="0"
+                      dur={`${dur}s`}
+                      begin={`${delay}s`}
+                      repeatCount="indefinite"
+                    />
+                  </path>
+                </g>
+              );
+            })}
+          </g>
+
+          {/* City nodes */}
+          {CITIES.map((c, i) => (
+            <g key={c.id}>
+              {/* Outer pulsing rings — SVG-native looping */}
+              <circle
+                cx={c.x}
+                cy={c.y}
+                r="0.8"
+                fill="none"
+                stroke="var(--color-accent)"
+                strokeWidth="0.2"
+                opacity="0"
+              >
+                <animate
+                  attributeName="r"
+                  from="0.8"
+                  to="5"
+                  dur="3s"
+                  begin={`${i * 0.7}s`}
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="opacity"
+                  values="0;0.7;0"
+                  dur="3s"
+                  begin={`${i * 0.7}s`}
+                  repeatCount="indefinite"
+                />
+              </circle>
+              <circle
+                cx={c.x}
+                cy={c.y}
+                r="0.8"
+                fill="none"
+                stroke="var(--color-accent)"
+                strokeWidth="0.15"
+                opacity="0"
+              >
+                <animate
+                  attributeName="r"
+                  from="0.8"
+                  to="7"
+                  dur="3s"
+                  begin={`${i * 0.7 + 1.4}s`}
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="opacity"
+                  values="0;0.5;0"
+                  dur="3s"
+                  begin={`${i * 0.7 + 1.4}s`}
+                  repeatCount="indefinite"
+                />
+              </circle>
+
+              {/* Soft halo */}
+              <circle cx={c.x} cy={c.y} r="3" fill="url(#cityGlow)" />
+              {/* Core dot */}
+              <circle cx={c.x} cy={c.y} r="0.9" fill="var(--color-accent)">
+                <animate
+                  attributeName="opacity"
+                  values="1;0.55;1"
+                  dur="2.2s"
+                  begin={`${i * 0.4}s`}
+                  repeatCount="indefinite"
+                />
+              </circle>
+
+              {/* Floating label */}
+              <g transform={`translate(${c.x + 2.4}, ${c.y + 0.6})`}>
+                {/* Live indicator dot */}
+                <circle
+                  cx="0"
+                  cy="-0.7"
+                  r="0.35"
+                  fill="var(--color-accent)"
+                >
+                  <animate
+                    attributeName="opacity"
+                    values="1;0.3;1"
+                    dur="1.6s"
+                    begin={`${i * 0.3}s`}
+                    repeatCount="indefinite"
+                  />
+                </circle>
+                <text
+                  x="0.9"
+                  y="0"
+                  fill="var(--color-fg-muted)"
+                  fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
+                  fontSize="1.6"
+                  letterSpacing="0.08"
+                >
+                  {c.name} · {c.count}
+                </text>
+              </g>
+            </g>
+          ))}
+
+          {/* Corner crosshair ticks for console feel */}
+          <g
+            stroke="var(--color-accent)"
+            strokeOpacity="0.35"
+            strokeWidth="0.15"
+          >
+            <path d="M 2 2 L 5 2 M 2 2 L 2 5" />
+            <path d="M 98 2 L 95 2 M 98 2 L 98 5" />
+            <path d="M 2 58 L 5 58 M 2 58 L 2 55" />
+            <path d="M 98 58 L 95 58 M 98 58 L 98 55" />
+          </g>
+        </svg>
+      </div>
 
       <div className="mt-4 pt-4 border-t border-[--color-line] flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.18em]">
-        <span className="text-[--color-fg-dim]">Live sites</span>
-        <span className="text-[--color-fg] tabular-nums">4</span>
+        <span className="text-[--color-fg-dim]">Network status</span>
+        <span className="text-[--color-fg] tabular-nums">4 live · global</span>
       </div>
     </div>
   );
