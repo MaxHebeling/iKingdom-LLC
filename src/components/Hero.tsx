@@ -88,12 +88,9 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
           </span>
         </motion.div>
 
-        {/* Headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.4, ease, delay: 0.5 }}
-          className="font-display text-balance text-[clamp(3rem,9vw,9.5rem)] leading-[0.92] tracking-[-0.025em] text-[--color-fg]"
+        {/* Headline — rendered immediately (no opacity:0 delay) for fast LCP */}
+        <h1
+          className="font-display text-balance text-[clamp(3rem,9vw,9.5rem)] leading-[0.92] tracking-[-0.025em] text-[--color-fg] animate-reveal"
         >
           {t.headlineBefore}
           <br />
@@ -101,7 +98,7 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
             {t.headlineItalic}
           </span>
           {t.headlineAfter}
-        </motion.h1>
+        </h1>
 
         {/* Subhead */}
         <motion.p

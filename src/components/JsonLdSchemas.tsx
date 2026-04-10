@@ -167,6 +167,8 @@ export default function JsonLdSchemas() {
       "@id": `${baseUrl}/#organization`,
     },
     inLanguage: "en",
+    datePublished: "2025-01-01",
+    dateModified: new Date().toISOString().split("T")[0],
     primaryImageOfPage: {
       "@type": "ImageObject",
       url: `${baseUrl}/og-image.png`,
