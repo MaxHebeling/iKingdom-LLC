@@ -65,7 +65,7 @@ export default function Hero() {
         >
           <a
             href="#apply"
-            className="group relative inline-flex items-center gap-3 px-7 py-4 bg-[--color-accent] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-accent-hover] transition-all duration-500 rounded-full"
+            className="group relative inline-flex items-center gap-3 px-7 py-4 bg-[--color-fg] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-accent] hover:text-[--color-bg] transition-all duration-500 rounded-full"
           >
             Begin Application
             <svg

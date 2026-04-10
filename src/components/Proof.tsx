@@ -125,7 +125,7 @@ export default function Proof() {
           live or in active production on the iKingdom architecture.
         </motion.p>
 
-        <div className="mt-24 md:mt-32 grid md:grid-cols-2 gap-px bg-[--color-line]">
+        <div className="mt-24 md:mt-32 grid md:grid-cols-2 gap-px bg-[--color-line-strong]">
           {cases.map((c, i) => (
             <motion.article
               key={c.name}
@@ -133,7 +133,7 @@ export default function Proof() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 1, ease, delay: (i % 2) * 0.1 }}
-              className="bg-[--color-bg] p-10 md:p-14 hover:bg-[--color-bg-elevated]/50 transition-colors duration-700 group flex flex-col"
+              className="bg-[--color-bg] p-10 md:p-14 hover:bg-[--color-bg-elevated] transition-colors duration-700 group flex flex-col"
             >
               <div className="flex items-start justify-between gap-4 mb-8">
                 <span className="text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim]">
@@ -141,7 +141,7 @@ export default function Proof() {
                 </span>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {c.status === "live" ? (
-                    <span className="text-[10px] uppercase tracking-[0.2em] text-[--color-bg] bg-[--color-accent] px-2 py-1 rounded-full font-medium">
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-[--color-bg] bg-[--color-fg] px-2 py-1 rounded-full font-medium">
                       Live
                     </span>
                   ) : (
@@ -150,7 +150,7 @@ export default function Proof() {
                     </span>
                   )}
                   {c.redacted && (
-                    <span className="text-[10px] uppercase tracking-[0.2em] text-[--color-fg-dim] border border-[--color-line] px-2 py-1 rounded-full">
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-[--color-fg-muted] border border-[--color-line-strong] px-2 py-1 rounded-full">
                       NDA
                     </span>
                   )}
@@ -165,7 +165,7 @@ export default function Proof() {
                 {c.body}
               </p>
 
-              <div className="mt-10 pt-6 border-t border-[--color-line] flex items-center justify-between">
+              <div className="mt-10 pt-6 border-t border-[--color-line-strong] flex items-center justify-between">
                 <span className="text-xs text-[--color-fg-muted] tabular-nums">
                   {c.metric}
                 </span>

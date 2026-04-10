@@ -15,7 +15,7 @@ const SECTION_IDS = ["top", "method", "capabilities", "process", "console", "pro
 export default function Nav() {
   const { scrollY, scrollYProgress } = useScroll();
   const borderOpacity = useTransform(scrollY, [0, 80], [0, 1]);
-  const bgOpacity = useTransform(scrollY, [0, 80], [0, 0.85]);
+  const bgOpacity = useTransform(scrollY, [0, 80], [0, 0.9]);
   const progressScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   const [activeSection, setActiveSection] = useState<string>("top");
@@ -43,11 +43,11 @@ export default function Nav() {
     <motion.header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md">
       <motion.div
         style={{ opacity: bgOpacity }}
-        className="absolute inset-0 bg-[--color-bg]/85 -z-10"
+        className="absolute inset-0 bg-[--color-bg]/90 -z-10"
       />
       <motion.div
         style={{ opacity: borderOpacity }}
-        className="absolute bottom-0 inset-x-0 h-px bg-[--color-line]"
+        className="absolute bottom-0 inset-x-0 h-px bg-[--color-line-strong]"
       />
 
       {/* Scroll progress line — gold thread that fills as you read */}
@@ -90,7 +90,7 @@ export default function Nav() {
           })}
           <a
             href="#apply"
-            className="text-sm tracking-wide px-5 py-2.5 border border-[--color-line-strong] hover:border-[--color-accent] hover:text-[--color-accent] text-[--color-fg] transition-all duration-500 rounded-full"
+            className="text-sm tracking-wide px-5 py-2.5 bg-[--color-fg] text-[--color-bg] hover:bg-[--color-accent] hover:text-[--color-bg] transition-all duration-500 rounded-full"
           >
             Apply
           </a>

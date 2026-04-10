@@ -64,7 +64,7 @@ export default function Process() {
           </span>
         </motion.h2>
 
-        <div className="mt-24 md:mt-32 space-y-px bg-[--color-line]">
+        <div className="mt-24 md:mt-32 space-y-px bg-[--color-line-strong]">
           {phases.map((phase, i) => (
             <motion.div
               key={phase.n}
@@ -83,7 +83,7 @@ export default function Process() {
                     {phase.label}
                   </span>
                 </div>
-                <div className="md:col-span-10 md:pl-8 md:border-l md:border-[--color-line]">
+                <div className="md:col-span-10 md:pl-8 md:border-l md:border-[--color-line-strong]">
                   <h3 className="font-display text-3xl md:text-5xl tracking-[-0.015em] leading-[1.05] text-[--color-fg]">
                     {phase.title}
                   </h3>

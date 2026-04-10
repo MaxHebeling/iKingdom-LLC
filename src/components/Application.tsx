@@ -124,7 +124,6 @@ export default function Application() {
       id="apply"
       className="relative py-32 md:py-48 border-t border-[--color-line] overflow-hidden"
     >
-      <div className="absolute inset-0 spotlight pointer-events-none" />
 
       <div className="relative max-w-[1400px] mx-auto px-6 md:px-10">
         <motion.div
@@ -214,7 +213,7 @@ export default function Application() {
             {submitted ? (
               <SubmittedPipeline activeStep={activeStep} />
             ) : (
-              <div className="border border-[--color-line] p-8 md:p-12 bg-[--color-bg-elevated]/40 backdrop-blur-sm">
+              <div className="border border-[--color-line-strong] p-8 md:p-12 bg-[--color-bg]">
                 <StepHeader step={step} />
 
                 <AnimatePresence mode="wait">
@@ -270,7 +269,7 @@ export default function Application() {
                         </p>
                         <button
                           type="submit"
-                          className="group inline-flex items-center gap-3 px-7 py-4 bg-[--color-accent] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-accent-hover] transition-all duration-500 rounded-full"
+                          className="group inline-flex items-center gap-3 px-7 py-4 bg-[--color-fg] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-fg-muted] transition-all duration-500 rounded-full"
                         >
                           Continue
                           <svg
@@ -362,7 +361,7 @@ export default function Application() {
                           value={formData.scope}
                           onChange={(e) => update("scope", e.target.value)}
                           placeholder="Briefly describe the operations you want iKingdom to take over."
-                          className="w-full bg-transparent border border-[--color-line] focus:border-[--color-accent] focus:outline-none px-4 py-3 text-[--color-fg] placeholder:text-[--color-fg-dim] text-[15px] resize-none transition-colors duration-300"
+                          className="w-full bg-transparent border border-[--color-line-strong] focus:border-[--color-accent] focus:outline-none px-4 py-3 text-[--color-fg] placeholder:text-[--color-fg-dim] text-[15px] resize-none transition-colors duration-300"
                         />
                       </div>
 
@@ -389,7 +388,7 @@ export default function Application() {
                         </button>
                         <button
                           type="submit"
-                          className="group inline-flex items-center gap-3 px-7 py-4 bg-[--color-accent] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-accent-hover] transition-all duration-500 rounded-full"
+                          className="group inline-flex items-center gap-3 px-7 py-4 bg-[--color-fg] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-fg-muted] transition-all duration-500 rounded-full"
                         >
                           Submit Application
                           <svg
@@ -455,7 +454,7 @@ function SubmittedPipeline({ activeStep }: { activeStep: number }) {
   const allDone = activeStep >= PIPELINE.length - 1;
 
   return (
-    <div className="border border-[--color-line] p-8 md:p-12 bg-[--color-bg-elevated]/40 backdrop-blur-sm">
+    <div className="border border-[--color-line-strong] p-8 md:p-12 bg-[--color-bg]">
       <div className="flex items-center gap-3 mb-2">
         <span className="relative flex h-2 w-2">
           <span className="absolute inline-flex h-full w-full rounded-full bg-[--color-accent] opacity-60 animate-ping" />
@@ -479,7 +478,7 @@ function SubmittedPipeline({ activeStep }: { activeStep: number }) {
         businesses.
       </p>
 
-      <div className="mt-12 space-y-px bg-[--color-line]">
+      <div className="mt-12 space-y-px bg-[--color-line-strong]">
         {PIPELINE.map((step, i) => {
           const status =
             i < activeStep ? "done" : i === activeStep ? "active" : "pending";
@@ -643,7 +642,7 @@ function Field({
         required={required}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-transparent border-b border-[--color-line] focus:border-[--color-accent] focus:outline-none py-3 text-[--color-fg] text-[15px] transition-colors duration-300"
+        className="w-full bg-transparent border-b border-[--color-line-strong] focus:border-[--color-accent] focus:outline-none py-3 text-[--color-fg] text-[15px] transition-colors duration-300"
       />
     </div>
   );
@@ -677,7 +676,7 @@ function Select({
         required
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-transparent border-b border-[--color-line] focus:border-[--color-accent] focus:outline-none py-3 text-[--color-fg] text-[15px] transition-colors duration-300 appearance-none cursor-pointer"
+        className="w-full bg-transparent border-b border-[--color-line-strong] focus:border-[--color-accent] focus:outline-none py-3 text-[--color-fg] text-[15px] transition-colors duration-300 appearance-none cursor-pointer"
       >
         <option value="" disabled className="bg-[--color-bg]">
           Select…

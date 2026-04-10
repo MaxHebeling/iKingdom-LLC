@@ -673,7 +673,7 @@ export default function PulseTicker() {
       className="fixed bottom-0 inset-x-0 z-30 pointer-events-none select-none"
       aria-hidden="true"
     >
-      <div className="relative bg-[--color-bg-elevated] border-t border-[--color-line]">
+      <div className="relative bg-[--color-bg-elevated] border-t-2 border-[--color-line-strong]">
         {/* Left fade — masks the marquee behind the Live badge */}
         <div className="absolute left-0 top-0 bottom-0 w-36 bg-gradient-to-r from-[--color-bg-elevated] via-[--color-bg-elevated] to-transparent z-10 pointer-events-none" />
         {/* Right fade */}

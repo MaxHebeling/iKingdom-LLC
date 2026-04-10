@@ -397,7 +397,7 @@ function AccuracyMeter() {
   return (
     <div
       ref={ref}
-      className="relative border border-[--color-line] bg-[--color-bg-elevated]/40 backdrop-blur-sm p-6 md:p-7 rounded-md max-w-sm"
+      className="relative border border-[--color-line-strong] bg-[--color-bg-card] p-6 md:p-7 rounded-md max-w-sm shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
     >
       <div className="flex items-center gap-2.5 mb-5">
         <span className="block h-1.5 w-1.5 rounded-full bg-[--color-accent]" />
@@ -415,11 +415,11 @@ function AccuracyMeter() {
         <motion.div
           animate={{ width: `${value}%` }}
           transition={{ duration: 0.6, ease }}
-          className="h-full bg-gradient-to-r from-[--color-accent]/60 to-[--color-accent]"
+          className="h-full bg-gradient-to-r from-[--color-accent]/70 to-[--color-accent]"
         />
       </div>
 
-      <div className="mt-5 pt-5 border-t border-[--color-line]">
+      <div className="mt-5 pt-5 border-t border-[--color-line-strong]">
         <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-[--color-fg-dim] leading-relaxed">
           Agents are released to autonomy upon reaching this accuracy
         </p>
@@ -459,8 +459,8 @@ function TierRow({
         onClick={onToggle}
         className={`group w-full text-left grid grid-cols-12 items-baseline gap-4 py-6 md:py-8 transition-colors duration-500 ${
           isOpen
-            ? "bg-[--color-bg-elevated]/50"
-            : "hover:bg-[--color-bg-elevated]/40"
+            ? "bg-[--color-bg-elevated]"
+            : "hover:bg-[--color-bg-elevated]"
         }`}
       >
         <span className="col-span-2 md:col-span-1 text-xs md:text-sm text-[--color-fg-dim] font-mono pl-2 md:pl-4">
@@ -505,7 +505,7 @@ function TierRow({
             transition={{ duration: 0.6, ease }}
             className="overflow-hidden"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[--color-line] mb-6 mx-2 md:mx-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[--color-line-strong] border border-[--color-line-strong] mb-6 mx-2 md:mx-4">
               {tier.agents.map((agent, j) => (
                 <motion.div
                   key={agent.num}
@@ -516,7 +516,7 @@ function TierRow({
                     ease,
                     delay: 0.1 + j * 0.03,
                   }}
-                  className="bg-[--color-bg] flex items-center gap-4 px-6 py-5 group/agent hover:bg-[--color-bg-elevated]/30 transition-colors duration-300"
+                  className="bg-[--color-bg-card] flex items-center gap-4 px-6 py-5 group/agent hover:bg-[--color-bg-elevated] transition-colors duration-300"
                 >
                   <span className="font-mono text-[11px] text-[--color-fg-dim] tabular-nums">
                     {agent.num}

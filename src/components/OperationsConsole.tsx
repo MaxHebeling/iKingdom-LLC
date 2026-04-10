@@ -136,8 +136,6 @@ export default function OperationsConsole() {
       id="console"
       className="relative py-32 md:py-48 border-t border-[--color-line] overflow-hidden"
     >
-      <div className="absolute inset-0 spotlight pointer-events-none" />
-
       <div className="relative max-w-[1400px] mx-auto px-6 md:px-10">
         {/* Section label */}
         <motion.div
@@ -185,15 +183,15 @@ export default function OperationsConsole() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.4, ease, delay: 0.3 }}
-          className="mt-20 md:mt-24 border border-[--color-line-strong] bg-[--color-bg-elevated]/80 backdrop-blur-sm rounded-md overflow-hidden shadow-2xl shadow-black/40"
+          className="mt-20 md:mt-24 bg-white border border-[--color-line-strong] rounded-md overflow-hidden shadow-xl shadow-black/5"
         >
           {/* Top bar */}
           <div className="border-b border-[--color-line] px-5 md:px-7 py-4 flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
               <div className="flex gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[--color-fg-dim]/40" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[--color-fg-dim]/40" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[--color-fg-dim]/40" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[--color-fg-dim]/60" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[--color-fg-dim]/60" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[--color-fg-dim]/60" />
               </div>
               <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg-muted] ml-3">
                 iKingdom · Internal Operations · Live
@@ -213,19 +211,19 @@ export default function OperationsConsole() {
           {/* Body grid */}
           <div className="grid lg:grid-cols-12 gap-px bg-[--color-line]">
             {/* Event Stream */}
-            <div className="lg:col-span-5 bg-[--color-bg-elevated]/40 p-6 md:p-8">
+            <div className="lg:col-span-5 bg-white p-6 md:p-8">
               <PanelHeader title="Event Stream" subtitle="Last 60 seconds" />
               <EventStream />
             </div>
 
             {/* KPI Counters */}
-            <div className="lg:col-span-7 bg-[--color-bg-elevated]/40 p-6 md:p-8">
+            <div className="lg:col-span-7 bg-white p-6 md:p-8">
               <PanelHeader title="Today's Telemetry" subtitle="Refreshing live" />
               <KpiGrid />
             </div>
 
             {/* Tier Activity */}
-            <div className="lg:col-span-7 bg-[--color-bg-elevated]/40 p-6 md:p-8">
+            <div className="lg:col-span-7 bg-white p-6 md:p-8">
               <PanelHeader
                 title="Tier Activity"
                 subtitle="Realtime utilization"
@@ -234,8 +232,8 @@ export default function OperationsConsole() {
             </div>
 
             {/* Deployment map */}
-            <div className="lg:col-span-5 bg-[--color-bg-elevated]/40 p-6 md:p-8">
-              <PanelHeader title="Deployments" subtitle="Across the network" />
+            <div className="lg:col-span-5 bg-white p-6 md:p-8">
+              <PanelHeader title="Deployments" subtitle="All inbound → primary" />
               <DeploymentMap />
             </div>
           </div>
@@ -421,7 +419,7 @@ function Kpi({ label, target, suffix, drift }: KpiSpec) {
       : Math.round(value).toLocaleString();
 
   return (
-    <div className="bg-[--color-bg-elevated]/40 p-5">
+    <div className="bg-white p-5">
       <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-[--color-fg-dim] mb-3">
         {label}
       </div>
@@ -535,65 +533,39 @@ type City = {
   count: number;
   x: number;
   y: number;
-  /** Activity intensity: affects pulse period (lower = faster). */
-  intensity: "high" | "med" | "low";
+  /** Which row the city label anchors to. */
+  row: "top" | "bottom";
 };
 
-// 10 cities placed over the dot-grid landmasses (viewBox 100x60).
-// Intensities vary so pulses feel like a real heatmap.
+// 10 cities placed on a strict 2×5 geometric grid (viewBox 100x60).
+// Perfect 18-unit horizontal spacing, two perfectly parallel rows.
+// Top row y=14, bottom row y=46, hub centered at (50, 30).
 const CITIES: City[] = [
-  // North America — primary hubs
-  { id: "sd",  name: "SAN DIEGO",     count: 178, x: 14, y: 32, intensity: "high" },
-  { id: "la",  name: "LOS ANGELES",   count:  94, x: 13, y: 30, intensity: "high" },
-  { id: "sf",  name: "SAN FRANCISCO", count:  71, x: 12, y: 26, intensity: "high" },
-  { id: "dal", name: "DALLAS",        count:  48, x: 22, y: 34, intensity: "med" },
-  { id: "aus", name: "AUSTIN",        count:  33, x: 21, y: 36, intensity: "med" },
-  { id: "chi", name: "CHICAGO",       count:  56, x: 24, y: 26, intensity: "med" },
-  { id: "nyc", name: "NEW YORK",      count:  87, x: 28, y: 27, intensity: "high" },
-  { id: "mia", name: "MIAMI",         count:  22, x: 27, y: 38, intensity: "low" },
-  // Europe
-  { id: "lon", name: "LONDON",        count:  41, x: 49, y: 22, intensity: "med" },
-  // Asia
-  { id: "sgp", name: "SINGAPORE",     count:   9, x: 78, y: 40, intensity: "low" },
+  // Top row — y=14
+  { id: "sf",  name: "SAN FRANCISCO", count:  71, x: 10, y: 14, row: "top" },
+  { id: "la",  name: "LOS ANGELES",   count:  94, x: 28, y: 14, row: "top" },
+  { id: "sd",  name: "SAN DIEGO",     count: 178, x: 46, y: 14, row: "top" },
+  { id: "dal", name: "DALLAS",        count:  48, x: 64, y: 14, row: "top" },
+  { id: "aus", name: "AUSTIN",        count:  33, x: 82, y: 14, row: "top" },
+  // Bottom row — y=46
+  { id: "chi", name: "CHICAGO",       count:  56, x: 10, y: 46, row: "bottom" },
+  { id: "nyc", name: "NEW YORK",      count:  87, x: 28, y: 46, row: "bottom" },
+  { id: "mia", name: "MIAMI",         count:  22, x: 46, y: 46, row: "bottom" },
+  { id: "lon", name: "LONDON",        count:  41, x: 64, y: 46, row: "bottom" },
+  { id: "sgp", name: "SINGAPORE",     count:   9, x: 82, y: 46, row: "bottom" },
 ];
 
-// Arc pairs: [fromIndex, toIndex, dashOffsetDuration, delay]
-// Connect SD to major hubs and cross-continental links.
-const ARCS: Array<[number, number, number, number]> = [
-  [0, 3, 3.2, 0],   // SD → DAL
-  [0, 6, 3.8, 0.4], // SD → NYC
-  [0, 8, 5.2, 0.8], // SD → LON
-  [3, 6, 3.4, 1.2], // DAL → NYC
-  [6, 8, 4.1, 1.6], // NYC → LON
-  [8, 9, 5.8, 2.0], // LON → SGP
-  [0, 9, 6.4, 2.4], // SD → SGP
-];
+// Central primary hub — iKingdom Core. All cities feed into this single node.
+const HUB = { x: 50, y: 30 };
 
-function arcPath(a: City, b: City): string {
-  // Quadratic curve whose control point is pulled "up" (toward y=0) to form an arc.
-  const mx = (a.x + b.x) / 2;
-  const my = (a.y + b.y) / 2;
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  const dist = Math.sqrt(dx * dx + dy * dy);
-  // Perpendicular offset scaled by distance — bigger arc for longer links.
-  const curve = Math.min(18, dist * 0.45);
-  const cx = mx;
-  const cy = my - curve;
-  return `M ${a.x} ${a.y} Q ${cx} ${cy} ${b.x} ${b.y}`;
+// Straight spoke from a city to the central hub — perfectly lineal.
+function spokePath(c: City): string {
+  return `M ${c.x} ${c.y} L ${HUB.x} ${HUB.y}`;
 }
 
-// Map intensity → pulse timing
-function pulseDur(intensity: City["intensity"]): number {
-  if (intensity === "high") return 2.0;
-  if (intensity === "med") return 3.0;
-  return 4.2;
-}
-function coreDur(intensity: City["intensity"]): number {
-  if (intensity === "high") return 1.6;
-  if (intensity === "med") return 2.4;
-  return 3.2;
-}
+// Uniform pulse timing across all cities — calm and consistent.
+const CITY_PULSE_DUR = 6.0;
+const CITY_CORE_DUR = 4.4;
 
 function DeploymentMap() {
   // Faint dot-grid background — rough landmass silhouette via ellipse masks.
@@ -619,7 +591,7 @@ function DeploymentMap() {
 
   return (
     <div className="min-h-[280px] flex flex-col">
-      <div className="relative flex-1 rounded-md border border-[--color-line] bg-[#120a04]/60 overflow-hidden">
+      <div className="relative flex-1 rounded-md border border-[--color-line] bg-[--color-bg-elevated] overflow-hidden">
         <svg
           viewBox="0 0 100 60"
           className="w-full h-full"
@@ -631,11 +603,11 @@ function DeploymentMap() {
               <stop offset="60%" stopColor="var(--color-accent)" stopOpacity="0.2" />
               <stop offset="100%" stopColor="var(--color-accent)" stopOpacity="0" />
             </radialGradient>
-            <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="var(--color-accent)" stopOpacity="0" />
-              <stop offset="50%" stopColor="var(--color-accent)" stopOpacity="0.9" />
+            <radialGradient id="hubGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="var(--color-accent)" stopOpacity="1" />
+              <stop offset="40%" stopColor="var(--color-accent)" stopOpacity="0.45" />
               <stop offset="100%" stopColor="var(--color-accent)" stopOpacity="0" />
-            </linearGradient>
+            </radialGradient>
           </defs>
 
           {/* Dot grid landmasses */}
@@ -645,31 +617,35 @@ function DeploymentMap() {
             ))}
           </g>
 
-          {/* Animated data arcs */}
+          {/* Inbound spokes: straight lines, uniform stroke, flowing toward the central hub */}
           <g fill="none" strokeLinecap="round">
-            {ARCS.map(([fromIdx, toIdx, dur, delay], i) => {
-              const path = arcPath(CITIES[fromIdx], CITIES[toIdx]);
+            {CITIES.map((c, i) => {
+              const path = spokePath(c);
+              // Gentle stagger so flow dashes don't all fire in sync,
+              // but every spoke shares identical visual weight.
+              const delay = i * 0.6;
               return (
-                <g key={i}>
-                  {/* Static faint base arc */}
+                <g key={`spoke-${c.id}`}>
+                  {/* Static faint base line */}
                   <path
                     d={path}
                     stroke="var(--color-accent)"
-                    strokeOpacity="0.12"
+                    strokeOpacity="0.35"
                     strokeWidth="0.25"
                   />
-                  {/* Flowing dashed arc */}
+                  {/* Dashed flow toward hub (negative offset = flow along direction city→hub) */}
                   <path
                     d={path}
-                    stroke="url(#arcGrad)"
-                    strokeWidth="0.55"
-                    strokeDasharray="6 40"
+                    stroke="var(--color-accent)"
+                    strokeOpacity="0.35"
+                    strokeWidth="0.35"
+                    strokeDasharray="2 40"
                   >
                     <animate
                       attributeName="stroke-dashoffset"
-                      from="46"
-                      to="0"
-                      dur={`${dur}s`}
+                      from="0"
+                      to="-42"
+                      dur="10s"
                       begin={`${delay}s`}
                       repeatCount="indefinite"
                     />
@@ -679,14 +655,104 @@ function DeploymentMap() {
             })}
           </g>
 
-          {/* City nodes */}
+          {/* Central primary hub — iKingdom Core */}
+          <g>
+            {/* Radial halo */}
+            <circle cx={HUB.x} cy={HUB.y} r="7" fill="url(#hubGlow)" />
+            {/* Outer pulsing ring */}
+            <circle
+              cx={HUB.x}
+              cy={HUB.y}
+              r="3"
+              fill="none"
+              stroke="var(--color-accent)"
+              strokeWidth="0.25"
+              opacity="0"
+            >
+              <animate
+                attributeName="r"
+                from="3"
+                to="9"
+                dur="5s"
+                repeatCount="indefinite"
+              />
+              <animate
+                attributeName="opacity"
+                values="0;0.7;0"
+                dur="5s"
+                repeatCount="indefinite"
+              />
+            </circle>
+            {/* Secondary pulsing ring (offset phase) */}
+            <circle
+              cx={HUB.x}
+              cy={HUB.y}
+              r="3"
+              fill="none"
+              stroke="var(--color-accent)"
+              strokeWidth="0.2"
+              opacity="0"
+            >
+              <animate
+                attributeName="r"
+                from="3"
+                to="11"
+                dur="5s"
+                begin="2.5s"
+                repeatCount="indefinite"
+              />
+              <animate
+                attributeName="opacity"
+                values="0;0.45;0"
+                dur="5s"
+                begin="2.5s"
+                repeatCount="indefinite"
+              />
+            </circle>
+            {/* Steady outer ring */}
+            <circle
+              cx={HUB.x}
+              cy={HUB.y}
+              r="3.0"
+              fill="none"
+              stroke="var(--color-accent)"
+              strokeOpacity="0.55"
+              strokeWidth="0.2"
+            />
+            {/* Core filled dot */}
+            <circle cx={HUB.x} cy={HUB.y} r="2.6" fill="var(--color-accent)">
+              <animate
+                attributeName="opacity"
+                values="1;0.75;1"
+                dur="4s"
+                repeatCount="indefinite"
+              />
+            </circle>
+            {/* Hub label — centered below the hub */}
+            <text
+              x={HUB.x}
+              y={36}
+              textAnchor="middle"
+              fill="var(--color-accent)"
+              fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
+              fontSize="2.4"
+              letterSpacing="0.22"
+            >
+              iKINGDOM CORE
+            </text>
+          </g>
+
+          {/* City nodes — uniform size, grid-aligned labels */}
           {CITIES.map((c, i) => {
-            const pDur = pulseDur(c.intensity);
-            const cDur = coreDur(c.intensity);
-            const haloR = c.intensity === "high" ? 3.2 : c.intensity === "med" ? 2.6 : 2.0;
+            const pDur = CITY_PULSE_DUR;
+            const cDur = CITY_CORE_DUR;
+            // Label y positions: top row dots at y=14 → labels at y=20/y=22
+            //                   bottom row dots at y=46 → labels at y=52/y=54
+            const labelY = c.row === "top" ? 20 : 52;
+            const countY = c.row === "top" ? 22 : 54;
             return (
               <g key={c.id}>
-                {/* Outer pulsing rings — SVG-native looping */}
+                {/* Outer pulsing rings — uniform across all cities */}
                 <circle
                   cx={c.x}
                   cy={c.y}
@@ -699,22 +765,16 @@ function DeploymentMap() {
                   <animate
                     attributeName="r"
                     from="0.8"
-                    to={c.intensity === "high" ? "5.5" : "4.2"}
+                    to="4.5"
                     dur={`${pDur}s`}
-                    begin={`${i * 0.35}s`}
+                    begin={`${i * 0.4}s`}
                     repeatCount="indefinite"
                   />
                   <animate
                     attributeName="opacity"
-                    values={
-                      c.intensity === "high"
-                        ? "0;0.8;0"
-                        : c.intensity === "med"
-                          ? "0;0.6;0"
-                          : "0;0.4;0"
-                    }
+                    values="0;0.55;0"
                     dur={`${pDur}s`}
-                    begin={`${i * 0.35}s`}
+                    begin={`${i * 0.4}s`}
                     repeatCount="indefinite"
                   />
                 </circle>
@@ -730,72 +790,61 @@ function DeploymentMap() {
                   <animate
                     attributeName="r"
                     from="0.8"
-                    to={c.intensity === "high" ? "7.5" : "5.5"}
+                    to="6"
                     dur={`${pDur}s`}
-                    begin={`${i * 0.35 + pDur / 2}s`}
+                    begin={`${i * 0.4 + pDur / 2}s`}
                     repeatCount="indefinite"
                   />
                   <animate
                     attributeName="opacity"
-                    values={
-                      c.intensity === "high"
-                        ? "0;0.55;0"
-                        : c.intensity === "med"
-                          ? "0;0.4;0"
-                          : "0;0.25;0"
-                    }
+                    values="0;0.35;0"
                     dur={`${pDur}s`}
-                    begin={`${i * 0.35 + pDur / 2}s`}
+                    begin={`${i * 0.4 + pDur / 2}s`}
                     repeatCount="indefinite"
                   />
                 </circle>
 
-                {/* Soft halo */}
-                <circle cx={c.x} cy={c.y} r={haloR} fill="url(#cityGlow)" />
-                {/* Core dot */}
+                {/* Soft halo — uniform */}
+                <circle cx={c.x} cy={c.y} r="2.6" fill="url(#cityGlow)" />
+                {/* Core dot — uniform radius */}
                 <circle
                   cx={c.x}
                   cy={c.y}
-                  r={c.intensity === "high" ? 1.0 : c.intensity === "med" ? 0.85 : 0.7}
+                  r="0.9"
                   fill="var(--color-accent)"
                 >
                   <animate
                     attributeName="opacity"
-                    values="1;0.55;1"
+                    values="1;0.6;1"
                     dur={`${cDur}s`}
                     begin={`${i * 0.25}s`}
                     repeatCount="indefinite"
                   />
                 </circle>
 
-                {/* Floating label */}
-                <g transform={`translate(${c.x + 2.0}, ${c.y + 0.6})`}>
-                  {/* Live indicator dot */}
-                  <circle
-                    cx="0"
-                    cy="-0.7"
-                    r="0.3"
-                    fill="var(--color-accent)"
-                  >
-                    <animate
-                      attributeName="opacity"
-                      values="1;0.3;1"
-                      dur={`${cDur * 0.8}s`}
-                      begin={`${i * 0.2}s`}
-                      repeatCount="indefinite"
-                    />
-                  </circle>
-                  <text
-                    x="0.7"
-                    y="0"
-                    fill="var(--color-fg-muted)"
-                    fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
-                    fontSize="1.3"
-                    letterSpacing="0.06"
-                  >
-                    {c.name} · {c.count}
-                  </text>
-                </g>
+                {/* Grid-aligned label — centered below the dot */}
+                <text
+                  x={c.x}
+                  y={labelY}
+                  textAnchor="middle"
+                  fill="var(--color-fg-muted)"
+                  fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
+                  fontSize="1.7"
+                  letterSpacing="0.12"
+                    >
+                  {c.name}
+                </text>
+                <text
+                  x={c.x}
+                  y={countY}
+                  textAnchor="middle"
+                  fill="var(--color-fg-dim)"
+                  fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
+                  fontSize="1.5"
+                  letterSpacing="0.1"
+                >
+                  · {c.count} ·
+                </text>
               </g>
             );
           })}
@@ -816,7 +865,7 @@ function DeploymentMap() {
 
       <div className="mt-4 pt-4 border-t border-[--color-line] flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.18em]">
         <span className="text-[--color-fg-dim]">Network status</span>
-        <span className="text-[--color-fg] tabular-nums">10 nodes · global</span>
+        <span className="text-[--color-fg] tabular-nums">10 nodes · 1 core</span>
       </div>
     </div>
   );

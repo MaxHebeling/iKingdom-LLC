@@ -9,6 +9,7 @@ import Application from "@/components/Application";
 import Footer from "@/components/Footer";
 import AgentTrace from "@/components/AgentTrace";
 import PulseTicker from "@/components/PulseTicker";
+import ChatWidget from "@/components/ChatWidget";
 
 export default function Home() {
   return (
@@ -26,6 +27,7 @@ export default function Home() {
         <Application />
       </main>
       <Footer />
+      <ChatWidget />
     </>
   );
 }

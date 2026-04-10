@@ -61,10 +61,10 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-[--color-fg-muted]">
               <li>
                 <a
-                  href="mailto:office@ikingdom.ai"
+                  href="mailto:executive@ikingdom.org"
                   className="hover:text-[--color-fg] transition-colors duration-300"
                 >
-                  office@ikingdom.ai
+                  executive@ikingdom.org
                 </a>
               </li>
               <li>By application only</li>

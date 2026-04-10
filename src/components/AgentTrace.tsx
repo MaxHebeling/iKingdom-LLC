@@ -106,7 +106,7 @@ export default function AgentTrace() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, delay: 1.6, ease: [0.16, 1, 0.3, 1] }}
-        className="relative bg-[--color-bg-elevated] border border-[--color-line] px-5 py-4 rounded-md min-w-[320px] shadow-xl shadow-black/50"
+        className="relative bg-white border border-[--color-line-strong] px-5 py-4 rounded-md min-w-[320px] shadow-xl shadow-black/10"
       >
         <div className="flex items-start gap-3">
           <div className="relative mt-1.5 flex-shrink-0">

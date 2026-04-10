@@ -80,7 +80,7 @@ export default function Capabilities() {
           </span>
         </motion.h2>
 
-        <div className="mt-24 md:mt-32 grid md:grid-cols-2 gap-px bg-[--color-line]">
+        <div className="mt-24 md:mt-32 grid md:grid-cols-2 gap-px bg-[--color-line-strong]">
           {capabilities.map((cap, i) => (
             <motion.div
               key={cap.title}
@@ -88,7 +88,7 @@ export default function Capabilities() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 1, ease, delay: (i % 2) * 0.1 }}
-              className="bg-[--color-bg] p-10 md:p-14 hover:bg-[--color-bg-elevated]/50 transition-colors duration-700 group relative"
+              className="bg-[--color-bg] p-10 md:p-14 hover:bg-[--color-bg-elevated] transition-colors duration-700 group relative"
             >
               {/* Stat badge — top right */}
               <div className="absolute top-10 md:top-14 right-10 md:right-14 flex items-center gap-2">
