@@ -8,15 +8,32 @@ type ChatMessage = {
   content: string;
 };
 
-const INITIAL_GREETING: ChatMessage = {
-  role: "assistant",
-  content:
-    "Hi — I'm Channel, the iKingdom Assistant. I can answer any question about how we automate businesses, our investment tiers, our process, or whether we're a fit for you. What would you like to know?",
+type Language = "en" | "es";
+
+const GREETINGS: Record<Language, string> = {
+  en: "Hi — I'm Channel, the iKingdom Assistant. I can answer any question about how we automate businesses, our investment tiers, our process, or whether we're a fit for you. What would you like to know?",
+  es: "Hola — soy Channel, la asistente de iKingdom. Puedo responder cualquier pregunta sobre cómo automatizamos negocios, nuestros niveles de inversión, nuestro proceso, o si somos adecuados para ti. ¿Qué te gustaría saber?",
+};
+
+const SWITCH_MESSAGES: Record<Language, string> = {
+  en: "Switching to English. What would you like to know next?",
+  es: "Cambiando a español. ¿Qué te gustaría saber ahora?",
+};
+
+const ERROR_MESSAGES: Record<Language, string> = {
+  en: "I'm having trouble reaching the iKingdom servers right now. Please try again in a moment, or submit the application form below and our team will follow up directly.",
+  es: "Estoy teniendo problemas para conectar con los servidores de iKingdom. Por favor intenta de nuevo en un momento, o envía el formulario de solicitud a continuación y nuestro equipo te responderá directamente.",
+};
+
+const PLACEHOLDERS: Record<Language, string> = {
+  en: "Ask about our process, pricing, or fit...",
+  es: "Pregunta sobre nuestro proceso, precios o si somos adecuados...",
 };
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_GREETING]);
+  const [language, setLanguage] = useState<Language | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,16 +47,32 @@ export default function ChatWidget() {
   }, [messages, loading, open]);
 
   useEffect(() => {
-    if (open) {
+    if (open && language) {
       // Delay focus until slide-up animation completes
       const t = setTimeout(() => inputRef.current?.focus(), 350);
       return () => clearTimeout(t);
     }
-  }, [open]);
+  }, [open, language]);
+
+  function chooseLanguage(lang: Language) {
+    setLanguage(lang);
+    setMessages([{ role: "assistant", content: GREETINGS[lang] }]);
+    setError(null);
+  }
+
+  function toggleLanguage() {
+    if (!language) return;
+    const next: Language = language === "en" ? "es" : "en";
+    setLanguage(next);
+    setMessages((prev) => [
+      ...prev,
+      { role: "assistant", content: SWITCH_MESSAGES[next] },
+    ]);
+  }
 
   async function sendMessage() {
     const text = input.trim();
-    if (!text || loading) return;
+    if (!text || loading || !language) return;
 
     const nextMessages: ChatMessage[] = [
       ...messages,
@@ -58,8 +91,16 @@ export default function ChatWidget() {
           // Drop the initial canned greeting from what we send to the model;
           // it's purely UI chrome.
           messages: nextMessages.filter(
-            (m) => !(m.role === "assistant" && m.content === INITIAL_GREETING.content)
+            (m) =>
+              !(
+                m.role === "assistant" &&
+                (m.content === GREETINGS.en ||
+                  m.content === GREETINGS.es ||
+                  m.content === SWITCH_MESSAGES.en ||
+                  m.content === SWITCH_MESSAGES.es)
+              )
           ),
+          language,
         }),
       });
 
@@ -80,8 +121,7 @@ export default function ChatWidget() {
         ...prev,
         {
           role: "assistant",
-          content:
-            "I'm having trouble reaching the iKingdom servers right now. Please try again in a moment, or submit the application form below and our team will follow up directly.",
+          content: ERROR_MESSAGES[language],
         },
       ]);
     } finally {
@@ -203,132 +243,188 @@ export default function ChatWidget() {
                     iKingdom Assistant
                   </div>
                   <div className="mt-1.5 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-fg-muted)]">
-                    Online · Always available
+                    {language === "es"
+                      ? "En línea · Siempre disponible"
+                      : "Online · Always available"}
                   </div>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                aria-label="Close chat"
-                className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-fg-muted)] transition-colors hover:bg-[var(--color-line)] hover:text-[var(--color-fg)]"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+              <div className="flex items-center gap-2">
+                {language && (
+                  <button
+                    type="button"
+                    onClick={toggleLanguage}
+                    aria-label={
+                      language === "en"
+                        ? "Switch to Spanish"
+                        : "Cambiar a inglés"
+                    }
+                    className="flex h-7 items-center justify-center rounded-full border border-[var(--color-line-strong)] bg-[var(--color-bg-card)] px-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-fg-muted)] transition-colors hover:border-[#c9a96e] hover:text-[var(--color-fg)]"
+                  >
+                    {language === "en" ? "ES / EN" : "EN / ES"}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  aria-label="Close chat"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-fg-muted)] transition-colors hover:bg-[var(--color-line)] hover:text-[var(--color-fg)]"
                 >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
-            {/* Messages */}
-            <div
-              ref={scrollRef}
-              className="flex-1 space-y-3 overflow-y-auto bg-[var(--color-bg-card)] px-5 py-5"
-            >
-              {messages.map((m, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                  className={`flex items-end gap-2 ${
-                    m.role === "user" ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  {m.role === "assistant" && (
-                    // eslint-disable-next-line @next/next/no-img-element
+            {/* Language picker OR Messages */}
+            {language === null ? (
+              <div className="flex flex-1 flex-col items-center justify-center bg-[var(--color-bg-card)] px-6 py-8">
+                <div className="w-full max-w-sm rounded-2xl border border-[var(--color-line-strong)] bg-[var(--color-bg-elevated)] px-6 py-8 text-center shadow-[0_8px_24px_rgba(36,28,14,0.08)]">
+                  <div className="font-display text-lg font-semibold leading-snug text-[var(--color-fg)]">
+                    Welcome to iKingdom.
+                  </div>
+                  <div className="mt-1 font-display text-lg font-semibold leading-snug text-[var(--color-fg)]">
+                    Bienvenido a iKingdom.
+                  </div>
+                  <div className="mt-5 text-[12px] font-medium leading-relaxed text-[var(--color-fg-muted)]">
+                    Please choose your language:
+                    <br />
+                    Por favor elige tu idioma:
+                  </div>
+                  <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                    <button
+                      type="button"
+                      onClick={() => chooseLanguage("en")}
+                      className="flex-1 rounded-full border-2 border-[var(--color-line-strong)] bg-[var(--color-bg-card)] px-8 py-4 text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--color-fg)] transition-colors hover:border-[#c9a96e] hover:bg-[var(--color-fg)] hover:text-[var(--color-bg)]"
+                    >
+                      English
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => chooseLanguage("es")}
+                      className="flex-1 rounded-full border-2 border-[var(--color-line-strong)] bg-[var(--color-bg-card)] px-8 py-4 text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--color-fg)] transition-colors hover:border-[#c9a96e] hover:bg-[var(--color-fg)] hover:text-[var(--color-bg)]"
+                    >
+                      Español
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div
+                ref={scrollRef}
+                className="flex-1 space-y-3 overflow-y-auto bg-[var(--color-bg-card)] px-5 py-5"
+              >
+                {messages.map((m, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                    className={`flex items-end gap-2 ${
+                      m.role === "user" ? "justify-end" : "justify-start"
+                    }`}
+                  >
+                    {m.role === "assistant" && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src="/assistant.jpg"
+                        alt="Channel"
+                        className="h-7 w-7 flex-shrink-0 rounded-full object-cover ring-1 ring-[#c9a96e]/50"
+                      />
+                    )}
+                    <div
+                      className={`max-w-[80%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-[14px] font-medium leading-relaxed ${
+                        m.role === "user"
+                          ? "bg-[#d4b37a] text-[var(--color-fg)] shadow-[0_4px_12px_rgba(201,169,110,0.35)]"
+                          : "border border-[var(--color-line-strong)] bg-[var(--color-bg-elevated)] text-[var(--color-fg)]"
+                      }`}
+                    >
+                      {m.content}
+                    </div>
+                  </motion.div>
+                ))}
+
+                {loading && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-end justify-start gap-2"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/assistant.jpg"
                       alt="Channel"
                       className="h-7 w-7 flex-shrink-0 rounded-full object-cover ring-1 ring-[#c9a96e]/50"
                     />
-                  )}
-                  <div
-                    className={`max-w-[80%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-[14px] font-medium leading-relaxed ${
-                      m.role === "user"
-                        ? "bg-[#d4b37a] text-[var(--color-fg)] shadow-[0_4px_12px_rgba(201,169,110,0.35)]"
-                        : "border border-[var(--color-line-strong)] bg-[var(--color-bg-elevated)] text-[var(--color-fg)]"
-                    }`}
-                  >
-                    {m.content}
-                  </div>
-                </motion.div>
-              ))}
+                    <div className="flex items-center gap-1.5 rounded-2xl border border-[var(--color-line-strong)] bg-[var(--color-bg-elevated)] px-4 py-3">
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c9a96e] [animation-delay:-0.3s]" />
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c9a96e] [animation-delay:-0.15s]" />
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c9a96e]" />
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+            )}
 
-              {loading && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex items-end justify-start gap-2"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/assistant.jpg"
-                    alt="Channel"
-                    className="h-7 w-7 flex-shrink-0 rounded-full object-cover ring-1 ring-[#c9a96e]/50"
+            {/* Input — only show once a language is chosen */}
+            {language !== null && (
+              <div className="border-t border-[var(--color-line-strong)] bg-[var(--color-bg-elevated)] px-4 py-3">
+                {error && (
+                  <div className="mb-2 text-[11px] font-medium text-[#b8954f]">{error}</div>
+                )}
+                <div className="flex items-end gap-2 rounded-xl border border-[var(--color-line-strong)] bg-[var(--color-bg-card)] px-3 py-2 transition-colors focus-within:border-[#c9a96e]">
+                  <textarea
+                    ref={inputRef}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    rows={1}
+                    placeholder={PLACEHOLDERS[language]}
+                    disabled={loading}
+                    className="max-h-32 flex-1 resize-none bg-transparent text-[14px] font-medium text-[var(--color-fg)] placeholder:text-[var(--color-fg-muted)] placeholder:font-normal focus:outline-none disabled:opacity-50"
                   />
-                  <div className="flex items-center gap-1.5 rounded-2xl border border-[var(--color-line-strong)] bg-[var(--color-bg-elevated)] px-4 py-3">
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c9a96e] [animation-delay:-0.3s]" />
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c9a96e] [animation-delay:-0.15s]" />
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#c9a96e]" />
-                  </div>
-                </motion.div>
-              )}
-            </div>
-
-            {/* Input */}
-            <div className="border-t border-[var(--color-line-strong)] bg-[var(--color-bg-elevated)] px-4 py-3">
-              {error && (
-                <div className="mb-2 text-[11px] font-medium text-[#b8954f]">{error}</div>
-              )}
-              <div className="flex items-end gap-2 rounded-xl border border-[var(--color-line-strong)] bg-[var(--color-bg-card)] px-3 py-2 transition-colors focus-within:border-[#c9a96e]">
-                <textarea
-                  ref={inputRef}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  rows={1}
-                  placeholder="Ask about our process, pricing, or fit..."
-                  disabled={loading}
-                  className="max-h-32 flex-1 resize-none bg-transparent text-[14px] font-medium text-[var(--color-fg)] placeholder:text-[var(--color-fg-muted)] placeholder:font-normal focus:outline-none disabled:opacity-50"
-                />
-                <button
-                  type="button"
-                  onClick={sendMessage}
-                  disabled={loading || !input.trim()}
-                  aria-label="Send message"
-                  className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--color-fg)] text-white transition-all hover:bg-[#c9a96e] hover:text-[var(--color-fg)] disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-[var(--color-fg)] disabled:hover:text-white"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                  <button
+                    type="button"
+                    onClick={sendMessage}
+                    disabled={loading || !input.trim()}
+                    aria-label={
+                      language === "es" ? "Enviar mensaje" : "Send message"
+                    }
+                    className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--color-fg)] text-white transition-all hover:bg-[#c9a96e] hover:text-[var(--color-fg)] disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-[var(--color-fg)] disabled:hover:text-white"
                   >
-                    <line x1="12" y1="19" x2="12" y2="5" />
-                    <polyline points="5 12 12 5 19 12" />
-                  </svg>
-                </button>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="12" y1="19" x2="12" y2="5" />
+                      <polyline points="5 12 12 5 19 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="mt-2 text-center text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-fg-muted)]">
+                  Powered by iKingdom
+                </div>
               </div>
-              <div className="mt-2 text-center text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-fg-muted)]">
-                Powered by iKingdom
-              </div>
-            </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
