@@ -4,9 +4,17 @@ import path from "node:path";
 /**
  * Server-side telemetry helpers for the iKingdom engagement pipeline.
  *
- * Storage model: a single newline-delimited JSON file (jsonl) at
+ * Storage model (production): Vercel KV (Upstash Redis). Events are pushed
+ * onto a single list at `telemetry:events` (newest first via LPUSH) and
+ * periodically trimmed to ~10k entries.
+ *
+ * Storage model (local dev / no KV env): newline-delimited JSON file at
  * `data/engagement.jsonl`, one event per line. Kept small (~5MB) by
  * truncating the oldest lines when the file grows past the cap.
+ *
+ * Selection is automatic: if `KV_REST_API_URL` and `KV_REST_API_TOKEN` are
+ * set in the environment, KV is used; otherwise we fall back to the file
+ * path so local development keeps working without any config.
  */
 
 export type TelemetryEventType =
@@ -42,6 +50,37 @@ export interface AggregatedStats {
   generatedAt: number;
 }
 
+// ---------------------------------------------------------------------------
+// Backend selection
+// ---------------------------------------------------------------------------
+
+const KV_KEY = "telemetry:events";
+// Cap the list at ~10k entries. Trim occasionally (not on every write) to
+// avoid doing an extra round-trip against KV on the hot path.
+const KV_MAX_LIST_SIZE = 10_000;
+const KV_TRIM_INTERVAL_MS = 60_000;
+let lastKvTrimAt = 0;
+
+function hasKvEnv(): boolean {
+  return Boolean(
+    process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
+  );
+}
+
+// Lazy so `import` side-effects don't force @vercel/kv at module load
+// when KV isn't configured (helps local dev and build-time analysis).
+let kvClientPromise: Promise<typeof import("@vercel/kv").kv> | null = null;
+function getKv(): Promise<typeof import("@vercel/kv").kv> {
+  if (!kvClientPromise) {
+    kvClientPromise = import("@vercel/kv").then((mod) => mod.kv);
+  }
+  return kvClientPromise;
+}
+
+// ---------------------------------------------------------------------------
+// File backend
+// ---------------------------------------------------------------------------
+
 const DATA_DIR = path.join(process.cwd(), "data");
 const LOG_FILE = path.join(DATA_DIR, "engagement.jsonl");
 const MAX_BYTES = 5 * 1024 * 1024; // ~5MB cap
@@ -75,9 +114,39 @@ async function rotateIfNeeded(): Promise<void> {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Shared helpers
+// ---------------------------------------------------------------------------
+
+function normalizeEvents(
+  sessionId: string,
+  events: TelemetryEvent[]
+): StoredEvent[] {
+  const now = Date.now();
+  const out: StoredEvent[] = [];
+  for (const e of events) {
+    if (!e || typeof e.type !== "string") continue;
+    const stored: StoredEvent = {
+      sessionId,
+      receivedAt: now,
+      type: String(e.type),
+      ts: typeof e.ts === "number" ? e.ts : now,
+    };
+    if (typeof e.section === "string") stored.section = e.section;
+    if (typeof e.dwellMs === "number") stored.dwellMs = e.dwellMs;
+    if (typeof e.scrollDepth === "number") stored.scrollDepth = e.scrollDepth;
+    out.push(stored);
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
+
 /**
- * Append a batch of events for a session to the jsonl log.
- * Writes are serialized via an in-process promise chain.
+ * Append a batch of events for a session.
+ * Returns the number of events actually stored.
  */
 export async function appendEvents(
   sessionId: string,
@@ -85,27 +154,37 @@ export async function appendEvents(
 ): Promise<number> {
   if (!sessionId || !Array.isArray(events) || events.length === 0) return 0;
 
-  const now = Date.now();
-  const lines = events
-    .filter((e) => e && typeof e.type === "string")
-    .map((e) => {
-      const stored: StoredEvent = {
-        sessionId,
-        receivedAt: now,
-        type: String(e.type),
-        ts: typeof e.ts === "number" ? e.ts : now,
-      };
-      if (typeof e.section === "string") stored.section = e.section;
-      if (typeof e.dwellMs === "number") stored.dwellMs = e.dwellMs;
-      if (typeof e.scrollDepth === "number") stored.scrollDepth = e.scrollDepth;
-      return JSON.stringify(stored);
-    });
+  const stored = normalizeEvents(sessionId, events);
+  if (stored.length === 0) return 0;
 
-  if (lines.length === 0) return 0;
+  if (hasKvEnv()) {
+    try {
+      const kv = await getKv();
+      // LPUSH newest-first. Pass each event as a separate string arg.
+      const payloads = stored.map((s) => JSON.stringify(s));
+      await kv.lpush(KV_KEY, ...payloads);
 
-  const payload = lines.join("\n") + "\n";
+      // Periodically trim the list to KV_MAX_LIST_SIZE to keep it bounded.
+      const now = Date.now();
+      if (now - lastKvTrimAt > KV_TRIM_INTERVAL_MS) {
+        lastKvTrimAt = now;
+        try {
+          await kv.ltrim(KV_KEY, 0, KV_MAX_LIST_SIZE - 1);
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
+          console.warn("[telemetry] kv ltrim failed:", msg);
+        }
+      }
+      return stored.length;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error("[telemetry] kv lpush failed:", msg);
+      throw err;
+    }
+  }
 
-  // Chain the write so concurrent callers are serialized.
+  // File fallback. Serialize writes through a promise chain.
+  const payload = stored.map((s) => JSON.stringify(s)).join("\n") + "\n";
   const task = writeChain.then(async () => {
     await ensureDir();
     await fs.appendFile(LOG_FILE, payload, "utf8");
@@ -113,11 +192,11 @@ export async function appendEvents(
   });
   writeChain = task.catch(() => undefined);
   await task;
-  return lines.length;
+  return stored.length;
 }
 
 /**
- * Read the most recent events, bounded by line count and age.
+ * Read the most recent events, bounded by count and age.
  * Returns at most `maxLines` events, all with receivedAt within
  * `maxAgeSeconds` of now.
  */
@@ -125,6 +204,46 @@ export async function readRecent(
   maxLines = 200,
   maxAgeSeconds = 60
 ): Promise<StoredEvent[]> {
+  const cutoff = Date.now() - maxAgeSeconds * 1000;
+
+  if (hasKvEnv()) {
+    try {
+      const kv = await getKv();
+      // LPUSH stores newest-first at index 0; take the first maxLines.
+      const raw = await kv.lrange(KV_KEY, 0, Math.max(0, maxLines - 1));
+      const events: StoredEvent[] = [];
+      for (const item of raw) {
+        // @vercel/kv auto-deserializes JSON if it can; otherwise it's a string.
+        let parsed: StoredEvent | null = null;
+        if (typeof item === "string") {
+          try {
+            parsed = JSON.parse(item) as StoredEvent;
+          } catch {
+            parsed = null;
+          }
+        } else if (item && typeof item === "object") {
+          parsed = item as unknown as StoredEvent;
+        }
+        if (
+          parsed &&
+          typeof parsed.receivedAt === "number" &&
+          parsed.receivedAt >= cutoff
+        ) {
+          events.push(parsed);
+        }
+      }
+      // Return oldest-first to match the file-backend contract that downstream
+      // aggregate() expects (it uses slice(-10) for "most recent").
+      events.reverse();
+      return events;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error("[telemetry] kv lrange failed:", msg);
+      return [];
+    }
+  }
+
+  // File fallback.
   let content: string;
   try {
     content = await fs.readFile(LOG_FILE, "utf8");
@@ -136,7 +255,6 @@ export async function readRecent(
 
   const lines = content.split("\n").filter((l) => l.length > 0);
   const tail = lines.slice(-maxLines);
-  const cutoff = Date.now() - maxAgeSeconds * 1000;
 
   const events: StoredEvent[] = [];
   for (const line of tail) {

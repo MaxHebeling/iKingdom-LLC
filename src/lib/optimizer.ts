@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { promises as fs } from "fs";
 import path from "path";
+import { kv } from "@vercel/kv";
 
 export type OptimizeInput = {
   section: string;
@@ -28,6 +29,13 @@ export type ActiveVariants = Record<string, ActiveVariant>;
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const VARIANTS_PATH = path.join(DATA_DIR, "variants.json");
+const KV_VARIANTS_KEY = "optimizer:variants";
+
+function isKvAvailable(): boolean {
+  return Boolean(
+    process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
+  );
+}
 
 const SYSTEM_PROMPT = `You are the Optimizer Agent for iKingdom — the world's first AI operations firm. iKingdom designs and installs autonomous AI operations inside ambitious businesses, deploying eighty agents across nine functional tiers as a living operational layer.
 
@@ -182,6 +190,19 @@ async function ensureDataDir(): Promise<void> {
 }
 
 export async function loadActiveVariants(): Promise<ActiveVariants> {
+  if (isKvAvailable()) {
+    try {
+      const stored = await kv.get<ActiveVariants>(KV_VARIANTS_KEY);
+      if (stored && typeof stored === "object") {
+        return stored;
+      }
+      return {};
+    } catch (err) {
+      console.error("[optimizer] kv.get error:", err);
+      return {};
+    }
+  }
+
   try {
     const raw = await fs.readFile(VARIANTS_PATH, "utf8");
     const parsed = JSON.parse(raw) as ActiveVariants;
@@ -203,9 +224,15 @@ export async function saveVariant(
   section: string,
   variant: ActiveVariant
 ): Promise<ActiveVariants> {
-  await ensureDataDir();
   const current = await loadActiveVariants();
   current[section] = variant;
+
+  if (isKvAvailable()) {
+    await kv.set(KV_VARIANTS_KEY, current);
+    return current;
+  }
+
+  await ensureDataDir();
   await fs.writeFile(VARIANTS_PATH, JSON.stringify(current, null, 2), "utf8");
   return current;
 }

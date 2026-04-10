@@ -1,5 +1,3 @@
-import { promises as fs } from "fs";
-import path from "path";
 import {
   agent01_applicationReceiver,
   agent14_tierAllocator,
@@ -13,15 +11,15 @@ import {
   type AgentContext,
   type TelemetryEvent,
 } from "@/lib/agents";
+import { readRecent } from "@/lib/telemetry";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// Keep this in sync with the telemetry pipeline.
-const ENGAGEMENT_FILE = path.join(process.cwd(), "data", "engagement.jsonl");
-
 // Consider events from the last 15 minutes "recent".
 const RECENT_WINDOW_MS = 15 * 60 * 1000;
+// Upper bound on events pulled from the telemetry store per run.
+const MAX_RECENT_LINES = 5000;
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -41,47 +39,34 @@ export async function OPTIONS(): Promise<Response> {
 }
 
 async function readRecentEvents(now: number): Promise<TelemetryEvent[]> {
-  let raw: string;
-  try {
-    raw = await fs.readFile(ENGAGEMENT_FILE, "utf-8");
-  } catch (err) {
-    const code = (err as NodeJS.ErrnoException).code;
-    if (code === "ENOENT") return [];
-    throw err;
-  }
+  // Delegate storage to the telemetry helper so this route automatically
+  // inherits whatever backing store (KV, file, etc.) telemetry.ts uses.
+  const stored = await readRecent(
+    MAX_RECENT_LINES,
+    Math.ceil(RECENT_WINDOW_MS / 1000)
+  );
 
-  const events: TelemetryEvent[] = [];
   const cutoff = now - RECENT_WINDOW_MS;
-  const lines = raw.split("\n");
+  const events: TelemetryEvent[] = [];
 
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
-    try {
-      const parsed = JSON.parse(trimmed) as Partial<TelemetryEvent>;
-      if (
-        typeof parsed.type === "string" &&
-        typeof parsed.ts === "number" &&
-        typeof parsed.sessionId === "string" &&
-        parsed.ts >= cutoff
-      ) {
-        events.push({
-          type: parsed.type,
-          section:
-            typeof parsed.section === "string" ? parsed.section : undefined,
-          dwellMs:
-            typeof parsed.dwellMs === "number" ? parsed.dwellMs : undefined,
-          scrollDepth:
-            typeof parsed.scrollDepth === "number"
-              ? parsed.scrollDepth
-              : undefined,
-          ts: parsed.ts,
-          sessionId: parsed.sessionId,
-        });
-      }
-    } catch {
-      // Skip malformed lines
+  for (const s of stored) {
+    if (
+      typeof s.type !== "string" ||
+      typeof s.ts !== "number" ||
+      typeof s.sessionId !== "string" ||
+      s.ts < cutoff
+    ) {
+      continue;
     }
+    events.push({
+      type: s.type,
+      section: typeof s.section === "string" ? s.section : undefined,
+      dwellMs: typeof s.dwellMs === "number" ? s.dwellMs : undefined,
+      scrollDepth:
+        typeof s.scrollDepth === "number" ? s.scrollDepth : undefined,
+      ts: s.ts,
+      sessionId: s.sessionId,
+    });
   }
 
   return events;
