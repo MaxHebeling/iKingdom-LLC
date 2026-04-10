@@ -69,7 +69,15 @@ export default function JsonLdSchemas() {
       "Machine Learning Operations",
     ],
     priceRange: "$$$$",
-    sameAs: [],
+    sameAs: [
+      "https://www.linkedin.com/company/ikingdom",
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "sales",
+      email: "executive@ikingdom.org",
+      availableLanguage: ["English", "Spanish"],
+    },
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "AI Operations Engagement Tiers",
@@ -140,7 +148,7 @@ export default function JsonLdSchemas() {
     inLanguage: ["en", "es"],
     potentialAction: {
       "@type": "ReadAction",
-      target: baseUrl,
+      target: [baseUrl, `${baseUrl}/es`],
     },
   };
 

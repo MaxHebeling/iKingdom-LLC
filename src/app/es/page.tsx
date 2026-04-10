@@ -22,9 +22,9 @@ const EngagementTracker = dynamic(
 
 export const metadata: Metadata = {
   title:
-    "iKingdom — La Primera Firma de Operaciones de IA | Automatizacion Empresarial con IA | San Diego",
+    "La Primera Firma de Operaciones de IA | Automatización Empresarial | San Diego",
   description:
-    "iKingdom es la primera firma de operaciones de IA del mundo. Desplegamos 80 agentes autonomos de IA en 9 niveles para automatizar tu empresa completa — desde captura de prospectos hasta facturacion. Automatizacion empresarial y consultoria de IA para empresas de $1M-$100M. San Diego, CA. Solo por solicitud.",
+    "Desplegamos 80 agentes autónomos de IA en 9 niveles para automatizar tu empresa. Inversión desde $35K. San Diego, CA. Solo por solicitud.",
   keywords: [
     "operaciones de IA",
     "firma de operaciones de IA",

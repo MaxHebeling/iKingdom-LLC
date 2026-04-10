@@ -3,5 +3,14 @@ export default function EsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div lang="es">{children}</div>;
+  return (
+    <>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `document.documentElement.lang="es"`,
+        }}
+      />
+      <div lang="es">{children}</div>
+    </>
+  );
 }

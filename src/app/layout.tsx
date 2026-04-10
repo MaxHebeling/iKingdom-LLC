@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     template: "%s | iKingdom",
   },
   description:
-    "iKingdom designs and deploys autonomous AI operations for businesses doing $1M-$100M+. 80 agents, 9 tiers, 12-month deployment. Founded by Jordan Talavera in San Diego, CA. By application only.",
+    "We design and deploy 80 autonomous AI agents across 9 tiers to run your business. San Diego, CA. By application only.",
   metadataBase: new URL("https://www.ikingdom.org"),
   keywords: [
     "AI operations firm",
@@ -61,6 +61,7 @@ export const metadata: Metadata = {
     languages: {
       en: "https://www.ikingdom.org",
       es: "https://www.ikingdom.org/es",
+      "x-default": "https://www.ikingdom.org",
     },
   },
   openGraph: {
