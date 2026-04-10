@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllSlugs, getPostBySlug } from "@/lib/blog";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 /* ------------------------------------------------------------------ */
 /*  Static params                                                      */
@@ -138,6 +139,15 @@ export default async function BlogPostPage({
       <link rel="alternate" hrefLang="es" href={esUrl} />
 
       <article className="pt-32 md:pt-40 pb-20 md:pb-28 px-6 md:px-10 max-w-[800px] mx-auto">
+        {/* Breadcrumbs */}
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "https://www.ikingdom.org" },
+            { label: "Blog", href: "https://www.ikingdom.org/blog" },
+            { label: post.title },
+          ]}
+        />
+
         {/* Back link */}
         <Link
           href="/blog"

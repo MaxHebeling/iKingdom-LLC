@@ -41,6 +41,11 @@ const COPY = {
     contactHeader: "Contact",
     byApplication: "By application only",
     location: "San Diego, CA",
+    legalHeader: "Legal",
+    privacy: "Privacy Policy",
+    terms: "Terms of Service",
+    privacyHref: "/privacy",
+    termsHref: "/terms",
     rights: (year: number) => `\u00A9 ${year} iKingdom LLC. All rights reserved.`,
     established:
       "Established \u00B7 The world\u2019s first AI operations firm \u00B7 San Diego, CA",
@@ -56,6 +61,11 @@ const COPY = {
     contactHeader: "Contacto",
     byApplication: "Solo por solicitud",
     location: "San Diego, CA",
+    legalHeader: "Legal",
+    privacy: "Pol\u00EDtica de Privacidad",
+    terms: "T\u00E9rminos de Servicio",
+    privacyHref: "/es/privacy",
+    termsHref: "/es/terms",
     rights: (year: number) =>
       `\u00A9 ${year} iKingdom LLC. Todos los derechos reservados.`,
     established:
@@ -71,7 +81,7 @@ export default function Footer({ lang = "en" }: { lang?: "en" | "es" }) {
       <div className="max-w-[1400px] mx-auto px-6 md:px-10">
         <div className="grid md:grid-cols-12 gap-12">
           <motion.div
-            className="md:col-span-5"
+            className="md:col-span-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
@@ -117,7 +127,7 @@ export default function Footer({ lang = "en" }: { lang?: "en" | "es" }) {
           </motion.div>
 
           <motion.div
-            className="md:col-span-4"
+            className="md:col-span-3"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
@@ -145,6 +155,26 @@ export default function Footer({ lang = "en" }: { lang?: "en" | "es" }) {
               </li>
             </ul>
           </motion.div>
+
+          <motion.div
+            className="md:col-span-2"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 1, ease, delay: 0.3 }}
+          >
+            <p className="text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim] mb-5">
+              {t.legalHeader}
+            </p>
+            <ul className="space-y-3 text-sm text-[--color-fg-muted]">
+              <li>
+                <FooterLink href={t.privacyHref}>{t.privacy}</FooterLink>
+              </li>
+              <li>
+                <FooterLink href={t.termsHref}>{t.terms}</FooterLink>
+              </li>
+            </ul>
+          </motion.div>
         </div>
 
         <motion.div
@@ -152,7 +182,7 @@ export default function Footer({ lang = "en" }: { lang?: "en" | "es" }) {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 1, ease, delay: 0.3 }}
+          transition={{ duration: 1, ease, delay: 0.4 }}
         >
           <p className="text-xs text-[--color-fg-dim]">{t.rights(year)}</p>
           <p className="text-xs text-[--color-fg-dim] tracking-wide">

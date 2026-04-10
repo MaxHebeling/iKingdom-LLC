@@ -54,6 +54,60 @@ export default function sitemap(): MetadataRoute.Sitemap {
         },
       },
     },
+    {
+      url: `${baseUrl}/privacy`,
+      lastModified,
+      changeFrequency: "yearly",
+      priority: 0.3,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/privacy`,
+          es: `${baseUrl}/es/privacy`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/terms`,
+      lastModified,
+      changeFrequency: "yearly",
+      priority: 0.3,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/terms`,
+          es: `${baseUrl}/es/terms`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/es/privacy`,
+      lastModified,
+      changeFrequency: "yearly",
+      priority: 0.2,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/privacy`,
+          es: `${baseUrl}/es/privacy`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/es/terms`,
+      lastModified,
+      changeFrequency: "yearly",
+      priority: 0.2,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/terms`,
+          es: `${baseUrl}/es/terms`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/blog/feed.xml`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.1,
+    },
   ];
 
   // Dynamic blog post pages

@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import JsonLdSchemas from "@/components/JsonLdSchemas";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
+import MetaPixel from "@/components/MetaPixel";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -101,6 +103,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  verification: {
+    google: "placeholder-will-be-replaced",
+  },
   category: "technology",
   other: {
     "geo.region": "US-CA",
@@ -128,6 +133,8 @@ export default function RootLayout({
         <JsonLdSchemas />
       </head>
       <body className="relative">
+        <GoogleAnalytics />
+        <MetaPixel />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[--color-fg] focus:text-[--color-bg] focus:rounded-md focus:text-sm focus:outline-none"
