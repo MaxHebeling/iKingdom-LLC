@@ -190,7 +190,7 @@ export default function ChatWidget() {
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/channel.png?v=3"
+                src="/channel.png?v=4"
                 alt="Channel — iKingdom Assistant"
                 width={60}
                 height={60}
@@ -229,7 +229,7 @@ export default function ChatWidget() {
                 <div className="relative h-10 w-10 flex-shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="/channel.png?v=3"
+                    src="/channel.png?v=4"
                     alt="Channel"
                     width={40}
                     height={40}
@@ -348,7 +348,7 @@ export default function ChatWidget() {
                     {m.role === "assistant" && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src="/channel.png?v=3"
+                        src="/channel.png?v=4"
                         alt="Channel"
                         width={28}
                         height={28}
@@ -377,7 +377,7 @@ export default function ChatWidget() {
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src="/channel.png?v=3"
+                      src="/channel.png?v=4"
                       alt="Channel"
                       width={28}
                       height={28}
