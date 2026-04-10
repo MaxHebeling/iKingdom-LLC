@@ -22,6 +22,15 @@ export const metadata: Metadata = {
   description:
     "iKingdom designs and deploys autonomous AI operations for ambitious companies. Eighty agents. Nine tiers. One fully automated business. By application only.",
   metadataBase: new URL("https://ikingdom.ai"),
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
   openGraph: {
     title: "iKingdom — The world's first AI operations firm",
     description:
