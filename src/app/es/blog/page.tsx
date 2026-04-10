@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllPosts } from "@/lib/blog";
 import BlogCard from "@/components/BlogCard";
+import NewsletterSignup from "@/components/NewsletterSignup";
 
 export const metadata: Metadata = {
   title: "Blog — Perspectivas en Operaciones de IA",
@@ -76,6 +77,8 @@ export default function BlogPageES() {
           </div>
         )}
       </main>
+
+      <NewsletterSignup lang="es" />
     </>
   );
 }

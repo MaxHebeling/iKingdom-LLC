@@ -55,6 +55,78 @@ export default function sitemap(): MetadataRoute.Sitemap {
       },
     },
     {
+      url: `${baseUrl}/contact`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.7,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/contact`,
+          es: `${baseUrl}/es/contact`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/es/contact`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.6,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/contact`,
+          es: `${baseUrl}/es/contact`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/about`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.8,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/about`,
+          es: `${baseUrl}/es/about`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/es/about`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.7,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/about`,
+          es: `${baseUrl}/es/about`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/cases`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.8,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/cases`,
+          es: `${baseUrl}/es/cases`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/es/cases`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.7,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/cases`,
+          es: `${baseUrl}/es/cases`,
+        },
+      },
+    },
+    {
       url: `${baseUrl}/privacy`,
       lastModified,
       changeFrequency: "yearly",

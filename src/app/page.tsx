@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
+import ClientLogos from "@/components/ClientLogos";
 import Footer from "@/components/Footer";
 
 // Heavy below-fold components loaded dynamically to reduce initial JS bundle
@@ -29,6 +30,7 @@ export default function Home() {
       <PulseTicker />
       <main id="main-content" className="relative">
         <Hero lang="en" />
+        <ClientLogos lang="en" />
         <Method lang="en" />
         <Capabilities lang="en" />
         <Continuity lang="en" />

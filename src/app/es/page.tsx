@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
+import ClientLogos from "@/components/ClientLogos";
 import Footer from "@/components/Footer";
 
 const Method = dynamic(() => import("@/components/Method"));
@@ -88,6 +89,7 @@ export default function HomeES() {
       <PulseTicker />
       <main id="main-content" className="relative">
         <Hero lang="es" />
+        <ClientLogos lang="es" />
         <Method lang="es" />
         <Capabilities lang="es" />
         <Continuity lang="es" />

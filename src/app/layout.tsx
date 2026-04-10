@@ -4,6 +4,7 @@ import "./globals.css";
 import JsonLdSchemas from "@/components/JsonLdSchemas";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import MetaPixel from "@/components/MetaPixel";
+import CookieConsent from "@/components/CookieConsent";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -142,6 +143,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         {children}
+        <CookieConsent />
       </body>
     </html>
   );

@@ -12,7 +12,11 @@ const COPY = {
       { id: "proof", label: "Proof" },
       { id: "process", label: "Process" },
     ],
-    blogLink: { href: "/blog", label: "Blog" },
+    pageLinks: [
+      { href: "/cases", label: "Cases" },
+      { href: "/blog", label: "Blog" },
+      { href: "/about", label: "About" },
+    ],
     apply: "Apply",
     menuOpen: "Open navigation menu",
     menuClose: "Close navigation menu",
@@ -24,7 +28,11 @@ const COPY = {
       { id: "proof", label: "Pruebas" },
       { id: "process", label: "Proceso" },
     ],
-    blogLink: { href: "/es/blog", label: "Blog" },
+    pageLinks: [
+      { href: "/es/cases", label: "Casos" },
+      { href: "/es/blog", label: "Blog" },
+      { href: "/es/about", label: "Nosotros" },
+    ],
     apply: "Solicitar",
     menuOpen: "Abrir menú de navegación",
     menuClose: "Cerrar menú de navegación",
@@ -155,13 +163,16 @@ export default function Nav({ lang = "en" }: { lang?: "en" | "es" }) {
               );
             })}
 
-            {/* Blog link */}
-            <a
-              href={t.blogLink.href}
-              className="hidden md:inline-flex items-center gap-2 text-sm text-[--color-fg-muted] hover:text-[--color-fg] transition-colors duration-300"
-            >
-              {t.blogLink.label}
-            </a>
+            {/* Page links (Cases, Blog, About) */}
+            {t.pageLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="hidden md:inline-flex items-center gap-2 text-sm text-[--color-fg-muted] hover:text-[--color-fg] transition-colors duration-300"
+              >
+                {link.label}
+              </a>
+            ))}
 
             {/* Apply CTA */}
             <motion.a
@@ -289,21 +300,24 @@ export default function Nav({ lang = "en" }: { lang?: "en" | "es" }) {
                 </motion.a>
               ))}
 
-              {/* Mobile blog link */}
-              <motion.a
-                href={t.blogLink.href}
-                onClick={closeMobileMenu}
-                initial={{ opacity: 0, x: -16 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{
-                  duration: 0.4,
-                  delay: t.links.length * 0.06,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="font-display text-4xl tracking-[-0.015em] text-[--color-fg] hover:text-[--color-accent] transition-colors duration-300"
-              >
-                {t.blogLink.label}
-              </motion.a>
+              {/* Mobile page links (Cases, Blog, About) */}
+              {t.pageLinks.map((link, i) => (
+                <motion.a
+                  key={link.href}
+                  href={link.href}
+                  onClick={closeMobileMenu}
+                  initial={{ opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: (t.links.length + i) * 0.06,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="font-display text-4xl tracking-[-0.015em] text-[--color-fg] hover:text-[--color-accent] transition-colors duration-300"
+                >
+                  {link.label}
+                </motion.a>
+              ))}
 
               {/* Mobile language toggle */}
               <motion.div

@@ -38,6 +38,8 @@ const COPY = {
     proof: "Proof",
     process: "Process",
     apply: "Apply",
+    contact: "Contact",
+    contactHref: "/contact",
     contactHeader: "Contact",
     byApplication: "By application only",
     location: "San Diego, CA",
@@ -58,6 +60,8 @@ const COPY = {
     proof: "Pruebas",
     process: "Proceso",
     apply: "Solicitar",
+    contact: "Contacto",
+    contactHref: "/es/contact",
     contactHeader: "Contacto",
     byApplication: "Solo por solicitud",
     location: "San Diego, CA",
@@ -122,6 +126,9 @@ export default function Footer({ lang = "en" }: { lang?: "en" | "es" }) {
               </li>
               <li>
                 <FooterLink href="#apply">{t.apply}</FooterLink>
+              </li>
+              <li>
+                <FooterLink href={t.contactHref}>{t.contact}</FooterLink>
               </li>
             </ul>
           </motion.div>
