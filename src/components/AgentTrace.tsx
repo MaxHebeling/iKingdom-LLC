@@ -10,6 +10,19 @@ type AgentState = {
   action: string;
 };
 
+type TelemetryLive = {
+  activeSessions?: number;
+  sectionDwell?: Record<string, number>;
+  currentSections?: Record<string, number>;
+  recentEvents?: Array<{
+    type: string;
+    section?: string;
+    ts?: number;
+    sessionId?: string;
+  }>;
+  engagementScore?: number;
+};
+
 const AGENT_BY_SECTION: Record<string, AgentState> = {
   top: {
     id: "top",
@@ -60,11 +73,39 @@ const SECTION_IDS = ["top", "method", "capabilities", "process", "console", "pro
 export default function AgentTrace() {
   const [activeSection, setActiveSection] = useState<string>("top");
   const [sessionId, setSessionId] = useState<string>("");
+  const [telemetry, setTelemetry] = useState<TelemetryLive | null>(null);
 
   // Generate session ID client-side only to avoid SSR hydration mismatch
   useEffect(() => {
     const n = Math.floor(Math.random() * 9000) + 1000;
     setSessionId(`IKDM-${n}`);
+  }, []);
+
+  // Poll live telemetry every 4s. Silent failure keeps the static UI intact.
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchLive = async () => {
+      try {
+        const res = await fetch("/api/telemetry/live", {
+          cache: "no-store",
+        });
+        if (!res.ok) return;
+        const data = (await res.json()) as TelemetryLive;
+        if (!cancelled && data && typeof data === "object") {
+          setTelemetry(data);
+        }
+      } catch {
+        // silent — keep static fallback
+      }
+    };
+
+    fetchLive();
+    const id = setInterval(fetchLive, 4000);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
   }, []);
 
   useEffect(() => {
@@ -100,6 +141,26 @@ export default function AgentTrace() {
     [activeSection],
   );
 
+  // If telemetry has a dwell time for the currently viewed section, weave the
+  // real number into the agent action. Otherwise keep the canned copy.
+  const actionText = useMemo(() => {
+    const dwellMs = telemetry?.sectionDwell?.[activeSection];
+    if (typeof dwellMs === "number" && dwellMs > 0) {
+      const secs = (dwellMs / 1000).toFixed(1);
+      return `monitoring ${secs}s dwell on ${activeSection}`;
+    }
+    return agent.action;
+  }, [telemetry, activeSection, agent.action]);
+
+  // Footer: show real live visitor count when available.
+  const footerId = useMemo(() => {
+    const count = telemetry?.activeSessions;
+    if (typeof count === "number" && count >= 0) {
+      return `iKingdom · ${count} visitor${count === 1 ? "" : "s"} live`;
+    }
+    return sessionId;
+  }, [telemetry, sessionId]);
+
   return (
     <div className="hidden md:block fixed bottom-20 left-6 z-40 pointer-events-none select-none">
       <motion.div
@@ -125,15 +186,18 @@ export default function AgentTrace() {
                 <div className="font-mono text-[11px] tracking-[0.16em] uppercase text-[--color-fg-muted] mb-1.5 font-medium">
                   Agent {agent.num} · {agent.name}
                 </div>
-                <div className="font-mono text-[12px] tracking-tight text-[--color-fg] font-medium">
-                  {agent.action}
+                <div
+                  aria-live="polite"
+                  className="font-mono text-[12px] tracking-tight text-[--color-fg] font-medium"
+                >
+                  {actionText}
                 </div>
               </motion.div>
             </AnimatePresence>
 
             <div className="mt-3 pt-2.5 border-t border-[--color-line] flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.16em] text-[--color-fg-dim] font-medium">
               <span>iKingdom · live</span>
-              <span>{sessionId}</span>
+              <span>{footerId}</span>
             </div>
           </div>
         </div>

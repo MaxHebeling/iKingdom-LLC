@@ -11,10 +11,12 @@ import Footer from "@/components/Footer";
 import AgentTrace from "@/components/AgentTrace";
 import PulseTicker from "@/components/PulseTicker";
 import ChatWidget from "@/components/ChatWidget";
+import EngagementTracker from "@/components/EngagementTracker";
 
 export default function Home() {
   return (
     <>
+      <EngagementTracker />
       <Nav />
       <AgentTrace />
       <PulseTicker />

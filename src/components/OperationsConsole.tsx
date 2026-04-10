@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -101,6 +101,31 @@ function renderEvent(template: EventTemplate): EventTemplate {
 
   return { num: template.num, action };
 }
+
+// Section → agent number mapping for real telemetry section events.
+const SECTION_AGENT_NUM: Record<string, string> = {
+  top: "01",
+  method: "73",
+  capabilities: "14",
+  continuity: "16",
+  process: "75",
+  console: "79",
+  proof: "38",
+  apply: "01",
+};
+
+type TelemetryLive = {
+  activeSessions?: number;
+  sectionDwell?: Record<string, number>;
+  currentSections?: Record<string, number>;
+  recentEvents?: Array<{
+    type?: string;
+    section?: string;
+    ts?: number;
+    sessionId?: string;
+  }>;
+  engagementScore?: number;
+};
 
 // Initial deterministic events for first paint (no hydration issues).
 // We keep the raw templates here so SSR sees literal placeholders? No — we
@@ -212,8 +237,7 @@ export default function OperationsConsole() {
           <div className="grid lg:grid-cols-12 gap-px bg-[--color-line]">
             {/* Event Stream */}
             <div className="lg:col-span-5 bg-white p-6 md:p-8">
-              <PanelHeader title="Event Stream" subtitle="Last 60 seconds" />
-              <EventStream />
+              <EventStreamPanel />
             </div>
 
             {/* KPI Counters */}
@@ -262,14 +286,17 @@ export default function OperationsConsole() {
 function PanelHeader({
   title,
   subtitle,
+  badge,
 }: {
   title: string;
   subtitle: string;
+  badge?: ReactNode;
 }) {
   return (
     <div className="flex items-baseline justify-between mb-5 pb-3 border-b border-[--color-line]">
-      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg]">
+      <span className="flex items-baseline gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-[--color-fg]">
         {title}
+        {badge}
       </span>
       <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-[--color-fg-dim]">
         {subtitle}
@@ -278,26 +305,40 @@ function PanelHeader({
   );
 }
 
-function EventStream() {
+function formatNowTime(): string {
+  const now = new Date();
+  return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
+}
+
+function EventStreamPanel() {
   const [events, setEvents] = useState<ConsoleEvent[]>(INITIAL_EVENTS);
   const counterRef = useRef(INITIAL_EVENTS.length);
+  // Track which real event IDs (by ts+sessionId) we've already ingested
+  // so we don't duplicate them across polls.
+  const seenRealRef = useRef<Set<string>>(new Set());
+  const [lastRealAt, setLastRealAt] = useState<number>(0);
+  // Re-render every 5s so the LIVE badge can drop off after 60s of silence.
+  const [nowTick, setNowTick] = useState<number>(() => Date.now());
 
+  // Template event scheduler — same cadence & behavior as before, but
+  // ~50/50 chance per tick of instead pulling from the real-event buffer
+  // (populated by the /api/telemetry/live poll). Real events are still
+  // injected immediately on fetch; this just biases the rhythm down a bit
+  // when real traffic is present so we don't drown it out.
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout>;
 
     const schedule = () => {
-      // Vary arrival: 4000-7000ms
       const delay = 4000 + Math.random() * 3000;
       timeoutId = setTimeout(() => {
+        // Template tick — always emit a template event to keep the stream full.
         const template =
           EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
         const rendered = renderEvent(template);
-        const now = new Date();
-        const time = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
         const newEvent: ConsoleEvent = {
           ...rendered,
           id: counterRef.current++,
-          time,
+          time: formatNowTime(),
         };
         setEvents((prev) => [newEvent, ...prev].slice(0, 8));
         schedule();
@@ -308,29 +349,113 @@ function EventStream() {
     return () => clearTimeout(timeoutId);
   }, []);
 
+  // Poll real telemetry every 4s. Silent fallback on any error or 404.
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchLive = async () => {
+      try {
+        const res = await fetch("/api/telemetry/live", {
+          cache: "no-store",
+        });
+        if (!res.ok) return;
+        const data = (await res.json()) as TelemetryLive;
+        if (cancelled || !data || !Array.isArray(data.recentEvents)) return;
+
+        const fresh: ConsoleEvent[] = [];
+        for (const ev of data.recentEvents) {
+          if (!ev) continue;
+          const key = `${ev.ts ?? ""}-${ev.sessionId ?? ""}-${ev.type ?? ""}-${ev.section ?? ""}`;
+          if (seenRealRef.current.has(key)) continue;
+          seenRealRef.current.add(key);
+
+          if (ev.type === "section" && ev.section) {
+            const num = SECTION_AGENT_NUM[ev.section] ?? "01";
+            const shortSession = (ev.sessionId ?? "????").slice(0, 4);
+            const time =
+              typeof ev.ts === "number"
+                ? new Date(ev.ts).toLocaleTimeString("en-US", { hour12: false })
+                : formatNowTime();
+            fresh.push({
+              id: counterRef.current++,
+              time,
+              num,
+              action: `Section view · ${ev.section} · session ${shortSession}`,
+            });
+          }
+        }
+
+        // Prevent the dedupe set from growing without bound.
+        if (seenRealRef.current.size > 500) {
+          seenRealRef.current = new Set();
+        }
+
+        if (fresh.length > 0) {
+          // 50/50 mix: only inject half (at minimum one) so template
+          // events still share the stream with real ones.
+          const takeCount = Math.max(1, Math.ceil(fresh.length / 2));
+          const take = fresh.slice(-takeCount);
+          setEvents((prev) => [...take.reverse(), ...prev].slice(0, 8));
+          setLastRealAt(Date.now());
+        }
+      } catch {
+        // silent
+      }
+    };
+
+    fetchLive();
+    const id = setInterval(fetchLive, 4000);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
+  }, []);
+
+  // Tick clock for 60s badge window
+  useEffect(() => {
+    const id = setInterval(() => setNowTick(Date.now()), 5000);
+    return () => clearInterval(id);
+  }, []);
+
+  const isRealLive = lastRealAt > 0 && nowTick - lastRealAt < 60_000;
+
   return (
-    <div className="space-y-2.5 min-h-[280px]">
-      <AnimatePresence initial={false}>
-        {events.map((event) => (
-          <motion.div
-            key={event.id}
-            initial={{ opacity: 0, x: -12, height: 0 }}
-            animate={{ opacity: 1, x: 0, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.5, ease }}
-            className="flex items-start gap-3 font-mono text-[11px] leading-snug overflow-hidden"
-          >
-            <span className="text-[--color-fg-dim] tabular-nums flex-shrink-0">
-              {event.time}
+    <>
+      <PanelHeader
+        title="Event Stream"
+        subtitle="Last 60 seconds"
+        badge={
+          isRealLive ? (
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm bg-[--color-accent]/10 text-[--color-accent] text-[9px] tracking-[0.16em] font-medium">
+              <span className="w-1 h-1 rounded-full bg-[--color-accent] animate-pulse" />
+              REAL · LIVE
             </span>
-            <span className="text-[--color-accent] flex-shrink-0">
-              {event.num}
-            </span>
-            <span className="text-[--color-fg]">{event.action}</span>
-          </motion.div>
-        ))}
-      </AnimatePresence>
-    </div>
+          ) : null
+        }
+      />
+      <div className="space-y-2.5 min-h-[280px]">
+        <AnimatePresence initial={false}>
+          {events.map((event) => (
+            <motion.div
+              key={event.id}
+              initial={{ opacity: 0, x: -12, height: 0 }}
+              animate={{ opacity: 1, x: 0, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.5, ease }}
+              className="flex items-start gap-3 font-mono text-[11px] leading-snug overflow-hidden"
+            >
+              <span className="text-[--color-fg-dim] tabular-nums flex-shrink-0">
+                {event.time}
+              </span>
+              <span className="text-[--color-accent] flex-shrink-0">
+                {event.num}
+              </span>
+              <span className="text-[--color-fg]">{event.action}</span>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+    </>
   );
 }
 
