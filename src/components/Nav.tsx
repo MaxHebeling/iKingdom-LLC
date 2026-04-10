@@ -176,7 +176,7 @@ export default function Nav({ lang = "en" }: { lang?: "en" | "es" }) {
 
             {/* Language toggle */}
             <div
-              className="hidden md:flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em]"
+              className="hidden md:inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.18em] whitespace-nowrap"
               role="group"
               aria-label="Language selector"
             >
@@ -184,7 +184,7 @@ export default function Nav({ lang = "en" }: { lang?: "en" | "es" }) {
                 href="/"
                 aria-current={lang === "en" ? "page" : undefined}
                 hrefLang="en"
-                className={`transition-colors ${
+                className={`leading-none transition-colors ${
                   lang === "en"
                     ? "text-[--color-fg]"
                     : "text-[--color-fg-dim] hover:text-[--color-fg]"
@@ -192,14 +192,12 @@ export default function Nav({ lang = "en" }: { lang?: "en" | "es" }) {
               >
                 EN
               </a>
-              <span className="text-[--color-fg-dim]" aria-hidden="true">
-                /
-              </span>
+              <span className="text-[--color-fg-dim] leading-none" aria-hidden="true">/</span>
               <a
                 href="/es"
                 aria-current={lang === "es" ? "page" : undefined}
                 hrefLang="es"
-                className={`transition-colors ${
+                className={`leading-none transition-colors ${
                   lang === "es"
                     ? "text-[--color-fg]"
                     : "text-[--color-fg-dim] hover:text-[--color-fg]"
