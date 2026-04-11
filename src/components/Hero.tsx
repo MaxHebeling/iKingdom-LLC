@@ -214,7 +214,8 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
               {t.headlineItalic}
             </span>
           </span>
-          <WordSplit text={t.headlineAfter.trimStart()} />
+          <span className="inline-block">&nbsp;</span>
+          <WordSplit text={t.headlineAfter.trim()} />
         </h1>
 
         {/* Subhead */}

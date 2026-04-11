@@ -283,4 +283,11 @@ html.lenis, html.lenis body {
     min-height: unset;
     min-width: unset;
   }
+
+  /* Exception for language toggle — must stay inline on one row */
+  .lang-toggle a,
+  .lang-toggle span {
+    min-height: unset;
+    min-width: unset;
+  }
 }
