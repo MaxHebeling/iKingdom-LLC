@@ -290,4 +290,18 @@ html.lenis, html.lenis body {
     min-height: unset;
     min-width: unset;
   }
+
+  /* Native cursor inside chat widget, inputs, and textareas */
+  [data-chat-widget],
+  [data-chat-widget] *,
+  input,
+  textarea,
+  [contenteditable] {
+    cursor: auto !important;
+  }
+
+  [data-chat-widget] a,
+  [data-chat-widget] button {
+    cursor: pointer !important;
+  }
 }

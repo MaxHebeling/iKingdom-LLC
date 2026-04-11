@@ -9,6 +9,7 @@ export default function MagneticCursor() {
   const mouse = useRef({ x: 0, y: 0 })
   const pos = useRef({ x: 0, y: 0 })
   const scale = useRef(1)
+  const opacity = useRef(1)
 
   useEffect(() => {
     if (typeof window === 'undefined' || window.innerWidth < 768) return
@@ -21,37 +22,39 @@ export default function MagneticCursor() {
     const onMouseMove = (e: MouseEvent) => {
       mouse.current.x = e.clientX
       mouse.current.y = e.clientY
+
+      // Hide cursor when over chat widget or any input
+      const target = e.target as HTMLElement | null
+      if (
+        target &&
+        (target.closest('[data-chat-widget]') ||
+          target.closest('input') ||
+          target.closest('textarea') ||
+          target.closest('[contenteditable]'))
+      ) {
+        opacity.current = 0
+      } else {
+        opacity.current = 1
+      }
     }
 
-    const onMouseEnter = () => {
-      scale.current = 1.5
+    // Use event delegation — no MutationObserver, no per-element listeners
+    const onMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null
+      if (!target) return
+      if (
+        target.closest('a') ||
+        target.closest('button') ||
+        target.closest('[role="button"]')
+      ) {
+        scale.current = 1.5
+      } else {
+        scale.current = 1
+      }
     }
 
-    const onMouseLeave = () => {
-      scale.current = 1
-    }
-
-    const addHoverListeners = () => {
-      const interactives = document.querySelectorAll('a, button, [role="button"]')
-      interactives.forEach((el) => {
-        el.addEventListener('mouseenter', onMouseEnter)
-        el.addEventListener('mouseleave', onMouseLeave)
-      })
-      return interactives
-    }
-
-    window.addEventListener('mousemove', onMouseMove)
-    let interactives = addHoverListeners()
-
-    // Re-attach listeners on DOM changes (e.g. route transitions)
-    const observer = new MutationObserver(() => {
-      interactives.forEach((el) => {
-        el.removeEventListener('mouseenter', onMouseEnter)
-        el.removeEventListener('mouseleave', onMouseLeave)
-      })
-      interactives = addHoverListeners()
-    })
-    observer.observe(document.body, { childList: true, subtree: true })
+    window.addEventListener('mousemove', onMouseMove, { passive: true })
+    window.addEventListener('mouseover', onMouseOver, { passive: true })
 
     // Animation loop
     const lerp = 0.15
@@ -63,6 +66,7 @@ export default function MagneticCursor() {
         x: pos.current.x - 20,
         y: pos.current.y - 20,
         scale: scale.current,
+        opacity: opacity.current,
       })
     }
 
@@ -70,11 +74,7 @@ export default function MagneticCursor() {
 
     return () => {
       window.removeEventListener('mousemove', onMouseMove)
-      interactives.forEach((el) => {
-        el.removeEventListener('mouseenter', onMouseEnter)
-        el.removeEventListener('mouseleave', onMouseLeave)
-      })
-      observer.disconnect()
+      window.removeEventListener('mouseover', onMouseOver)
       gsap.ticker.remove(tick)
     }
   }, [])

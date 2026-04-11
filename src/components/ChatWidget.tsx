@@ -182,6 +182,7 @@ export default function ChatWidget() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         aria-label={open ? "Close Khloe" : "Open Khloe — iKingdom Assistant"}
+        data-chat-widget="true"
         className="fixed bottom-24 right-6 z-[60] hidden h-[68px] w-[68px] items-center justify-center rounded-full bg-[var(--color-bg-elevated)] transition-transform sm:flex"
         style={{
           boxShadow:
@@ -253,6 +254,7 @@ export default function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.98 }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            data-chat-widget="true"
             className="fixed bottom-44 right-6 z-[59] hidden w-[400px] max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-2xl border border-[var(--color-line-strong)] bg-[var(--color-bg-card)] text-[var(--color-fg)] shadow-[0_40px_90px_rgba(36,28,14,0.22)] sm:flex"
             style={{ height: "min(600px, calc(100vh - 14rem))" }}
           >
