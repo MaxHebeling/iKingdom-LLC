@@ -159,7 +159,7 @@ export function agent16_engagementPlanDrafter(
   const lastSection = last?.section;
   const lastDwell = lastSection ? dwell[lastSection] || 0 : 0;
 
-  // Stalled on the apply section → hand off to Channel
+  // Stalled on the apply section → hand off to Khloe
   if (lastSection === "apply" && lastDwell > 8000) {
     return {
       nextAction: "offer_chat_with_channel",

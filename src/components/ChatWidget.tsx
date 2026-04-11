@@ -9,7 +9,7 @@ type ChatMessage = {
 };
 
 // Minimal, SSR-safe inline markdown renderer. Handles **bold** and *italic*
-// as a fallback in case Channel slips into markdown despite the system prompt
+// as a fallback in case Khloe slips into markdown despite the system prompt
 // instructions. Any other markdown passes through as plain text.
 function renderInlineMarkdown(text: string): React.ReactNode {
   const parts: React.ReactNode[] = [];
@@ -45,8 +45,8 @@ function renderInlineMarkdown(text: string): React.ReactNode {
 type Language = "en" | "es";
 
 const GREETINGS: Record<Language, string> = {
-  en: "Hi — I'm Channel, the iKingdom Assistant. I can answer any question about how we automate businesses, our investment tiers, our process, or whether we're a fit for you. What would you like to know?",
-  es: "Hola — soy Channel, la asistente de iKingdom. Puedo responder cualquier pregunta sobre cómo automatizamos negocios, nuestros niveles de inversión, nuestro proceso, o si somos adecuados para ti. ¿Qué te gustaría saber?",
+  en: "Hi — I'm Khloe, the iKingdom Assistant. I can answer any question about how we automate businesses, our investment tiers, our process, or whether we're a fit for you. What would you like to know?",
+  es: "Hola — soy Khloe, la asistente de iKingdom. Puedo responder cualquier pregunta sobre cómo automatizamos negocios, nuestros niveles de inversión, nuestro proceso, o si somos adecuados para ti. ¿Qué te gustaría saber?",
 };
 
 const SWITCH_MESSAGES: Record<Language, string> = {
@@ -181,7 +181,7 @@ export default function ChatWidget() {
         transition={{ delay: 0.6, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        aria-label={open ? "Close Channel" : "Open Channel — iKingdom Assistant"}
+        aria-label={open ? "Close Khloe" : "Open Khloe — iKingdom Assistant"}
         className="fixed bottom-24 right-6 z-[60] hidden h-[68px] w-[68px] items-center justify-center rounded-full bg-[var(--color-bg-elevated)] transition-transform sm:flex"
         style={{
           boxShadow:
@@ -225,7 +225,7 @@ export default function ChatWidget() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/channel.png?v=5"
-                alt="Channel — iKingdom Assistant"
+                alt="Khloe — iKingdom Assistant"
                 width={60}
                 height={60}
                 loading="lazy"
@@ -263,7 +263,7 @@ export default function ChatWidget() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/channel.png?v=5"
-                    alt="Channel"
+                    alt="Khloe"
                     width={48}
                     height={48}
                     loading="eager"
@@ -279,7 +279,7 @@ export default function ChatWidget() {
                 </div>
                 <div>
                   <div className="font-display text-base font-semibold leading-none text-[var(--color-fg)]">
-                    Channel
+                    Khloe
                   </div>
                   <div className="mt-1 text-[11px] font-medium leading-none text-[var(--color-fg-muted)]">
                     iKingdom Assistant
@@ -382,7 +382,7 @@ export default function ChatWidget() {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src="/channel.png?v=5"
-                        alt="Channel"
+                        alt="Khloe"
                         width={40}
                         height={40}
                         loading="eager"
@@ -413,7 +413,7 @@ export default function ChatWidget() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/channel.png?v=5"
-                      alt="Channel"
+                      alt="Khloe"
                       width={40}
                       height={40}
                       loading="eager"
