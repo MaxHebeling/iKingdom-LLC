@@ -1,8 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { gsap, useGSAP } from "@/lib/gsap";
 
 type Lang = "en" | "es";
 
@@ -175,45 +174,6 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
         yoyo: true,
         ease: "sine.inOut",
       });
-
-      // Scroll-driven cinematic parallax sequence
-      // Background image scales and drifts as user scrolls
-      gsap.to(".hero-bg-image", {
-        yPercent: 30,
-        scale: 1.15,
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-
-      // Content fades and lifts on scroll
-      gsap.to(".hero-content", {
-        yPercent: -20,
-        opacity: 0,
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "60% top",
-          scrub: true,
-        },
-      });
-
-      // Atmospheric overlay deepens on scroll
-      gsap.to(".hero-overlay", {
-        opacity: 0.95,
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
     },
     { scope: containerRef }
   );
@@ -223,58 +183,30 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
       ref={containerRef}
       id="top"
       aria-label={lang === "es" ? "Inicio" : "Hero"}
-      className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#0A0A0A]"
+      className="relative min-h-screen flex flex-col justify-center overflow-hidden"
     >
-      {/* Cinematic background image with parallax */}
-      <div className="hero-bg-image absolute inset-0 will-change-transform">
-        <Image
-          src="/hero-bg.png"
-          alt=""
-          fill
-          priority
-          quality={90}
-          sizes="100vw"
-          className="object-cover object-right md:object-center"
-        />
-      </div>
+      {/* Cinematic spotlight wash */}
+      <div className="absolute inset-0 spotlight pointer-events-none" />
 
-      {/* Atmospheric gradient overlay — left side darker for text readability */}
-      <div
-        className="hero-overlay absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(90deg, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.75) 35%, rgba(10,10,10,0.4) 65%, rgba(10,10,10,0.2) 100%)",
-        }}
-      />
+      {/* Subtle horizon line */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[--color-line-strong] to-transparent" />
 
-      {/* Subtle vignette for depth */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 100%)",
-        }}
-      />
-
-      {/* Top horizon line */}
-      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-
-      <div className="hero-content relative max-w-[1400px] mx-auto px-6 md:px-10 w-full pt-32 md:pt-40 pb-24">
+      <div className="relative max-w-[1400px] mx-auto px-6 md:px-10 w-full pt-32 md:pt-40 pb-24">
         {/* Eyebrow */}
         <div className="flex items-start gap-3 mb-10 md:mb-14">
           <span className="h-px w-8 bg-[--color-accent] mt-[0.55rem]" />
           <span className="flex flex-col gap-1.5">
-            <span className="hero-eyebrow-line text-[12px] md:text-sm uppercase tracking-[0.28em] text-white font-medium opacity-0">
+            <span className="hero-eyebrow-line text-[12px] md:text-sm uppercase tracking-[0.28em] text-[--color-fg] font-medium opacity-0">
               {t.eyebrowTop}
             </span>
-            <span className="hero-eyebrow-line text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-white/60 opacity-0">
+            <span className="hero-eyebrow-line text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[--color-fg-dim] opacity-0">
               {t.eyebrowBottom}
             </span>
           </span>
         </div>
 
         {/* Headline — rendered immediately visible via clip-path (LCP safe) */}
-        <h1 className="font-display text-balance text-[clamp(3rem,9vw,9.5rem)] leading-[0.92] tracking-[-0.025em] text-white">
+        <h1 className="font-display text-balance text-[clamp(3rem,9vw,9.5rem)] leading-[0.92] tracking-[-0.025em] text-[--color-fg]">
           <WordSplit text={t.headlineBefore} />
           <br />
           <span className="inline-block overflow-hidden">
@@ -286,16 +218,13 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
         </h1>
 
         {/* Subhead */}
-        <p className="hero-subhead mt-12 md:mt-16 max-w-2xl text-pretty text-base md:text-lg leading-relaxed text-white/80 opacity-0">
+        <p className="hero-subhead mt-12 md:mt-16 max-w-2xl text-pretty text-base md:text-lg leading-relaxed text-[--color-fg-muted] opacity-0">
           {t.subhead}
         </p>
 
         {/* Supporting tagline */}
         <div className="mt-8 md:mt-10 flex items-center gap-3">
-          <span
-            className="hero-tagline-line h-px bg-white/30"
-            style={{ width: 0 }}
-          />
+          <span className="hero-tagline-line h-px bg-[--color-line-strong]" style={{ width: 0 }} />
           <span className="hero-tagline-text font-mono text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[--color-accent] font-medium opacity-0">
             {t.tagline}
           </span>
@@ -305,7 +234,7 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
         <div className="mt-10 md:mt-14 flex flex-wrap items-center gap-6">
           <a
             href="#apply"
-            className="hero-cta group relative inline-flex items-center gap-3 px-7 py-4 bg-white text-black text-sm tracking-wide hover:bg-[--color-accent] hover:text-black transition-all duration-500 rounded-full overflow-hidden opacity-0"
+            className="hero-cta group relative inline-flex items-center gap-3 px-7 py-4 bg-[--color-fg] text-[--color-bg] text-sm tracking-wide hover:bg-[--color-accent] hover:text-[--color-bg] transition-all duration-500 rounded-full overflow-hidden opacity-0"
           >
             <span className="relative z-10">{t.ctaPrimary}</span>
             <svg
@@ -326,7 +255,7 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
           </a>
           <a
             href="#console"
-            className="hero-cta text-sm text-white/70 hover:text-white transition-colors duration-300 underline underline-offset-4 decoration-white/30 hover:decoration-white opacity-0"
+            className="hero-cta text-sm text-[--color-fg-muted] hover:text-[--color-fg] transition-colors duration-300 underline underline-offset-4 decoration-[--color-line-strong] hover:decoration-[--color-fg] opacity-0"
           >
             {t.ctaSecondary}
           </a>
@@ -340,11 +269,11 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
       </div>
 
       {/* Scroll affordance */}
-      <div className="hero-scroll absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-0 z-10">
-        <span className="text-[10px] uppercase tracking-[0.3em] text-white/50">
+      <div className="hero-scroll absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-0">
+        <span className="text-[10px] uppercase tracking-[0.3em] text-[--color-fg-dim]">
           {t.scroll}
         </span>
-        <div className="hero-scroll-bar w-px h-10 bg-gradient-to-b from-white/50 to-transparent" />
+        <div className="hero-scroll-bar w-px h-10 bg-gradient-to-b from-[--color-fg-dim] to-transparent" />
       </div>
     </section>
   );
@@ -353,10 +282,10 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
 function TrustStat({ value, label }: { value: string; label: string }) {
   return (
     <div className="flex flex-col">
-      <span className="font-display text-3xl md:text-4xl tracking-[-0.02em] text-white tabular-nums leading-none">
+      <span className="font-display text-3xl md:text-4xl tracking-[-0.02em] text-[--color-fg] tabular-nums leading-none">
         {value}
       </span>
-      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/50 mt-3 font-medium">
+      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[--color-fg-dim] mt-3 font-medium">
         {label}
       </span>
     </div>
