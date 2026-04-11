@@ -369,7 +369,9 @@ export default function ChatWidget() {
               <div
                 ref={scrollRef}
                 data-lenis-prevent
-                className="flex-1 space-y-3 overflow-y-auto bg-[var(--color-bg-card)] px-5 py-5"
+                onWheel={(e) => e.stopPropagation()}
+                onTouchMove={(e) => e.stopPropagation()}
+                className="flex-1 space-y-3 overflow-y-auto overscroll-contain bg-[var(--color-bg-card)] px-5 py-5"
               >
                 {messages.map((m, i) => (
                   <motion.div
