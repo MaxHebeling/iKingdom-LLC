@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRedisClient } from "@/lib/redis";
+import { resend, NOTIFY_EMAIL, FROM_EMAIL } from "@/lib/resend";
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,12 +17,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const redis = await getRedisClient();
-    await redis.sAdd("newsletter:subscribers", email.trim().toLowerCase());
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: NOTIFY_EMAIL,
+      subject: `New Newsletter Subscriber`,
+      html: `
+        <h2>New Newsletter Signup</h2>
+        <p><strong>Email:</strong> ${email.trim().toLowerCase()}</p>
+        <hr />
+        <p style="color:#888;font-size:12px;">Sent from ikingdom.ai newsletter form</p>
+      `,
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Newsletter signup failed:", error);
+    console.error("Newsletter signup error:", error);
     return NextResponse.json(
       { error: "Something went wrong. Please try again." },
       { status: 500 },

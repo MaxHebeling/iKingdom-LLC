@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { resend, NOTIFY_EMAIL, FROM_EMAIL } from "@/lib/resend";
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,20 +31,31 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Log the submission for now — email sending can be added later
-    console.log("[Contact Form Submission]", {
-      name: name.trim(),
-      email: email.trim(),
-      company: typeof company === "string" ? company.trim() : "",
-      message: message.trim(),
-      timestamp: new Date().toISOString(),
+    const companyLine = company ? `<p><strong>Company:</strong> ${company}</p>` : "";
+
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: NOTIFY_EMAIL,
+      subject: `New Contact — ${name.trim()}`,
+      html: `
+        <h2>New Contact Form Submission</h2>
+        <p><strong>Name:</strong> ${name.trim()}</p>
+        <p><strong>Email:</strong> ${email.trim()}</p>
+        ${companyLine}
+        <p><strong>Message:</strong></p>
+        <p>${message.trim()}</p>
+        <hr />
+        <p style="color:#888;font-size:12px;">Sent from ikingdom.ai contact form</p>
+      `,
+      replyTo: email.trim(),
     });
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error("Contact form error:", error);
     return NextResponse.json(
-      { error: "Invalid request." },
-      { status: 400 },
+      { error: "Something went wrong." },
+      { status: 500 },
     );
   }
 }

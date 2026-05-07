@@ -336,10 +336,20 @@ export default function Application({ lang = "en" }: { lang?: Lang }) {
     setStep(target);
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!formData.investment) return;
-    // Local-only for now — wire to backend later
+
+    try {
+      await fetch("/api/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+    } catch {
+      // Pipeline animation runs regardless — email is best-effort
+    }
+
     setSubmitted(true);
   }
 
