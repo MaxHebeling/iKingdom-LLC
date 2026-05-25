@@ -103,7 +103,7 @@ export default function ApplicationClient() {
     if (!validateSection()) return;
     setFormError(null);
     startTransition(async () => {
-      const payload: Record<string, unknown> = {};
+      const payload: Record<string, unknown> = { lang: "es" };
       for (const [k, v] of Object.entries(values)) {
         if (typeof v === "string") payload[k] = v.trim();
         else payload[k] = v;

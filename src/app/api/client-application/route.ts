@@ -14,6 +14,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { resend, NOTIFY_EMAIL, FROM_EMAIL } from "@/lib/resend";
+import { prospectConfirmationEmail } from "@/lib/email-templates";
 
 // Dedicated Supabase project for /application — isolated from any
 // other Supabase the site might use. Reads APPLICATION_* env vars.
@@ -425,6 +426,25 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error("[iKingdom/application] Email send failed:", err);
+  }
+
+  // ── Auto-confirmation to prospect (best-effort) ──────────
+  try {
+    const lang = (body as { lang?: unknown })?.lang === "en" ? "en" : "es";
+    const confirmation = prospectConfirmationEmail({
+      name: safe.full_name,
+      lang,
+    });
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: safe.email,
+      replyTo: NOTIFY_EMAIL,
+      subject: confirmation.subject,
+      html: confirmation.html,
+      text: confirmation.text,
+    });
+  } catch (err) {
+    console.error("[iKingdom/application] Prospect confirmation failed:", err);
   }
 
   return NextResponse.json({ success: true, id: leadId }, { status: 200 });

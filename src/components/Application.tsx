@@ -344,7 +344,7 @@ export default function Application({ lang = "en" }: { lang?: Lang }) {
       await fetch("/api/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, lang }),
       });
     } catch {
       // Pipeline animation runs regardless — email is best-effort

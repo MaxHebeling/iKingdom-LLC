@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { resend, NOTIFY_EMAIL, FROM_EMAIL } from "@/lib/resend";
+import { prospectConfirmationEmail } from "@/lib/email-templates";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, title, email, phone, company, website, industry, revenue, investment, scope } = body;
+    const { name, title, email, phone, company, website, industry, revenue, investment, scope, lang } = body;
 
     if (!name || !email || !phone || !company || !industry || !revenue || !investment || !scope) {
       return NextResponse.json(
@@ -46,6 +47,24 @@ export async function POST(req: NextRequest) {
       `,
       replyTo: email,
     });
+
+    // Auto-confirmation to prospect — best-effort, never blocks the response.
+    try {
+      const confirmation = prospectConfirmationEmail({
+        name,
+        lang: lang === "es" ? "es" : "en",
+      });
+      await resend.emails.send({
+        from: FROM_EMAIL,
+        to: email,
+        replyTo: NOTIFY_EMAIL,
+        subject: confirmation.subject,
+        html: confirmation.html,
+        text: confirmation.text,
+      });
+    } catch (confirmErr) {
+      console.error("Prospect confirmation email failed:", confirmErr);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
