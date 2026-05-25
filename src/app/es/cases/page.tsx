@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Casos de Estudio — Prueba del Sistema",
+  title: "Casos de estudio — Pruebas del sistema",
   description:
-    "Descubre como iKingdom despliega operaciones autonomas con IA en la practica. Despliegues activos en construccion, capital, arquitectura y mas.",
+    "Descubre cómo iKingdom despliega operaciones autónomas con IA en la práctica. Despliegues activos en construcción, capital, arquitectura y más.",
   alternates: {
     canonical: "https://www.ikingdom.org/es/cases",
     languages: {
@@ -13,9 +13,9 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Casos de Estudio — Prueba del Sistema | iKingdom",
+    title: "Casos de estudio — Pruebas del sistema | iKingdom",
     description:
-      "Como se ven las operaciones autonomas en la practica. Despliegues activos en tecnologia de construccion, capital y arquitectura.",
+      "Cómo se ven las operaciones autónomas en la práctica. Despliegues activos en tecnología de construcción, capital y arquitectura.",
     url: "https://www.ikingdom.org/es/cases",
     siteName: "iKingdom",
     locale: "es_ES",
@@ -26,15 +26,15 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "iKingdom Casos de Estudio — Prueba del Sistema",
+        alt: "iKingdom — Casos de estudio",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Casos de Estudio — Prueba del Sistema | iKingdom",
+    title: "Casos de estudio — Pruebas del sistema | iKingdom",
     description:
-      "Como se ven las operaciones autonomas en la practica. Despliegues activos en construccion, capital y arquitectura.",
+      "Cómo se ven las operaciones autónomas en la práctica. Despliegues activos en construcción, capital y arquitectura.",
     images: ["/og-image.png"],
   },
 };
@@ -52,21 +52,21 @@ type CaseStudy = {
 const casos: CaseStudy[] = [
   {
     name: "BuildCore Ai",
-    industry: "Tecnologia de Construccion",
+    industry: "Tecnología de Construcción",
     location: "San Diego, CA",
     agents: 97,
     status: "Activo",
     description:
-      "Plataforma de construccion productizada. El primer y mayor despliegue de iKingdom, sirviendo como prueba de concepto y arquitectura de referencia continua.",
+      "Plataforma de construcción convertida en producto. El primer y mayor despliegue de iKingdom — sirve como prueba de concepto y arquitectura de referencia permanente.",
     featured: true,
   },
   {
     name: "Distinct Construction Solutions",
-    industry: "Construccion",
+    industry: "Construcción",
     location: "Sur de California",
     status: "Activo",
     description:
-      "Primer despliegue de BuildCore. Operaciones de extremo a extremo, desde captacion de leads hasta finalizacion de proyectos.",
+      "Primer despliegue productivo de BuildCore. Operaciones de extremo a extremo, desde la captación de prospectos hasta la finalización de proyectos.",
   },
   {
     name: "Elite Control Group LLC",
@@ -74,23 +74,23 @@ const casos: CaseStudy[] = [
     location: "California",
     status: "Activo",
     description:
-      "Operaciones multi-entidad consolidadas bajo una sola capa autonoma.",
+      "Operaciones multi-entidad consolidadas bajo una sola capa autónoma.",
   },
   {
     name: "Kyros Global Capital",
-    industry: "Capital e Inversion",
+    industry: "Capital e Inversión",
     location: "California",
     status: "Activo",
     description:
-      "Operaciones de inversion con due diligence automatizado, monitoreo de portafolio y reporteo.",
+      "Operaciones de inversión con due diligence automatizado, monitoreo de portafolio y reportes.",
   },
   {
     name: "Structura Aeternum",
-    industry: "Arquitectura y Construccion",
+    industry: "Arquitectura y Construcción",
     location: "California / Texas",
     status: "Activo",
     description:
-      "Operaciones multi-estado que abarcan ciclos de arquitectura y construccion.",
+      "Operaciones multi-estado que abarcan ciclos completos de arquitectura y construcción.",
   },
 ];
 
@@ -144,14 +144,14 @@ export default function CasesPageEs() {
 
       <header className="mb-16">
         <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-fg-dim)] mb-4">
-          Casos de Estudio &mdash; Prueba del Sistema
+          Casos de estudio &mdash; Pruebas del sistema
         </p>
         <h1 className="font-display text-4xl md:text-6xl tracking-[-0.02em] leading-[1.1] mb-6">
-          Como se ven las operaciones autonomas en la practica
+          Operaciones autónomas en la práctica
         </h1>
         <p className="text-lg text-[var(--color-fg-muted)] leading-relaxed max-w-[640px]">
-          Cada despliegue listado aqui esta activo. Empresas reales operando con
-          el sistema iKingdom, hoy.
+          Cada despliegue listado aquí está activo. Empresas reales operando
+          hoy con el sistema iKingdom.
         </p>
       </header>
 
@@ -172,15 +172,15 @@ export default function CasesPageEs() {
           Bajo NDA
         </p>
         <h2 className="font-display text-2xl md:text-3xl tracking-[-0.02em] leading-[1.2] mb-6">
-          Compromisos adicionales
+          Despliegues adicionales
         </h2>
         <div className="space-y-4 text-[var(--color-fg-muted)] leading-relaxed">
           <p>
-            Tambien estamos construyendo para clientes bajo NDA en hipotecas,
+            También estamos construyendo para clientes bajo NDA en hipotecas,
             mudanzas y almacenamiento, y horticultura.
           </p>
           <p>
-            Estos compromisos seran presentados aqui una vez completados.
+            Estos despliegues se presentarán aquí una vez completados.
           </p>
         </div>
       </section>
@@ -190,13 +190,13 @@ export default function CasesPageEs() {
       {/* CTA */}
       <div className="text-center">
         <p className="font-display text-xl md:text-2xl tracking-[-0.02em] mb-6">
-          Listo para ver que construiriamos para ti?
+          ¿Listo para ver qué construiríamos para ti?
         </p>
         <Link
           href="/es#apply"
           className="inline-block text-sm tracking-wide px-8 py-3 bg-[var(--color-fg)] text-[var(--color-bg)] hover:bg-[var(--color-accent)] transition-all duration-500 rounded-full"
         >
-          Solicitar ahora
+          Iniciar solicitud
         </Link>
       </div>
     </article>

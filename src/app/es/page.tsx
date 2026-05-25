@@ -22,17 +22,17 @@ const EngagementTracker = dynamic(
 
 export const metadata: Metadata = {
   title:
-    "Primera Firma de Operaciones de IA | San Diego",
+    "La primera firma de operaciones de IA del mundo | San Diego",
   description:
     "Desplegamos 80 agentes autónomos de IA en 9 niveles para automatizar tu empresa. Inversión desde $35K. San Diego, CA. Solo por solicitud.",
   keywords: [
     "operaciones de IA",
     "firma de operaciones de IA",
-    "automatizacion empresarial",
-    "automatizacion de IA",
-    "consultoria de IA",
-    "agentes autonomos de IA",
-    "automatizacion de procesos de negocio",
+    "automatización empresarial",
+    "automatización de IA",
+    "consultoría de IA",
+    "agentes autónomos de IA",
+    "automatización de procesos de negocio",
     "despliegue de agentes de IA",
     "soluciones de IA empresarial",
     "IA para negocios",
@@ -46,9 +46,9 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "iKingdom — La Primera Firma de Operaciones de IA del Mundo",
+    title: "iKingdom — La primera firma de operaciones de IA del mundo",
     description:
-      "La primera firma de operaciones de IA del mundo. 80 agentes autonomos. 9 niveles operacionales. Construimos empresas que se operan solas. Inversion desde $35K. Solo por solicitud.",
+      "La primera firma de operaciones de IA del mundo. 80 agentes autónomos. 9 niveles operacionales. Construimos empresas que se operan solas. Inversión desde $35K. Solo por solicitud.",
     type: "website",
     locale: "es_ES",
     alternateLocale: "en_US",
@@ -66,9 +66,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "iKingdom — La Primera Firma de Operaciones de IA del Mundo",
+    title: "iKingdom — La primera firma de operaciones de IA del mundo",
     description:
-      "La primera firma de operaciones de IA. 80 agentes de IA. 9 niveles. Construimos empresas que se operan solas. San Diego, CA.",
+      "La primera firma de operaciones de IA del mundo. 80 agentes. 9 niveles. Construimos empresas que se operan solas. San Diego, CA.",
     images: ["/og-image-es.png"],
   },
   other: {

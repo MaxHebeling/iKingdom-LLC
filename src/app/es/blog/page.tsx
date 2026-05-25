@@ -5,13 +5,13 @@ import BlogCard from "@/components/BlogCard";
 import NewsletterSignup from "@/components/NewsletterSignup";
 
 export const metadata: Metadata = {
-  title: "Blog — Perspectivas en Operaciones de IA",
+  title: "Blog — Perspectivas sobre operaciones de IA",
   description:
-    "Perspectivas sobre operaciones de IA, agentes autonomos y automatizacion empresarial de iKingdom. Aprende a desplegar sistemas de IA que operen tu negocio.",
+    "Perspectivas sobre operaciones de IA, agentes autónomos y automatización empresarial de iKingdom. Aprende a desplegar sistemas de IA que operen tu negocio.",
   openGraph: {
-    title: "Blog — Perspectivas en Operaciones de IA | iKingdom",
+    title: "Blog — Perspectivas sobre operaciones de IA | iKingdom",
     description:
-      "Perspectivas sobre operaciones de IA, agentes autonomos y automatizacion empresarial de iKingdom.",
+      "Perspectivas sobre operaciones de IA, agentes autónomos y automatización empresarial de iKingdom.",
     type: "website",
     url: "https://www.ikingdom.org/es/blog",
     siteName: "iKingdom",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "iKingdom Blog — Perspectivas en Operaciones de IA",
+        alt: "iKingdom — Blog sobre operaciones de IA",
       },
     ],
   },
@@ -45,11 +45,11 @@ export default function BlogPageES() {
           01 &mdash; Blog
         </p>
         <h1 className="font-display text-4xl md:text-6xl tracking-[-0.02em] mb-6">
-          Perspectivas en Operaciones de IA
+          Perspectivas sobre operaciones de IA
         </h1>
         <p className="text-[var(--color-fg-dim)] max-w-2xl text-lg leading-relaxed">
-          Perspectivas sobre sistemas autonomos de IA, inteligencia operativa y
-          el futuro de la automatizacion empresarial.
+          Perspectivas sobre sistemas autónomos de IA, inteligencia
+          operacional y el futuro de la automatización empresarial.
         </p>
         <div className="mt-8 flex items-center gap-4 text-sm">
           <Link
@@ -67,7 +67,7 @@ export default function BlogPageES() {
       <main className="px-6 md:px-10 py-16 md:py-20 max-w-[1400px] mx-auto">
         {posts.length === 0 ? (
           <p className="text-[var(--color-fg-dim)] text-center py-20">
-            Aun no hay publicaciones. Vuelve pronto.
+            Aún no hay publicaciones. Vuelve pronto.
           </p>
         ) : (
           <div className="grid gap-6 md:gap-8 md:grid-cols-2 lg:grid-cols-3">

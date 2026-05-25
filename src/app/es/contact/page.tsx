@@ -4,13 +4,13 @@ import Footer from "@/components/Footer";
 import ContactForm from "../../contact/ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contacto — Ponte en Contacto",
+  title: "Contacto — Hablemos de tus operaciones",
   description:
-    "Comun\u00EDcate con iKingdom para consultor\u00EDa en operaciones de IA, despliegue de agentes aut\u00F3nomos y automatizaci\u00F3n empresarial. Con sede en San Diego, CA.",
+    "Comunícate con iKingdom para consultoría en operaciones de IA, despliegue de agentes autónomos y automatización empresarial. Con sede en San Diego, CA.",
   openGraph: {
-    title: "Contacto — Ponte en Contacto",
+    title: "Contacto — Hablemos de tus operaciones",
     description:
-      "Comun\u00EDcate con iKingdom para consultor\u00EDa en operaciones de IA y despliegue de agentes aut\u00F3nomos.",
+      "Comunícate con iKingdom para consultoría en operaciones de IA y despliegue de agentes autónomos.",
     type: "website",
     url: "https://www.ikingdom.org/es/contact",
     siteName: "iKingdom",
@@ -40,7 +40,7 @@ export default function ContactPageES() {
       <Nav lang="es" />
       <header className="pt-32 md:pt-40 pb-16 md:pb-20 px-6 md:px-10 max-w-[1400px] mx-auto">
         <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-fg-dim)] mb-4">
-          Contacto &mdash; Ponte en Contacto
+          Contacto &mdash; Conversemos
         </p>
         <h1 className="font-display text-4xl md:text-6xl tracking-[-0.02em] mb-6">
           Hablemos de tus operaciones
@@ -55,12 +55,12 @@ export default function ContactPageES() {
 
           <div>
             <h2 className="text-xs uppercase tracking-[0.18em] text-[var(--color-fg-dim)] mb-8">
-              Informaci&oacute;n de contacto
+              Información de contacto
             </h2>
 
             <div className="space-y-6 text-sm text-[var(--color-fg-muted)]">
               <div>
-                <p className="text-[var(--color-fg)] font-medium mb-1">Correo electr&oacute;nico</p>
+                <p className="text-[var(--color-fg)] font-medium mb-1">Correo electrónico</p>
                 <a
                   href="mailto:executive@ikingdom.org"
                   className="hover:text-[var(--color-accent)] transition-colors duration-300"
@@ -70,14 +70,14 @@ export default function ContactPageES() {
               </div>
 
               <div>
-                <p className="text-[var(--color-fg)] font-medium mb-1">Ubicaci&oacute;n</p>
+                <p className="text-[var(--color-fg)] font-medium mb-1">Ubicación</p>
                 <p>San Diego, California</p>
               </div>
 
               <div className="pt-4 border-t border-[var(--color-line)]">
                 <p className="leading-relaxed">
-                  Para consultas de contrataci&oacute;n formal, recomendamos comenzar con el
-                  formulario de solicitud en nuestra p&aacute;gina principal.
+                  Para evaluar un compromiso formal, te recomendamos comenzar
+                  con el formulario de solicitud en nuestra página principal.
                 </p>
                 <a
                   href="/es#apply"
