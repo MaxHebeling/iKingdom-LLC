@@ -1,7 +1,7 @@
 ---
 title: "Agentes Autónomos vs. Chatbots: Entendiendo la Diferencia"
 slug: "autonomous-agents-vs-chatbots"
-description: "Los chatbots responden a prompts. Los agentes autónomos ejecutan flujos de trabajo. Aprende la diferencia arquitectonica y por qué importa para la automatización empresarial seria."
+description: "Los chatbots responden a prompts. Los agentes autónomos ejecutan flujos de trabajo. Aprende la diferencia arquitectonica y por qué importa para la automatización empresarial sería."
 date: "2026-04-08"
 author: "iKingdom"
 tags: ["Agentes de IA", "Automatización", "Tecnología"]
@@ -30,7 +30,7 @@ Los agentes autónomos son sistemas **proactivos**. Tienen:
 3. **Herramientas** — acceso a sistemas reales (CRM, email, bases de datos, APIs)
 4. **Toma de decisiones** — la capacidad de elegir proximas acciones basadas en contexto
 
-Un agente autónomo no espera a que le pregunten. Monitorea, decide y actua. Cuando algo cae fuera de sus parametros, escala a un humano u otro agente — tal como lo haria un empleado bien capacitado.
+Un agente autónomo no espera a que le pregunten. Monitorea, decide y actua. Cuando algo cae fuera de sus parametros, escala a un humano u otro agente — tal como lo haría un empleado bien capacitado.
 
 ## La arquitectura importa
 
@@ -52,7 +52,7 @@ Esta no es una diferencia sutil. Es la diferencia entre una calculadora y un con
 - Necesitas ejecución de flujos de trabajo de principio a fin
 - Multiples sistemas necesitan coordinarse
 - Las decisiones requieren contexto y juicio
-- La operación debe ejecutarse sin intervencion humana
+- La operación debe ejecutarse sin intervención humana
 
 ## La conclusion
 

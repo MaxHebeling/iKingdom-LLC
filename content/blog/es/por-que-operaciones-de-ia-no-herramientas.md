@@ -1,7 +1,7 @@
 ---
 title: "Por qué Operaciones de IA, No Herramientas de IA"
 slug: "why-ai-operations-not-ai-tools"
-description: "La mayoría de las empresas compran herramientas de IA. Pocas construyen operaciones de IA. Aqui explicamos por qué la distincion importa."
+description: "La mayoría de las empresas compran herramientas de IA. Pocas construyen operaciones de IA. Aqui explicamos por qué la distinción importa."
 date: "2026-04-10"
 author: "iKingdom"
 tags: ["Operaciones de IA", "Estrategia"]
@@ -30,7 +30,7 @@ Eso no es una herramienta. Es una *operación.*
 
 ## La arquitectura de 80 agentes
 
-En iKingdom, desplegamos hasta 80 agentes autónomos organizados en 9 niveles. Cada agente tiene un rol definido, entradas y salidas claras, y protocolos de escalamiento. Trabajan juntos como lo haria un equipo bien dirigido — excepto que nunca duermen, nunca olvidan y nunca pierden un seguimiento.
+En iKingdom, desplegamos hasta 80 agentes autónomos organizados en 9 niveles. Cada agente tiene un rol definido, entradas y salidas claras, y protocolos de escalamiento. Trabajan juntos como lo haría un equipo bien dirigido — excepto que nunca duermen, nunca olvidan y nunca pierden un seguimiento.
 
 > La pregunta no es si usar IA. Es si tu IA realmente *opera* algo.
 
@@ -42,10 +42,10 @@ En iKingdom, desplegamos hasta 80 agentes autónomos organizados en 9 niveles. C
 
 ## El camino hacia adelante
 
-Las empresas que dominaran la proxima decada no seran las que tengan más herramientas. Seran las que tengan las mejores operaciones — donde la IA no sólo asista sino que *ejecute.*
+Las empresas que dominaran la proxima década no seran las que tengan más herramientas. Seran las que tengan las mejores operaciones — donde la IA no sólo asista sino que *ejecute.*
 
 Eso es lo que construimos en iKingdom. No otra herramienta. Una capa completa de operaciones autónomas para tu negocio.
 
 ---
 
-*Interesado en explorar como se ven las operaciones de IA para tu empresa? [Solicita aquí](https://www.ikingdom.org/#apply).*
+*Interesado en explorar cómo se ven las operaciones de IA para tu empresa? [Solicita aquí](https://www.ikingdom.org/#apply).*

@@ -29,9 +29,9 @@ El Modelo de Graduación por Checkpoints tiene cuatro etapas. Cada una increment
 
 **Etapa 2: Ejecución Supervisada.** El agente comienza a tomar acciones, pero cada una requiere aprobacion humana antes de ejecutarse. El humano puede aceptar, modificar o rechazar cada decisión. Esta etapa genera los datos necesarios para calcular precisión contra resultados operativos reales, no solo contra el criterio humano.
 
-**Etapa 3: Supervisión por Excepcion.** El agente opera de forma autónoma en casos rutinarios. Solo las decisiones que caen fuera de umbrales de confianza definidos o que involucran escenarios nuevos se canalizan a revisión humana. Para la mayoría de las funciones, esto significa que entre el 85% y 92% de las decisiones se manejan de forma autónoma, y el resto se marca para intervencion.
+**Etapa 3: Supervisión por Excepcion.** El agente opera de forma autónoma en casos rutinarios. Solo las decisiones que caen fuera de umbrales de confianza definidos o que involucran escenarios nuevos se canalizan a revisión humana. Para la mayoría de las funciones, esto significa que entre el 85% y 92% de las decisiones se manejan de forma autónoma, y el resto se marca para intervención.
 
-**Etapa 4: Autonomía Completa.** El agente maneja todas las decisiones dentro de su dominio sin intervencion humana. El monitoreo continúa, y el agente puede retroceder a la Etapa 3 si la precisión cae por debajo del umbral. La autonomía completa no es permanente. Es un estatus que debe mantenerse de forma continúa.
+**Etapa 4: Autonomía Completa.** El agente maneja todas las decisiones dentro de su dominio sin intervención humana. El monitoreo continúa, y el agente puede retroceder a la Etapa 3 si la precisión cae por debajo del umbral. La autonomía completa no es permanente. Es un estatus que debe mantenerse de forma continúa.
 
 ## Cómo se mide la precisión
 
@@ -49,11 +49,11 @@ El sistema rastrea cuatro métricas en cada checkpoint:
 
 **Precisión** contra el modelo ponderado de errores. Este es el criterio principal de graduación.
 
-**Consistencia** bajo diferentes condiciones. Un agente que rinde bien los lunes pero mal los viernes tiene un problema de confiabilidad que la precisión bruta podria ocultar.
+**Consistencia** bajo diferentes condiciones. Un agente que rinde bien los lunes pero mal los viernes tiene un problema de confiabilidad que la precisión bruta podría ocultar.
 
 **Latencia** relativa a operadores humanos. Un agente que tarda más que un humano en llegar a la misma decisión no agrega valor, aunque sea preciso.
 
-**Manejo de casos limite.** Como se comporta el agente cuando encuentra entradas fuera de su distribución de entrenamiento. La degradacion controlada, donde el agente señala incertidumbre en lugar de adivinar, es un indicador clave de preparacion para mayor autonomía.
+**Manejo de casos límite.** Cómo se comporta el agente cuando encuentra entradas fuera de su distribución de entrenamiento. La degradación controlada, donde el agente señala incertidumbre en lugar de adivinar, es un indicador clave de preparación para mayor autonomía.
 
 ## Por qué la autonomía gradual funciona
 
@@ -65,11 +65,11 @@ Para cuando un agente alcanza Autonomía Completa, la empresa tiene semanas o me
 
 ## Regresion y rollback
 
-La confianza no es un logro permanente. Las condiciones cambian. Las distribuciones de datos se desplazan. Surgen nuevos casos limite. El Modelo de Graduación por Checkpoints incluye monitoreo automatizado de regresion que evalua continuamente el rendimiento de cada agente contra los mismos umbrales usados para la graduación.
+La confianza no es un logro permanente. Las condiciones cambian. Las distribuciones de datos se desplazan. Surgen nuevos casos límite. El Modelo de Graduación por Checkpoints incluye monitoreo automatizado de regresion que evalua continuamente el rendimiento de cada agente contra los mismos umbrales usados para la graduación.
 
 Si la precisión de un agente cae por debajo del umbral durante un periodo sostenido, retrocede automaticamente a la etapa anterior. El sistema notifica al equipo de operaciones, registra las condiciones detonantes e inicia el reentrenamiento. Esto no es un fracaso. Es el sistema funcionando como fue disenado.
 
-El rollback ha ocurrido en producción. Las condiciones del mercado cambian, el comportamiento de los clientes evoluciona y los agentes entrenados con patrones historicos pierden precisión temporalmente. La palabra clave es temporalmente. Porque el sistema detecta la degradacion temprano y responde automaticamente, el impacto en el negocio es minimo.
+El rollback ha ocurrido en producción. Las condiciones del mercado cambian, el comportamiento de los clientes evoluciona y los agentes entrenados con patrones historicos pierden precisión temporalmente. La palabra clave es temporalmente. Porque el sistema detecta la degradación temprano y responde automaticamente, el impacto en el negocio es minimo.
 
 ## Construir confianza a escala
 
@@ -77,4 +77,4 @@ El Modelo de Graduación por Checkpoints es lo que hace posible operar 80 agente
 
 Esta modularidad también significa que las empresas pueden adoptar operaciones de IA de forma incremental. Comienza con tres agentes en funciones de bajo riesgo. Observa como graduan. Construye confianza. Luego expande hacia operaciones de mayor impacto con la misma metodología.
 
-La confianza en la IA no deberia ser un acto de fe. Deberia ser una serie de pasos pequenos y medibles, donde cada uno esta respaldado por datos. Eso es lo que entrega el Modelo de Graduación por Checkpoints.
+La confianza en la IA no debería ser un acto de fe. Deberia ser una serie de pasos pequeños y medibles, donde cada uno esta respaldado por datos. Eso es lo que entrega el Modelo de Graduación por Checkpoints.
