@@ -1,15 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Instrument_Serif } from "next/font/google";
-import dynamic from "next/dynamic";
 import "./globals.css";
 import JsonLdSchemas from "@/components/JsonLdSchemas";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import MetaPixel from "@/components/MetaPixel";
 import CookieConsent from "@/components/CookieConsent";
-import LazyMount from "@/components/LazyMount";
+import MagneticCursor from "@/components/MagneticCursor";
 import SmoothScroll from "@/components/SmoothScroll";
-
-const MagneticCursor = dynamic(() => import("@/components/MagneticCursor"));
 
 const inter = Inter({
   variable: "--font-inter",
@@ -147,9 +144,7 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <LazyMount trigger="idle" pointerFineOnly>
-          <MagneticCursor />
-        </LazyMount>
+        <MagneticCursor />
         <SmoothScroll>
           {children}
           <CookieConsent />

@@ -4,7 +4,6 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import ClientLogos from "@/components/ClientLogos";
 import Footer from "@/components/Footer";
-import LazyMount from "@/components/LazyMount";
 
 const Method = dynamic(() => import("@/components/Method"));
 const Capabilities = dynamic(() => import("@/components/Capabilities"));
@@ -85,9 +84,7 @@ export default function HomeES() {
     <>
       <EngagementTracker />
       <Nav lang="es" />
-      <LazyMount trigger="scroll">
-        <AgentTrace lang="es" />
-      </LazyMount>
+      <AgentTrace lang="es" />
       <main id="main-content" className="relative">
         <Hero lang="es" />
         <ClientLogos lang="es" />
@@ -100,9 +97,7 @@ export default function HomeES() {
         <Application lang="es" />
       </main>
       <Footer lang="es" />
-      <LazyMount trigger="interaction">
-        <ChatWidget />
-      </LazyMount>
+      <ChatWidget />
     </>
   );
 }
