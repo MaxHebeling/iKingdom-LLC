@@ -28,10 +28,10 @@ const COPY: Record<Lang, HeroCopy> = {
     headlineItalic: "companies",
     headlineAfter: " that run themselves.",
     subhead:
-      "We design and install autonomous AI operations inside ambitious businesses. Eighty agents. Nine tiers. From first contact to final invoice — running as one coordinated, supervised system.",
+      "Your business, running autonomously — from first contact to final invoice.",
     tagline: "Built once. Reshaped continuously. Yours forever.",
     ctaPrimary: "Begin Application",
-    ctaSecondary: "See it run",
+    ctaSecondary: "Book a 30-min call",
     liveDeployments: "Live deployments",
     inActiveBuild: "In active build",
     scroll: "Scroll",
@@ -43,10 +43,10 @@ const COPY: Record<Lang, HeroCopy> = {
     headlineItalic: "compañías",
     headlineAfter: " que operan solas.",
     subhead:
-      "Diseñamos e instalamos operaciones autónomas de IA dentro de empresas ambiciosas. Ochenta agentes. Nueve niveles. Desde el primer contacto hasta la última factura — funcionando como un sistema único, coordinado y supervisado.",
+      "Tu negocio, operando solo — desde el primer contacto hasta la última factura.",
     tagline: "Construido una vez. Reformado continuamente. Tuyo para siempre.",
     ctaPrimary: "Iniciar solicitud",
-    ctaSecondary: "Velo en acción",
+    ctaSecondary: "Agenda una llamada de 30 min",
     liveDeployments: "Despliegues en vivo",
     inActiveBuild: "En construcción activa",
     scroll: "Desliza",
@@ -255,7 +255,9 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
             </svg>
           </a>
           <a
-            href="#console"
+            href="https://calendly.com/executive-ikingdom/30min"
+            target="_blank"
+            rel="noopener noreferrer"
             className="hero-cta text-sm text-[--color-fg-muted] hover:text-[--color-fg] transition-colors duration-300 underline underline-offset-4 decoration-[--color-line-strong] hover:decoration-[--color-fg] opacity-0"
           >
             {t.ctaSecondary}
