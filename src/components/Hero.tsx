@@ -119,14 +119,9 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
         t.headlineAfter.trim().split(" ").length;
       const headlineEnd = 0.1 + 0.9 + (wordCount - 1) * 0.08;
 
-      // 3. Subhead: slide up only — element is visible from frame 1 (LCP eligible).
-      // No opacity animation: subhead is the mobile LCP element and must paint immediately.
-      tl.fromTo(
-        ".hero-subhead",
-        { y: 16 },
-        { y: 0, duration: 1 },
-        headlineEnd + 0.2
-      );
+      // 3. Subhead: no animation. It's the mobile LCP element — Chrome won't
+      // attribute LCP to an element that's being animated (even translateY).
+      // Visible and static from frame 1.
 
       // 4. Tagline: gold line draws from width 0 -> full, then text fades in
       tl.fromTo(
