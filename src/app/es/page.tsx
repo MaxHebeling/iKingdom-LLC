@@ -15,7 +15,6 @@ const OperationsConsole = dynamic(
 const Proof = dynamic(() => import("@/components/Proof"));
 const Application = dynamic(() => import("@/components/Application"));
 const AgentTrace = dynamic(() => import("@/components/AgentTrace"));
-const PulseTicker = dynamic(() => import("@/components/PulseTicker"));
 const ChatWidget = dynamic(() => import("@/components/ChatWidget"));
 const EngagementTracker = dynamic(
   () => import("@/components/EngagementTracker"),
@@ -86,7 +85,6 @@ export default function HomeES() {
       <EngagementTracker />
       <Nav lang="es" />
       <AgentTrace lang="es" />
-      <PulseTicker />
       <main id="main-content" className="relative">
         <Hero lang="es" />
         <ClientLogos lang="es" />
