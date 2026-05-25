@@ -3,6 +3,7 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import ClientLogos from "@/components/ClientLogos";
 import Footer from "@/components/Footer";
+import LazyMount from "@/components/LazyMount";
 
 // Heavy below-fold components loaded dynamically to reduce initial JS bundle
 const Method = dynamic(() => import("@/components/Method"));
@@ -25,7 +26,9 @@ export default function Home() {
     <>
       <EngagementTracker />
       <Nav lang="en" />
-      <AgentTrace lang="en" />
+      <LazyMount trigger="scroll">
+        <AgentTrace lang="en" />
+      </LazyMount>
       <main id="main-content" className="relative">
         <Hero lang="en" />
         <ClientLogos lang="en" />
@@ -38,7 +41,9 @@ export default function Home() {
         <Application lang="en" />
       </main>
       <Footer lang="en" />
-      <ChatWidget />
+      <LazyMount trigger="interaction">
+        <ChatWidget />
+      </LazyMount>
     </>
   );
 }
