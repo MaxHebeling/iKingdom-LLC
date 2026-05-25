@@ -53,7 +53,7 @@ const COPY: Record<Lang, HeroCopy> = {
   },
 };
 
-/** Split text into word spans for staggered clip-path animation */
+/** Split text into word spans for staggered opacity+translateY reveal */
 function WordSplit({
   text,
   className,
@@ -64,10 +64,7 @@ function WordSplit({
   return (
     <>
       {text.split(" ").map((word, i) => (
-        <span
-          key={i}
-          className="inline-block overflow-hidden"
-        >
+        <span key={i} className="inline-block">
           <span className={`hero-word inline-block ${className ?? ""}`}>
             {word}
           </span>
@@ -99,13 +96,15 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
         0
       );
 
-      // 2. Headline: clip-path reveal per word (cinematic hero moment)
-      // Words start visible (no opacity:0) but clipped from bottom — LCP-safe
+      // 2. Headline: opacity + translateY reveal per word.
+      // Words start partially visible (opacity 0.3) so the headline is the
+      // LCP element on first paint, not blocked behind the animation.
       tl.fromTo(
         ".hero-word",
-        { clipPath: "inset(100% 0 0 0)" },
+        { opacity: 0.3, y: 20 },
         {
-          clipPath: "inset(0% 0 0 0)",
+          opacity: 1,
+          y: 0,
           duration: 0.9,
           stagger: 0.08,
           ease: "power4.out",
@@ -209,7 +208,7 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
         <h1 className="font-display text-balance text-[clamp(3rem,9vw,9.5rem)] leading-[0.92] tracking-[-0.025em] text-[--color-fg]">
           <WordSplit text={t.headlineBefore} />
           <br />
-          <span className="inline-block overflow-hidden">
+          <span className="inline-block">
             <span className="hero-word inline-block italic text-[--color-accent]">
               {t.headlineItalic}
             </span>
