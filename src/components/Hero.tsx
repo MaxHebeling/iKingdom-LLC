@@ -119,11 +119,12 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
         t.headlineAfter.trim().split(" ").length;
       const headlineEnd = 0.1 + 0.9 + (wordCount - 1) * 0.08;
 
-      // 3. Subhead: fade in + slide up, starts 0.2s after headline finishes
+      // 3. Subhead: slide up only — element is visible from frame 1 (LCP eligible).
+      // No opacity animation: subhead is the mobile LCP element and must paint immediately.
       tl.fromTo(
         ".hero-subhead",
-        { opacity: 0, y: 16 },
-        { opacity: 1, y: 0, duration: 1 },
+        { y: 16 },
+        { y: 0, duration: 1 },
         headlineEnd + 0.2
       );
 
@@ -218,7 +219,7 @@ export default function Hero({ lang = "en" }: { lang?: Lang }) {
         </h1>
 
         {/* Subhead */}
-        <p className="hero-subhead mt-12 md:mt-16 max-w-2xl text-pretty text-base md:text-lg leading-relaxed text-[--color-fg-muted] opacity-0">
+        <p className="hero-subhead mt-12 md:mt-16 max-w-2xl text-pretty text-base md:text-lg leading-relaxed text-[--color-fg-muted]">
           {t.subhead}
         </p>
 
