@@ -59,3 +59,7 @@ Esta no es una diferencia sutil. Es la diferencia entre una calculadora y un con
 Si estas evaluando IA para tu negocio, empieza preguntando: *Necesito algo que responda preguntas, o algo que ejecute operaciones?*
 
 La respuesta determina todo lo que sigue.
+
+---
+
+*¿Listo para ir más allá de los chatbots y entrar a operaciones autónomas? [Aplica aquí](https://www.ikingdom.org/es#apply).*

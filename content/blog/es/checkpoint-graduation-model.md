@@ -77,4 +77,8 @@ El Modelo de Graduación por Checkpoints es lo que hace posible operar 80 agente
 
 Esta modularidad también significa que las empresas pueden adoptar operaciones de IA de forma incremental. Comienza con tres agentes en funciones de bajo riesgo. Observa como graduan. Construye confianza. Luego expande hacia operaciones de mayor impacto con la misma metodología.
 
-La confianza en la IA no debería ser un acto de fe. Deberia ser una serie de pasos pequeños y medibles, donde cada uno esta respaldado por datos. Eso es lo que entrega el Modelo de Graduación por Checkpoints.
+La confianza en la IA no debería ser un acto de fe. Debería ser una serie de pasos pequeños y medibles, donde cada uno está respaldado por datos. Eso es lo que entrega el Modelo de Graduación por Checkpoints.
+
+---
+
+*¿Quieres ver cómo se vería la Graduación por Checkpoint dentro de tus operaciones? [Aplica aquí](https://www.ikingdom.org/es#apply).*

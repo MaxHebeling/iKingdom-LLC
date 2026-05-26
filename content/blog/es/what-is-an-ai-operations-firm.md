@@ -72,3 +72,7 @@ El modelo de operaciones de IA se convertira en estándar en los proximos cinco 
 Pero la transición requiere confianza. Las empresas necesitan ver que los agentes autónomos pueden manejar operaciones reales con consecuencias reales. Por eso iKingdom construyó el Modelo de Graduación por Checkpoints: una metodología para ganar esa confianza de forma incremental, a través de desempeño demostrado, no de promesas.
 
 El futuro de las operaciones empresariales no es humano o IA. Es un sistema cuidadosamente orquestado donde la IA maneja lo predecible y los humanos se enfocan en lo estratégico. Una firma de operaciones de IA es la entidad que construye y opera ese sistema.
+
+---
+
+*¿Crees que tu negocio está listo para una firma de operaciones de IA? [Aplica aquí](https://www.ikingdom.org/es#apply).*
