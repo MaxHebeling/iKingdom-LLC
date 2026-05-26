@@ -5,7 +5,6 @@ description: "Most companies buy AI tools. Few build AI operations. Here's why t
 date: "2026-04-10"
 author: "iKingdom"
 tags: ["AI Operations", "Strategy"]
-image: "/blog/why-ai-operations-not-ai-tools.jpg"
 ---
 
 ## The tool trap
@@ -30,7 +29,7 @@ That's not a tool. That's an *operation.*
 
 ## The 80-agent architecture
 
-At iKingdom, we deploy up to 80 autonomous agents organized across 9 tiers. Each agent has a defined role, clear inputs and outputs, and escalation protocols. They work together the way a well-run team does — except they never sleep, never forget, and never miss a follow-up.
+At iKingdom, we deploy 80 autonomous agents organized across 9 tiers. Each agent has a defined role, clear inputs and outputs, and escalation protocols. They work together the way a well-run team does — except they never sleep, never forget, and never miss a follow-up.
 
 > The question isn't whether to use AI. It's whether your AI actually *runs* anything.
 

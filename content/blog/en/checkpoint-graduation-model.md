@@ -78,3 +78,7 @@ The Checkpoint Graduation Model is what makes it possible to run 80 agents simul
 This modularity also means businesses can adopt AI operations incrementally. Start with three agents in low-risk functions. Watch them graduate. Build confidence. Then expand to higher-stakes operations with the same methodology.
 
 Trust in AI should not be a leap of faith. It should be a series of small, measurable steps where each one is backed by data. That is what the Checkpoint Graduation Model delivers.
+
+---
+
+*Want to see what Checkpoint Graduation would look like inside your operations? [Apply here](https://www.ikingdom.org/#apply).*

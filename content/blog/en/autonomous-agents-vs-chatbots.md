@@ -59,3 +59,7 @@ This isn't a subtle difference. It's the difference between a calculator and an 
 If you're evaluating AI for your business, start by asking: *Do I need something that answers questions, or something that runs operations?*
 
 The answer determines everything that follows.
+
+---
+
+*Ready to move beyond chatbots and into autonomous operations? [Apply here](https://www.ikingdom.org/#apply).*

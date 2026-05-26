@@ -72,3 +72,7 @@ The AI operations model will become standard within the next five years. The eco
 But the transition requires trust. Businesses need to see that autonomous agents can handle real operations with real consequences. That is why iKingdom built the Checkpoint Graduation Model, a methodology for earning that trust incrementally, through demonstrated performance rather than promises.
 
 The future of business operations is not human or AI. It is a carefully orchestrated system where AI handles the predictable and humans focus on the strategic. An AI operations firm is the entity that builds and runs that system.
+
+---
+
+*Think your business is ready for an AI operations firm? [Apply here](https://www.ikingdom.org/#apply).*
