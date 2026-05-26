@@ -50,7 +50,7 @@ export default function ContactForm({ lang = "en" }: { lang?: "en" | "es" }) {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, lang }),
       });
 
       if (res.ok) {

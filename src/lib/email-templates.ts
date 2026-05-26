@@ -127,3 +127,58 @@ www.ikingdom.org`;
 
   return { subject, html: wrap({ preheader, body }), text };
 }
+
+export function contactConfirmationEmail(opts: {
+  name: string;
+  lang: Lang;
+}): Template {
+  const firstName = opts.name.split(" ")[0] || opts.name;
+
+  if (opts.lang === "es") {
+    const subject = "Mensaje recibido — iKingdom";
+    const preheader = "Te responderemos dentro de unos días hábiles.";
+    const body = `
+<p style="margin:0 0 20px 0;">${firstName},</p>
+
+<p style="margin:0 0 20px 0;">Tu mensaje ha sido recibido. Te responderemos dentro de unos días hábiles.</p>
+
+<p style="margin:0 0 28px 0;">Si tu consulta es sobre un compromiso formal, la vía más rápida es el formulario de solicitud en <a href="https://www.ikingdom.org/es" style="color:${STYLES.accent};text-decoration:underline;">www.ikingdom.org</a>. De lo contrario, responderemos directamente a este hilo.</p>
+
+<p style="margin:0;font-style:italic;color:${STYLES.fg};">— iKingdom</p>
+`;
+    const text = `${firstName},
+
+Tu mensaje ha sido recibido. Te responderemos dentro de unos días hábiles.
+
+Si tu consulta es sobre un compromiso formal, la vía más rápida es el formulario de solicitud en www.ikingdom.org. De lo contrario, responderemos directamente a este hilo.
+
+— iKingdom
+San Diego, CA
+www.ikingdom.org`;
+
+    return { subject, html: wrap({ preheader, body }), text };
+  }
+
+  const subject = "Message received — iKingdom";
+  const preheader = "We'll respond within a few business days.";
+  const body = `
+<p style="margin:0 0 20px 0;">${firstName},</p>
+
+<p style="margin:0 0 20px 0;">Your message has been received. We'll respond within a few business days.</p>
+
+<p style="margin:0 0 28px 0;">If your inquiry is about a formal engagement, the fastest path is the application form at <a href="https://www.ikingdom.org" style="color:${STYLES.accent};text-decoration:underline;">www.ikingdom.org</a>. Otherwise, we'll reply to this thread directly.</p>
+
+<p style="margin:0;font-style:italic;color:${STYLES.fg};">— iKingdom</p>
+`;
+  const text = `${firstName},
+
+Your message has been received. We'll respond within a few business days.
+
+If your inquiry is about a formal engagement, the fastest path is the application form at www.ikingdom.org. Otherwise, we'll reply to this thread directly.
+
+— iKingdom
+San Diego, CA
+www.ikingdom.org`;
+
+  return { subject, html: wrap({ preheader, body }), text };
+}
