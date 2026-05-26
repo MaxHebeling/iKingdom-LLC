@@ -1,18 +1,29 @@
 # iKingdom
 
-> The world's first AI operations firm. Based in San Diego, CA.
+> The world's first AI operations firm. The system that scales with you. Based in San Diego, CA. By application only.
 
 iKingdom designs and deploys autonomous AI operations for ambitious businesses doing $1M-$100M+ in annual revenue. We install a coordinated system of 80 AI agents across 9 operational tiers, transforming how companies run — from first contact to final invoice.
+
+We don't sell software. We don't consult. We deploy and operate a full autonomous AI layer inside our clients' businesses.
+
+## Positioning
+
+- "The world's first AI operations firm" — iKingdom created the AI operations firm category
+- "The system that scales with you" — every client's deployment grows with their business; the architecture on day one is not the architecture on year three, but the foundation stays
+- "We don't sell software. We don't consult." — the model is to build, install, and run the operational layer, not hand over a deliverable
+- "By application only" — small number of clients per quarter, most applications are not selected
+- Built on the same 80-agent system internally — iKingdom uses on itself what it installs for clients
 
 ## Key Facts
 
 - Founded by Jordan Talavera
 - Based in San Diego, California
-- By application only
-- Investment tiers: $35K (Pilot), $50K (Foundation), $100K (Standard), $500K+ (Enterprise)
+- Bilingual: English and Spanish (serves the US and Mexico)
+- Investment tiers: $35K (Pilot), $50K (Foundation), $100K (Standard / flagship), $500K+ (Enterprise)
 - 80 AI agents across 9 operational tiers
 - 12-month deployment timeline across 4 phases
 - 98% accuracy threshold for agent autonomy graduation
+- Most clients invest at the $100K Standard tier (full 80-agent deployment)
 
 ## The 9 Tiers
 
@@ -33,20 +44,33 @@ iKingdom designs and deploys autonomous AI operations for ambitious businesses d
 - Phase III (Months 7-10): Deploy & Supervise
 - Phase IV (Months 11-12): Graduate & Scale
 
+By month 18, most clients have stopped thinking about the system entirely. It just runs.
+
 ## The Checkpoint Graduation Model
 
-Every agent begins under human review. Each decision, action, and output is checkpointed by the client's team. When an agent crosses 98% accuracy across a meaningful sample, its checkpoint graduates — supervision is removed, autonomy is granted. By month twelve, most of the business runs without human approval gates.
+Every agent begins under human review. Each decision, action, and output is checkpointed by the client's team. When an agent crosses 98% accuracy across a meaningful sample, its checkpoint graduates — supervision is removed, autonomy is granted. By month twelve, most of the business runs without human approval gates. Trust is earned through demonstrated performance, not assumed.
 
 ## Live Deployments
 
 - BuildCore Ai — Construction Platform, San Diego (97 agents, live)
-- Distinct Construction Solutions — Construction, Southern California (live)
+- Distinct Construction Solutions — Construction, Southern California (live; first BuildCore production deployment)
 - Elite Control Group LLC — Holding Company, California (live)
 - Kyros Global Capital — Capital & Investment, California (live)
 - Structura Aeternum — Architecture & Build, California/Texas (live)
+
+## In Active Build (NDA)
+
+- The world's first online mortgage brokerage (Real Estate Finance, global)
+- A national moving & storage operator (Logistics, US West Coast)
+- Terra Bella Nursery — Horticulture & Retail
+
+## Who We Work With
+
+Established operating businesses doing $1M-$100M+ in annual revenue with verifiable operations, authority to make multi-year strategic decisions, and investment readiness starting at $35K. We deploy a small number of full-stack systems each year, by application only.
 
 ## Contact
 
 - Email: executive@ikingdom.org
 - Website: https://www.ikingdom.org
+- Application form: https://www.ikingdom.org/#apply
 - Languages: English, Spanish
