@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import ClientLogos from "@/components/ClientLogos";
 import Footer from "@/components/Footer";
+import JsonLdSchemas from "@/components/JsonLdSchemas";
 
 const Method = dynamic(() => import("@/components/Method"));
 const Capabilities = dynamic(() => import("@/components/Capabilities"));
@@ -82,6 +83,7 @@ export const metadata: Metadata = {
 export default function HomeES() {
   return (
     <>
+      <JsonLdSchemas page="home" lang="es" />
       <EngagementTracker />
       <Nav lang="es" />
       <AgentTrace lang="es" />

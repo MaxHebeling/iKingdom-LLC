@@ -3,6 +3,7 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import ClientLogos from "@/components/ClientLogos";
 import Footer from "@/components/Footer";
+import JsonLdSchemas from "@/components/JsonLdSchemas";
 
 // Heavy below-fold components loaded dynamically to reduce initial JS bundle
 const Method = dynamic(() => import("@/components/Method"));
@@ -23,6 +24,7 @@ const EngagementTracker = dynamic(
 export default function Home() {
   return (
     <>
+      <JsonLdSchemas page="home" lang="en" />
       <EngagementTracker />
       <Nav lang="en" />
       <AgentTrace lang="en" />
