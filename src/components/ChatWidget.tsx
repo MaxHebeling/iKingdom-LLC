@@ -112,10 +112,14 @@ export default function ChatWidget() {
       ...messages,
       { role: "user", content: text },
     ];
-    setMessages(nextMessages);
+    // Add an empty assistant placeholder; we'll stream tokens into it.
+    setMessages([...nextMessages, { role: "assistant", content: "" }]);
     setInput("");
     setLoading(true);
     setError(null);
+
+    let assistantContent = "";
+    let streamError: string | null = null;
 
     try {
       const res = await fetch("/api/chat", {
@@ -138,26 +142,88 @@ export default function ChatWidget() {
         }),
       });
 
-      const data = (await res.json()) as { content?: string; error?: string };
-
-      if (!res.ok || data.error) {
-        throw new Error(data.error || `Request failed (${res.status})`);
+      if (!res.ok || !res.body) {
+        throw new Error(`Request failed (${res.status})`);
       }
 
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: data.content || "" },
-      ]);
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        // SSE events are separated by "\n\n"; keep any incomplete trailing chunk.
+        const events = buffer.split("\n\n");
+        buffer = events.pop() || "";
+
+        for (const evt of events) {
+          if (!evt.startsWith("data: ")) continue;
+          const payload = evt.slice(6);
+
+          if (payload === "[DONE]") {
+            continue;
+          }
+
+          try {
+            const parsed = JSON.parse(payload) as {
+              text?: string;
+              error?: string;
+            };
+            if (parsed.error) {
+              streamError = parsed.error;
+              continue;
+            }
+            if (parsed.text) {
+              assistantContent += parsed.text;
+              setMessages((prev) => {
+                const next = [...prev];
+                const last = next[next.length - 1];
+                if (last && last.role === "assistant") {
+                  next[next.length - 1] = {
+                    role: "assistant",
+                    content: assistantContent,
+                  };
+                }
+                return next;
+              });
+            }
+          } catch {
+            // Malformed event — skip.
+          }
+        }
+      }
+
+      if (streamError) {
+        throw new Error(streamError);
+      }
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Something went wrong.";
+      const message =
+        err instanceof Error ? err.message : "Something went wrong.";
       setError(message);
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: ERROR_MESSAGES[language],
-        },
-      ]);
+      // If we got nothing back, replace the empty placeholder with the error
+      // message. If we got partial content, leave it and append the error as
+      // a new assistant message.
+      setMessages((prev) => {
+        const next = [...prev];
+        const last = next[next.length - 1];
+        if (last && last.role === "assistant" && last.content === "") {
+          next[next.length - 1] = {
+            role: "assistant",
+            content: ERROR_MESSAGES[language],
+          };
+        } else {
+          next.push({
+            role: "assistant",
+            content: ERROR_MESSAGES[language],
+          });
+        }
+        return next;
+      });
     } finally {
       setLoading(false);
     }

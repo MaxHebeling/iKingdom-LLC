@@ -327,69 +327,65 @@ export async function POST(request: Request): Promise<Response> {
 
   const client = new Anthropic({ apiKey });
 
-  // Primary model: Claude Opus 4.7 (latest, most capable). Fallback: Sonnet 4.6.
-  const PRIMARY_MODEL = "claude-opus-4-7";
-  const FALLBACK_MODEL = "claude-sonnet-4-6";
+  // SSE streaming. Each event emitted as `data: <JSON>\n\n`.
+  // - { text: "..." }  — incremental text delta
+  // - { error: "..." } — terminal error
+  // - [DONE]           — stream complete
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream({
+    async start(controller) {
+      try {
+        const messageStream = client.messages.stream({
+          model: "claude-opus-4-7",
+          max_tokens: 1024,
+          // Auto-cache the system prompt (~3500 tokens). First call writes the
+          // cache; subsequent calls within 5min read at ~0.1x cost.
+          cache_control: { type: "ephemeral" },
+          system: systemPrompt,
+          messages,
+        });
 
-  async function callModel(model: string) {
-    return client.messages.create({
-      model,
-      max_tokens: 1024,
-      // Auto-cache the system prompt (~3500 tokens). Top-level cache_control
-      // caches the last cacheable block, which is the system message here.
-      // First request writes the cache (~1.25x cost on the prefix); subsequent
-      // requests within 5 minutes read from cache at ~0.1x cost.
-      cache_control: { type: "ephemeral" },
-      system: systemPrompt,
-      messages,
-    });
-  }
+        for await (const event of messageStream) {
+          if (
+            event.type === "content_block_delta" &&
+            event.delta.type === "text_delta"
+          ) {
+            const payload = JSON.stringify({ text: event.delta.text });
+            controller.enqueue(encoder.encode(`data: ${payload}\n\n`));
+          }
+        }
 
-  try {
-    let response;
-    try {
-      response = await callModel(PRIMARY_MODEL);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      // Fall back if the primary model ID is not available on this account.
-      if (
-        msg.toLowerCase().includes("model") ||
-        msg.toLowerCase().includes("not_found") ||
-        msg.toLowerCase().includes("404")
-      ) {
-        response = await callModel(FALLBACK_MODEL);
-      } else {
-        throw err;
+        // Log final cache utilization so we can verify hits in Vercel logs.
+        const final = await messageStream.finalMessage();
+        const usage = final.usage;
+        console.log(
+          `[api/chat] tokens — in:${usage.input_tokens} cache_read:${usage.cache_read_input_tokens ?? 0} cache_write:${usage.cache_creation_input_tokens ?? 0} out:${usage.output_tokens}`
+        );
+
+        controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
+        controller.close();
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Unknown error";
+        console.error("[api/chat] stream error:", message);
+        try {
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ error: message })}\n\n`)
+          );
+        } catch {
+          // Controller may already be closed; ignore.
+        }
+        controller.close();
       }
-    }
+    },
+  });
 
-    // Log cache utilization so we can verify hits in Vercel logs.
-    // Expect cache_read_input_tokens > 0 after the first request per 5min window.
-    const usage = response.usage;
-    console.log(
-      `[api/chat] tokens — in:${usage.input_tokens} cache_read:${usage.cache_read_input_tokens ?? 0} cache_write:${usage.cache_creation_input_tokens ?? 0} out:${usage.output_tokens}`
-    );
-
-    const text = response.content
-      .filter((block): block is Anthropic.TextBlock => block.type === "text")
-      .map((block) => block.text)
-      .join("\n")
-      .trim();
-
-    if (!text) {
-      return jsonResponse(
-        { error: "Empty response from assistant." },
-        500
-      );
-    }
-
-    return jsonResponse({ content: text });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("[api/chat] Anthropic error:", message);
-    return jsonResponse(
-      { error: `Assistant temporarily unavailable: ${message}` },
-      500
-    );
-  }
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache, no-transform",
+      Connection: "keep-alive",
+      "Access-Control-Allow-Origin": "*",
+      "X-Accel-Buffering": "no",
+    },
+  });
 }
