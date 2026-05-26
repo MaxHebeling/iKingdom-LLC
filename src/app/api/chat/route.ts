@@ -236,6 +236,28 @@ function buildSystemPrompt(language: Language): string {
   return `${directive}\n\n${SYSTEM_PROMPT_BODY}`;
 }
 
+// In-memory rate limiter keyed by IP. Works within a single Vercel function
+// instance — sufficient for the volume iKingdom expects. Limit chosen to allow
+// real back-and-forth conversation (1 msg every ~2s burst) while blocking spam.
+const RATE_BUCKET = new Map<string, { count: number; reset: number }>();
+function rateLimit(ip: string, max: number, windowMs: number): boolean {
+  const now = Date.now();
+  const entry = RATE_BUCKET.get(ip);
+  if (!entry || now > entry.reset) {
+    RATE_BUCKET.set(ip, { count: 1, reset: now + windowMs });
+    return true;
+  }
+  if (entry.count >= max) return false;
+  entry.count += 1;
+  return true;
+}
+
+function getClientIp(request: Request): string {
+  const xff = request.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0]!.trim();
+  return request.headers.get("x-real-ip") || "unknown";
+}
+
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -262,6 +284,19 @@ export async function POST(request: Request): Promise<Response> {
           "The iKingdom Assistant is not configured yet. Please set ANTHROPIC_API_KEY in .env.local.",
       },
       500
+    );
+  }
+
+  // Rate limit: 30 requests per 60s per IP. Normal conversation is ~1 msg
+  // every 10-30s, so 30/min covers rapid back-and-forth while blocking spam.
+  const ip = getClientIp(request);
+  if (!rateLimit(ip, 30, 60_000)) {
+    return jsonResponse(
+      {
+        error:
+          "Khloe is receiving a high volume of messages right now. Please wait a moment and try again.",
+      },
+      429
     );
   }
 
@@ -300,6 +335,11 @@ export async function POST(request: Request): Promise<Response> {
     return client.messages.create({
       model,
       max_tokens: 1024,
+      // Auto-cache the system prompt (~3500 tokens). Top-level cache_control
+      // caches the last cacheable block, which is the system message here.
+      // First request writes the cache (~1.25x cost on the prefix); subsequent
+      // requests within 5 minutes read from cache at ~0.1x cost.
+      cache_control: { type: "ephemeral" },
       system: systemPrompt,
       messages,
     });
@@ -322,6 +362,13 @@ export async function POST(request: Request): Promise<Response> {
         throw err;
       }
     }
+
+    // Log cache utilization so we can verify hits in Vercel logs.
+    // Expect cache_read_input_tokens > 0 after the first request per 5min window.
+    const usage = response.usage;
+    console.log(
+      `[api/chat] tokens — in:${usage.input_tokens} cache_read:${usage.cache_read_input_tokens ?? 0} cache_write:${usage.cache_creation_input_tokens ?? 0} out:${usage.output_tokens}`
+    );
 
     const text = response.content
       .filter((block): block is Anthropic.TextBlock => block.type === "text")
