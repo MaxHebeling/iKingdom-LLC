@@ -127,12 +127,30 @@ export default function sitemap(): MetadataRoute.Sitemap {
       },
     },
     {
-      // Standalone premium intake form. Single canonical URL — the form
-      // content is Spanish-language but the route is /application (no /es).
+      // Standalone premium intake form. Bilingual: /application serves EN,
+      // /es/application serves ES. Backend is the same /api/client-application.
       url: `${baseUrl}/application`,
       lastModified,
       changeFrequency: "monthly",
       priority: 0.8,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/application`,
+          es: `${baseUrl}/es/application`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/es/application`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.7,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/application`,
+          es: `${baseUrl}/es/application`,
+        },
+      },
     },
     {
       url: `${baseUrl}/privacy`,

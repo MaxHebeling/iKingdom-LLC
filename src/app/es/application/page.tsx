@@ -1,28 +1,30 @@
 import type { Metadata } from "next";
-import ApplicationClient from "./ApplicationClient";
+import ApplicationClient from "../../application/ApplicationClient";
 
 export const metadata: Metadata = {
-  title: "Client Application · iKingdom",
+  title: "Aplicación de cliente · iKingdom",
   description:
-    "Complete this application so our team can evaluate your company, product, or service and prepare a tailored proposal.",
+    "Completa esta aplicación para que nuestro equipo evalúe tu empresa, producto o servicio y prepare una propuesta personalizada.",
   alternates: {
-    canonical: "https://www.ikingdom.org/application",
+    canonical: "https://www.ikingdom.org/es/application",
     languages: {
       en: "https://www.ikingdom.org/application",
       es: "https://www.ikingdom.org/es/application",
     },
   },
   openGraph: {
-    title: "Client Application · iKingdom",
+    title: "Aplicación de cliente · iKingdom",
     description:
-      "Apply to work with iKingdom. We evaluate your case and prepare a tailored proposal.",
-    url: "https://www.ikingdom.org/application",
+      "Aplica para trabajar con iKingdom. Evaluamos tu caso y preparamos una propuesta a la medida.",
+    url: "https://www.ikingdom.org/es/application",
     type: "website",
+    locale: "es_ES",
+    alternateLocale: "en_US",
   },
   robots: { index: true, follow: true },
 };
 
-export default function ApplicationPage() {
+export default function ApplicationPageEs() {
   return (
     <main
       className="min-h-screen"
@@ -41,31 +43,31 @@ export default function ApplicationPage() {
             className="text-[13px] font-medium tracking-tight"
             style={{ color: "#0071e3" }}
           >
-            Client Application
+            Aplicación de cliente
           </p>
           <h1
             className="mt-4 text-[44px] md:text-[68px] font-semibold leading-[1.05] tracking-[-0.025em]"
             style={{ color: "#1d1d1f" }}
           >
-            Tell us about your company.
+            Cuéntanos sobre tu empresa.
             <br />
-            <span style={{ color: "#86868b" }}>We&rsquo;ll help you grow it.</span>
+            <span style={{ color: "#86868b" }}>Te ayudamos a crecerla.</span>
           </h1>
           <p
             className="mt-6 max-w-2xl mx-auto text-[19px] md:text-[21px] font-normal leading-[1.4]"
             style={{ color: "#6e6e73" }}
           >
-            Complete this application so we can evaluate your company and prepare a
-            tailored proposal. The more precise your information, the better our
-            evaluation.
+            Completa esta aplicación para que podamos evaluar tu empresa y preparar
+            una propuesta personalizada. Entre más precisa sea tu información, mejor
+            será nuestra evaluación.
           </p>
 
           {/* Trust strip */}
           <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
             {[
-              { t: "Careful review", d: "Every application is read by our team." },
-              { t: "Serious evaluation", d: "We analyze your business before proposing." },
-              { t: "Tailored proposal", d: "If there's a fit, we prepare a proposal." },
+              { t: "Revisión cuidadosa", d: "Cada aplicación es leída por nuestro equipo." },
+              { t: "Evaluación seria", d: "Analizamos tu negocio antes de proponer." },
+              { t: "Propuesta a medida", d: "Si hay buen fit, preparamos una propuesta." },
             ].map((b) => (
               <div
                 key={b.t}
@@ -101,15 +103,15 @@ export default function ApplicationPage() {
             boxShadow: "0 1px 2px rgba(0,0,0,0.04), 0 24px 60px -20px rgba(0,0,0,0.12)",
           }}
         >
-          <ApplicationClient lang="en" />
+          <ApplicationClient lang="es" />
         </div>
 
         <p
           className="mt-10 text-center text-[12px] leading-[1.5] max-w-xl mx-auto"
           style={{ color: "#86868b" }}
         >
-          Your information is treated confidentially and is reviewed only by our
-          internal team for the purpose of evaluating your case.
+          Tu información se trata de forma confidencial y es revisada únicamente por
+          nuestro equipo interno con el fin de evaluar tu caso.
         </p>
       </section>
     </main>

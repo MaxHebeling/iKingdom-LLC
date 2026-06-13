@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SECTIONS, ALL_FIELDS, type FieldDef } from "./form-config";
+import { getSections, ALL_FIELDS, type FieldDef, type Lang } from "./form-config";
 import { COUNTRIES, DEFAULT_COUNTRY } from "./countries";
 
 type FieldValue = string | string[] | boolean | undefined;
@@ -14,6 +14,45 @@ const INITIAL: FormState = ALL_FIELDS.reduce<FormState>((acc, f) => {
   else acc[f.name] = "";
   return acc;
 }, {});
+
+const COPY = {
+  en: {
+    requiredError: "Required",
+    emailInvalidError: "Invalid email",
+    submitError: "We couldn't submit your application.",
+    networkError: "Network error.",
+    successTitle: "Application received",
+    successBody:
+      "We've received your application. Our team will review it to evaluate your case and prepare a possible proposal. We'll be in touch soon.",
+    stepLabel: (current: number, total: number) => `Step ${current} of ${total}`,
+    previous: "Previous",
+    next: "Next",
+    submitting: "Submitting…",
+    submitApplication: "Submit application",
+    selectPlaceholder: "Select…",
+    selectCountryPlaceholder: "Select a country…",
+    countryCodeLabel: "Country code",
+    phoneNumberPlaceholder: "Number",
+  },
+  es: {
+    requiredError: "Requerido",
+    emailInvalidError: "Email no válido",
+    submitError: "No pudimos enviar tu aplicación.",
+    networkError: "Error de red.",
+    successTitle: "Aplicación recibida",
+    successBody:
+      "Hemos recibido tu aplicación. Nuestro equipo la revisará para evaluar tu caso y preparar una posible propuesta. Te contactaremos pronto.",
+    stepLabel: (current: number, total: number) => `Paso ${current} de ${total}`,
+    previous: "Anterior",
+    next: "Siguiente",
+    submitting: "Enviando…",
+    submitApplication: "Enviar aplicación",
+    selectPlaceholder: "Selecciona…",
+    selectCountryPlaceholder: "Selecciona un país…",
+    countryCodeLabel: "Código de país",
+    phoneNumberPlaceholder: "Número",
+  },
+} as const;
 
 // ── Apple-inspired tokens ────────────────────────────────────────────────────
 const C = {
@@ -53,7 +92,10 @@ const inputFocus: React.CSSProperties = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-export default function ApplicationClient() {
+export default function ApplicationClient({ lang = "es" }: { lang?: Lang }) {
+  const t = COPY[lang];
+  const SECTIONS = useMemo(() => getSections(lang), [lang]);
+
   const [step, setStep] = useState(0);
   const [values, setValues] = useState<FormState>(INITIAL);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -76,13 +118,13 @@ export default function ApplicationClient() {
       if (!f.required) continue;
       const v = values[f.name];
       if (f.type === "checkbox") {
-        if (v !== true) next[f.name] = "Requerido";
+        if (v !== true) next[f.name] = t.requiredError;
       } else if (Array.isArray(v)) {
-        if (v.length === 0) next[f.name] = "Requerido";
+        if (v.length === 0) next[f.name] = t.requiredError;
       } else if (!v || (typeof v === "string" && v.trim().length === 0)) {
-        next[f.name] = "Requerido";
+        next[f.name] = t.requiredError;
       } else if (f.type === "email" && typeof v === "string") {
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) next[f.name] = "Email no válido";
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) next[f.name] = t.emailInvalidError;
       }
     }
     setErrors((e) => ({ ...e, ...next }));
@@ -103,7 +145,7 @@ export default function ApplicationClient() {
     if (!validateSection()) return;
     setFormError(null);
     startTransition(async () => {
-      const payload: Record<string, unknown> = { lang: "es" };
+      const payload: Record<string, unknown> = { lang };
       for (const [k, v] of Object.entries(values)) {
         if (typeof v === "string") payload[k] = v.trim();
         else payload[k] = v;
@@ -116,13 +158,13 @@ export default function ApplicationClient() {
         });
         const json = await res.json();
         if (!res.ok || !json.success) {
-          setFormError(json.error || "No pudimos enviar tu aplicación.");
+          setFormError(json.error || t.submitError);
           return;
         }
         setSubmittedId(json.id || "ok");
         if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
       } catch (err) {
-        setFormError(err instanceof Error ? err.message : "Error de red.");
+        setFormError(err instanceof Error ? err.message : t.networkError);
       }
     });
   };
@@ -143,14 +185,13 @@ export default function ApplicationClient() {
           ✓
         </div>
         <h2 className="mt-8 text-[32px] md:text-[40px] font-semibold tracking-[-0.02em]" style={{ color: C.text }}>
-          Aplicación recibida
+          {t.successTitle}
         </h2>
         <p
           className="mt-4 max-w-xl mx-auto text-[17px] leading-[1.5]"
           style={{ color: C.textMuted }}
         >
-          Hemos recibido tu aplicación. Nuestro equipo la revisará para evaluar tu
-          caso y preparar una posible propuesta. Te contactaremos pronto.
+          {t.successBody}
         </p>
       </motion.div>
     );
@@ -162,9 +203,7 @@ export default function ApplicationClient() {
       {/* Progress */}
       <div className="space-y-3">
         <div className="flex items-center justify-between text-[12px] font-medium" style={{ color: C.textFaint }}>
-          <span>
-            Paso {step + 1} de {total}
-          </span>
+          <span>{t.stepLabel(step + 1, total)}</span>
           <span style={{ color: C.textSoft }}>{section.label}</span>
         </div>
         <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ background: C.surfaceAlt }}>
@@ -214,6 +253,7 @@ export default function ApplicationClient() {
               value={values[f.name]}
               error={errors[f.name]}
               onChange={(v) => set(f.name, v)}
+              copy={t}
             />
           ))}
         </motion.div>
@@ -237,7 +277,7 @@ export default function ApplicationClient() {
           className="text-[15px] font-medium px-5 py-3 rounded-full transition disabled:opacity-30 disabled:cursor-not-allowed"
           style={{ color: C.textSoft, background: "transparent" }}
         >
-          ← Anterior
+          ← {t.previous}
         </button>
 
         {step < total - 1 ? (
@@ -247,7 +287,7 @@ export default function ApplicationClient() {
             className="text-[15px] font-medium px-7 py-3 rounded-full transition-transform active:scale-[0.98]"
             style={{ background: C.blue, color: "#fff" }}
           >
-            Siguiente
+            {t.next}
           </button>
         ) : (
           <button
@@ -257,7 +297,7 @@ export default function ApplicationClient() {
             className="text-[15px] font-semibold px-7 py-3 rounded-full transition-transform active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
             style={{ background: C.blue, color: "#fff" }}
           >
-            {pending ? "Enviando…" : "Enviar aplicación"}
+            {pending ? t.submitting : t.submitApplication}
           </button>
         )}
       </div>
@@ -269,16 +309,20 @@ export default function ApplicationClient() {
 // Field renderer
 // ─────────────────────────────────────────────────────────────────────────────
 
+type FieldCopy = (typeof COPY)[Lang];
+
 function Field({
   field,
   value,
   error,
   onChange,
+  copy,
 }: {
   field: FieldDef;
   value: FieldValue;
   error?: string;
   onChange: (v: FieldValue) => void;
+  copy: FieldCopy;
 }) {
   const colSpan = field.span === 2 ? "md:col-span-2" : "md:col-span-1";
   const [focused, setFocused] = useState(false);
@@ -356,7 +400,7 @@ function Field({
           onBlur={() => setFocused(false)}
           style={{ ...styleErr, appearance: "none", cursor: "pointer", color: value ? C.text : C.textFaint }}
         >
-          <option value="">Selecciona…</option>
+          <option value="">{copy.selectPlaceholder}</option>
           {field.options?.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
@@ -371,7 +415,7 @@ function Field({
           onBlur={() => setFocused(false)}
           style={{ ...styleErr, appearance: "none", cursor: "pointer", color: value ? C.text : C.textFaint }}
         >
-          <option value="">Selecciona un país…</option>
+          <option value="">{copy.selectCountryPlaceholder}</option>
           {COUNTRIES.map((c) => (
             <option key={c.iso2} value={c.name}>
               {c.name}
@@ -385,7 +429,8 @@ function Field({
           baseStyle={styleErr}
           focused={focused}
           setFocused={setFocused}
-          placeholder={field.placeholder}
+          placeholder={field.placeholder ?? copy.phoneNumberPlaceholder}
+          countryCodeLabel={copy.countryCodeLabel}
         />
       ) : field.type === "multiselect" ? (
         <MultiSelect
@@ -421,6 +466,7 @@ function PhoneIntl({
   focused,
   setFocused,
   placeholder,
+  countryCodeLabel,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -428,6 +474,7 @@ function PhoneIntl({
   focused: boolean;
   setFocused: (f: boolean) => void;
   placeholder?: string;
+  countryCodeLabel: string;
 }) {
   // Parse "+<dial> <number>" — default to MX if empty.
   const parsed = (() => {
@@ -440,6 +487,9 @@ function PhoneIntl({
     const cleaned = number.replace(/[^\d\s\-()]/g, "");
     onChange(`${dial}${cleaned ? ` ${cleaned}` : ""}`);
   };
+
+  // Silence unused-var TS warning while keeping the hook signature stable.
+  void focused;
 
   return (
     <div
@@ -456,7 +506,7 @@ function PhoneIntl({
         onChange={(e) => update(e.target.value, parsed.number)}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        aria-label="Código de país"
+        aria-label={countryCodeLabel}
         style={{
           appearance: "none",
           background: C.surfaceAlt,
@@ -482,7 +532,7 @@ function PhoneIntl({
         onChange={(e) => update(parsed.dial, e.target.value)}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        placeholder={placeholder ?? "Número"}
+        placeholder={placeholder}
         inputMode="tel"
         style={{
           flex: 1,
