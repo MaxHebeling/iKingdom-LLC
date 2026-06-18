@@ -261,6 +261,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
 
+  // formKey dispatches the internal notification + DB source label.
+  // Default ("client") goes to executive@ikingdom.org.
+  // "partner" routes to True Market (office@true-market.io) — same form,
+  // different inbox. Add new keys here as needed.
+  const formKey = ((body as { formKey?: unknown }).formKey === "partner" ? "partner" : "client") as "client" | "partner";
+  const notifyEmail =
+    formKey === "partner"
+      ? process.env.PARTNER_NOTIFY_EMAIL ?? "office@true-market.io"
+      : NOTIFY_EMAIL;
+  const dbSource =
+    formKey === "partner" ? "partner_application_form" : "application_form";
+  const emailSubjectPrefix =
+    formKey === "partner" ? "Partner Application" : "Client Application";
+
   // Required fields
   const fullName = str(body.full_name, 200);
   const companyName = str(body.company_name, 200);
@@ -347,7 +361,7 @@ export async function POST(req: NextRequest) {
       .from("client_applications")
       .insert({
         status: "new",
-        source: "application_form",
+        source: dbSource,
         full_name: safe.full_name,
         job_title: safe.job_title || null,
         company_name: safe.company_name,
@@ -419,9 +433,9 @@ export async function POST(req: NextRequest) {
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
-      to: NOTIFY_EMAIL,
+      to: notifyEmail,
       replyTo: safe.email,
-      subject: `Client Application: ${safe.full_name} — ${safe.company_name}`,
+      subject: `${emailSubjectPrefix}: ${safe.full_name} — ${safe.company_name}`,
       html: buildEmailHtml(safe, notesBlock),
     });
   } catch (err) {

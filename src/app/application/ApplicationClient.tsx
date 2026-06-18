@@ -92,7 +92,15 @@ const inputFocus: React.CSSProperties = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-export default function ApplicationClient({ lang = "es" }: { lang?: Lang }) {
+export default function ApplicationClient({
+  lang = "es",
+  formKey,
+}: {
+  lang?: Lang;
+  /** Optional dispatch key. When "partner", the backend routes the internal
+   * notification to True Market instead of the iKingdom executive inbox. */
+  formKey?: "partner";
+}) {
   const t = COPY[lang];
   const SECTIONS = useMemo(() => getSections(lang), [lang]);
 
@@ -146,6 +154,7 @@ export default function ApplicationClient({ lang = "es" }: { lang?: Lang }) {
     setFormError(null);
     startTransition(async () => {
       const payload: Record<string, unknown> = { lang };
+      if (formKey) payload.formKey = formKey;
       for (const [k, v] of Object.entries(values)) {
         if (typeof v === "string") payload[k] = v.trim();
         else payload[k] = v;

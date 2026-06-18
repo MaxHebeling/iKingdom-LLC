@@ -153,6 +153,33 @@ export default function sitemap(): MetadataRoute.Sitemap {
       },
     },
     {
+      // Partner intake variant. Same UI/UX as /application; backend routes the
+      // internal notification to True Market (office@true-market.io) instead of
+      // the iKingdom executive inbox. Driven by formKey="partner" in payload.
+      url: `${baseUrl}/partner-application`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.6,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/partner-application`,
+          es: `${baseUrl}/es/partner-application`,
+        },
+      },
+    },
+    {
+      url: `${baseUrl}/es/partner-application`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.5,
+      alternates: {
+        languages: {
+          en: `${baseUrl}/partner-application`,
+          es: `${baseUrl}/es/partner-application`,
+        },
+      },
+    },
+    {
       url: `${baseUrl}/privacy`,
       lastModified,
       changeFrequency: "yearly",
