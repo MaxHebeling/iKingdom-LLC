@@ -8,7 +8,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { resend, NOTIFY_EMAIL, FROM_EMAIL } from "@/lib/resend";
+import { resend, FROM_EMAIL } from "@/lib/resend";
 import { INTAKE_FORMS, type IntakeFormKey } from "@/app/es/escuela-virtual/forms";
 
 function getClient() {
@@ -30,6 +30,8 @@ function rateLimit(ip: string, max: number, windowMs: number) {
   e.count += 1;
   return true;
 }
+
+const INTAKE_NOTIFY = process.env.INTAKE_NOTIFY_EMAIL ?? "oficinamx@ikingdom.org";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const esc = (s: string) =>
@@ -135,7 +137,7 @@ export async function POST(req: NextRequest) {
   try {
     const r = await resend.emails.send({
       from: FROM_EMAIL,
-      to: process.env.INTAKE_NOTIFY_EMAIL ?? NOTIFY_EMAIL,
+      to: INTAKE_NOTIFY,
       replyTo: email,
       subject: `${form.eyebrow}: ${orgName} — ${fullName}`,
       html: `<div style="font-family:-apple-system,Helvetica,Arial,sans-serif;max-width:720px;margin:0 auto;padding:32px;color:#1d1d1f">
@@ -159,7 +161,7 @@ export async function POST(req: NextRequest) {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: email,
-      replyTo: NOTIFY_EMAIL,
+      replyTo: INTAKE_NOTIFY,
       subject: `Recibimos tu formulario — ${form.eyebrow}`,
       html: `<div style="font-family:-apple-system,Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;padding:32px;color:#1d1d1f">
         <h1 style="font-size:22px">Hola ${esc(fullName.split(" ")[0] || fullName)},</h1>
