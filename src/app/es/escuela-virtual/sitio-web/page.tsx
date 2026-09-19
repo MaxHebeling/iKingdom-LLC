@@ -12,7 +12,7 @@ export default function Page() {
     <IntakePage
       formKey="sitio_web"
       nextHref="/es/escuela-virtual/escuela"
-      nextLabel="Continuar con la escuela virtual"
+      nextLabel="Continuar con el campus virtual"
     />
   );
 }
