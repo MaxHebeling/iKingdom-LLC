@@ -318,9 +318,14 @@ export default function ApplicationClient({
 // Field renderer
 // ─────────────────────────────────────────────────────────────────────────────
 
-type FieldCopy = (typeof COPY)[Lang];
+export interface FieldCopy {
+  selectPlaceholder: string;
+  selectCountryPlaceholder: string;
+  countryCodeLabel: string;
+  phoneNumberPlaceholder: string;
+}
 
-function Field({
+export function Field({
   field,
   value,
   error,
